@@ -2,16 +2,33 @@
 
 namespace App\Http\Controllers;
 
+use Inertia\Inertia;
 use App\Models\Category;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\Storage as FacadesStorage;
 
 class CategoryController extends Controller
 {
-    public function create(Request $request) {
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        return Inertia::render("AdminSide/Categories/Index", [
+            'categories' => Category::paginate(5)
+        ]);
+    }
 
-        // Automatically generate slug and SKU based on the name field
+
+    public function create()
+    {
+        return Inertia::render("AdminSide/Categories/Create");
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
         $request->merge([
             'slug' => str()->slug($request->input('name')),
             'sku' => strtoupper( // Generate SKU
@@ -43,47 +60,46 @@ class CategoryController extends Controller
         Category::create($categoryFields);
 
         //Redirect
-        return redirect()->route('categoryview.index');
+        return redirect()->route('categories.index');
     }
 
-    public function edit($id) {
-        $category = Category::findorFail($id);
+    /**
+     * Display the specified resource.
+     */
+    public function show(string $id)
+    {
 
-        return inertia('CategoryEdit',[
-            'category' => $category,
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(Category $category)
+    {
+        return Inertia::render("AdminSide/Categories/Edit", [
+            'category' => [
+                'id' => $category->id,
+                'name' => $category->name,
+                'slug' => $category->slug,
+                'sku' => $category->sku,
+                'image' => $category->image ? asset('storage/' . $category->image) : asset('storage/categoryImages/default.jpg'), // Add full image URL or null
+            ],
         ]);
     }
 
-    public function update(Request $request, $id){
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, string $id)
+    {
+        //
+    }
 
-        // Automatically generate slug and SKU based on the name field
-        $request->merge([
-            'slug' => str()->slug($request->input('name')),
-            'sku' => strtoupper( // Generate SKU
-                preg_replace('/[aeiou\s]/i', '', $request->input('name'))
-            )
-        ]);
-
-        // Limit SKU to first 3 characters
-        $request->merge([
-            'sku' => substr($request->input('sku'), 0, 3),
-        ]);
-
-        //Validate
-        $request->validate([
-            'image' => ['nullable', 'file', 'max:10240'], // Max 10MB
-            'name' => ['required', 'max:255'],
-            'slug' => ['required', 'max:255', Rule::unique('categories')->ignore($id)],
-            'sku' => ['required', 'max:3', Rule::unique('categories')->ignore($id)],
-        ]);
-        //FindorFail
-        $category = Category::findOrFail($id);
-
-
-        //Update
-        $category->update($request->all());
-        //Redirect
-
-        return redirect()->route('CategoryView.vue');
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(string $id)
+    {
+        //
     }
 }
