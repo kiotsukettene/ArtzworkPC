@@ -93,7 +93,7 @@
                           id="file-upload"
                           type="file"
                           class="sr-only"
-                          accept="image/*"
+                          accept=".jpg,.jpeg,.png,.gif"
                           @change="handleFileUpload"
                         />
                       </label>
@@ -104,6 +104,14 @@
                     <p class="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
                   </div>
                 </div>
+
+                <!-- Hidden Input for Image Removal -->
+                <input
+                  type="hidden"
+                  name="remove_image"
+                  :value="imagePreview === null ? 1 : 0"
+                />
+
                 <small class="text-red-700">{{ form.errors.image }}</small>
               </div>
 
@@ -146,13 +154,14 @@ const props = defineProps({
     required: true,
   },
 });
-const imagePreview = ref(props.category?.image || null); // Display the current image
+const imagePreview = ref(props.category.image); // Display the current image
 
 const form = useForm({
-  name: props.category?.name || "",
-  slug: props.category?.slug || "",
-  sku: props.category?.sku || "",
-  image: props.category?.image || null, // Holds the new file upload
+  name: props.category.name,
+  slug: props.category.slug,
+  sku: props.category.sku,
+  image: null,
+  _method: "PUT",
 });
 
 // Watcher for Slug and SKU
@@ -171,8 +180,8 @@ watch(
 const handleFileUpload = (event) => {
   const file = event.target.files[0];
   if (file) {
-    form.image = file;
-    createImagePreview(file);
+    form.image = file; // Bind the file to the form
+    createImagePreview(file); // Generate a preview
   }
 };
 
@@ -180,8 +189,8 @@ const handleDrop = (event) => {
   event.preventDefault();
   const file = event.dataTransfer.files[0];
   if (file) {
-    form.image = file;
-    createImagePreview(file);
+    form.image = file; // Bind the file to the form
+    createImagePreview(file); // Generate a preview
   }
 };
 
@@ -199,11 +208,11 @@ const removeImage = () => {
 };
 
 const updateForm = () => {
-  form.put(route("categories.update", props.category.id), {
+  form.post(route("categories.update", props.category.id), {
     preserveScroll: true,
     onSuccess: () => {
-      form.reset();
-      imagePreview.value = null; // Reset preview
+      form.reset("image");
+      imagePreview.value = form.image || null; // Update preview on success
     },
   });
 };

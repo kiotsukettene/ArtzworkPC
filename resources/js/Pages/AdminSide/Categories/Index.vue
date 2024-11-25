@@ -88,26 +88,26 @@
                           : 'none',
                     }"
                   >
-                    <button
-                      @click="
-                        () => {
-                          console.log('Viewing', category);
-                        }
-                      "
-                      class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    >
-                      View
-                    </button>
-                    <button
-                      @click="
-                        () => {
-                          console.log('Editing', category);
-                        }
-                      "
-                      class="block w-full text-left px-4 py-2 text-sm text-green-500 hover:bg-green-100"
-                    >
-                      Edit
-                    </button>
+                    <Link>
+                      <button
+                        @click="
+                          () => {
+                            console.log('Viewing', category);
+                          }
+                        "
+                        class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        View
+                      </button>
+                    </Link>
+                    <Link :href="route('categories.edit', category.id)">
+                      <button
+                        class="block w-full text-left px-4 py-2 text-sm text-green-500 hover:bg-green-100"
+                      >
+                        Edit
+                      </button>
+                    </Link>
+
                     <button
                       @click="() => openDeleteModal(category)"
                       class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100"
@@ -184,16 +184,19 @@
 </template>
 <script setup>
 import { ref } from "vue";
-import { Link } from "@inertiajs/vue3";
+import { Link, router } from "@inertiajs/vue3";
 import { MoreVerticalIcon, ChevronDownIcon, TrashIcon } from "lucide-vue-next";
 import Sidebar from "../../../Components/Sidebar.vue";
 import Header from "../../../Components/Header.vue";
 import { route } from "../../../../../vendor/tightenco/ziggy/src/js";
 
+const props = defineProps({
+  categories: Object,
+});
+
 const isFilterOpen = ref(false);
 const showDeleteModal = ref(false); // Tracks if the delete modal is visible
-const itemToDelete = ref(null); // Tracks the item to delete
-
+const categoryToDelete = ref(null);
 const activeActionMenu = ref(null); // Tracks the row index for which the modal is active
 
 const toggleActionMenu = (index) => {
@@ -207,25 +210,22 @@ const closeActionMenu = () => {
 };
 
 const openDeleteModal = (item) => {
-  // Open the delete modal and set the item to delete
-  itemToDelete.value = item;
+  categoryToDelete.value = item;
+  activeActionMenu.value = null;
   showDeleteModal.value = true;
 };
 
 const confirmDelete = () => {
-  // Perform the delete operation
-  console.log("Deleting item:", itemToDelete.value);
-  // Close the modal
-  showDeleteModal.value = false;
-  itemToDelete.value = null;
+  router.delete(route("categories.destroy", categoryToDelete.value.id), {
+    onSuccess: () => {
+      showDeleteModal.value = false; // Close the modal after success
+      activeActionMenu.value = null;
+    },
+  });
 };
 const logout = () => {
   // Implement logout logic
 };
-
-defineProps({
-  categories: Object,
-});
 
 const getDate = (date) =>
   new Date(date).toLocaleDateString("en-us", {
