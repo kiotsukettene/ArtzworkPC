@@ -1,15 +1,16 @@
 <template>
   <Head title=" | Create Category"></Head>
   <div class="min-h-screen bg-gray-50">
-    <!-- Mobile Sidebar Toggle -->
-    <Sidebar> </Sidebar>
+    <!-- Sidebar -->
+    <Sidebar></Sidebar>
+
     <!-- Main Content -->
     <main class="lg:ml-64 min-h-screen">
       <!-- Header -->
-      <Header title="Create Category" :showSearch="false"> </Header>
+      <Header title="Create Category" :showSearch="false"></Header>
 
-      <!-- Create Category Form -->
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Create Category Form -->
         <div class="bg-white rounded-lg shadow">
           <div class="p-6">
             <form @submit.prevent="submitForm">
@@ -59,9 +60,7 @@
 
               <!-- Image Upload -->
               <div class="mb-6">
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                  Image
-                </label>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Image</label>
                 <div
                   class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg"
                   @dragover.prevent
@@ -76,12 +75,11 @@
                         class="mx-auto h-32 w-auto"
                       />
                     </div>
-
                     <!-- Upload Instructions -->
                     <div v-else class="flex text-sm text-gray-600">
                       <label
                         for="file-upload"
-                        class="relative cursor-pointer rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500"
+                        class="relative cursor-pointer rounded-md font-medium text-blue-600 hover:text-blue-500"
                       >
                         <span>Upload a file</span>
                         <input
@@ -91,15 +89,56 @@
                           accept="image/*"
                           @change="handleFileUpload"
                         />
-                        <small class="text-red-700">{{ form.errors.image }}</small>
                       </label>
                       <p class="pl-1">or drag and drop</p>
                     </div>
-
-                    <!-- File Format Info -->
                     <p class="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
                   </div>
                 </div>
+                <small class="text-red-700">{{ form.errors.image }}</small>
+              </div>
+
+              <!-- Dynamic Specifications -->
+              <div class="mt-2">
+                <h2 class="text-lg font-medium mb-4">Add Specifications</h2>
+
+                <!-- Loop through specifications -->
+                <div
+                  v-for="(spec, index) in dynamicSpecifications"
+                  :key="index"
+                  class="mb-4"
+                >
+                  <label class="block text-sm font-medium text-gray-700 mb-1">
+                    Specification #{{ index + 1 }}
+                  </label>
+                  <div class="flex items-center space-x-4">
+                    <!-- Input for Specification -->
+                    <input
+                      v-model="spec.value"
+                      type="text"
+                      class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      :placeholder="`Enter specification #${index + 1}`"
+                    />
+
+                    <!-- Remove Button -->
+                    <button
+                      @click="removeSpecification(index)"
+                      type="button"
+                      class="px-2 py-1 bg-red-500 text-white text-sm rounded hover:bg-red-600"
+                      v-if="dynamicSpecifications.length > 1"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Add Another Specification Button -->
+                <button
+                  @click.prevent="addSpecification"
+                  class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                >
+                  Add another specification
+                </button>
               </div>
 
               <!-- Form Actions -->
@@ -133,10 +172,9 @@ import { ref, watch } from "vue";
 import { Link } from "@inertiajs/vue3";
 import Sidebar from "../../../Components/Sidebar.vue";
 import Header from "../../../Components/Header.vue";
-import Toast from "../../../Components/Toast.vue";
 
 // State
-
+const dynamicSpecifications = ref([{ value: "" }]); // Initialize with one empty specification
 const imagePreview = ref(null);
 
 const form = useForm({
@@ -144,8 +182,10 @@ const form = useForm({
   slug: "",
   sku: "",
   image: null,
+  specifications: [], // Store specifications here
 });
 
+// Watch for name changes to auto-generate slug and SKU
 watch(
   () => form.name,
   (newName) => {
@@ -157,44 +197,57 @@ watch(
   }
 );
 
-// Methods
-// Handle File Upload via Input
+// Add a new specification
+const addSpecification = () => {
+  dynamicSpecifications.value.push({ value: "" });
+};
+
+// Remove a specification
+const removeSpecification = (index) => {
+  // Ensure at least one specification remains
+  if (dynamicSpecifications.value.length > 1) {
+    dynamicSpecifications.value.splice(index, 1);
+  }
+};
+
+// Handle file upload
 const handleFileUpload = (event) => {
   const file = event.target.files[0];
   if (file) {
-    form.image = file; // Append file to the form object
+    form.image = file;
     createImagePreview(file);
   }
 };
 
-// Handle File Upload via Drag-and-Drop
+// Handle drag-and-drop file upload
 const handleDrop = (event) => {
-  event.preventDefault(); // Prevent default drag behaviors
+  event.preventDefault();
   const file = event.dataTransfer.files[0];
   if (file) {
-    form.image = file; // Append file to the form object
+    form.image = file;
     createImagePreview(file);
   }
 };
 
-// Create Image Preview
+// Create image preview
 const createImagePreview = (file) => {
   const reader = new FileReader();
   reader.onload = (e) => {
-    imagePreview.value = e.target.result; // Update preview with base64
+    imagePreview.value = e.target.result;
   };
   reader.readAsDataURL(file);
 };
 
+// Submit form
 const submitForm = () => {
+  // Map dynamic specifications into the form
+  form.specifications = dynamicSpecifications.value.map((spec) => spec.value);
+
+  // Post the form data
   form.post(route("categories.store"), {
     preserveScroll: true,
     onSuccess: () => form.reset(),
   });
-};
-
-const logout = () => {
-  // Implement logout logic
 };
 </script>
 

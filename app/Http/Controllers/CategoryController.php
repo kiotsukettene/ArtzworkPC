@@ -49,6 +49,8 @@ class CategoryController extends Controller
             'name' => ['required', 'max:255'],
             'slug' => ['required', 'max:255', 'unique:categories'],
             'sku' => ['required', 'max:3', 'unique:categories'],
+            'specifications' => ['nullable', 'array'],
+            'specifications.*' => ['nullable', 'string', 'max:255'],
         ]);
 
         //Image
@@ -61,7 +63,15 @@ class CategoryController extends Controller
             $categoryFields['image'] = Storage::disk('public')->put('categoryImages', $request->image);
         }
         //Store
-        Category::create($categoryFields);
+        $category = Category::create($categoryFields);
+
+        if (!empty($categoryFields['specifications'])) {
+            foreach ($categoryFields['specifications'] as $specification) {
+                if (!empty($specification)) {
+                    $category->specifications()->create(['name' => $specification]);
+                }
+            }
+        }
 
         //Redirect
         return redirect()->route('categories.index');
@@ -87,6 +97,12 @@ class CategoryController extends Controller
                 'slug' => $category->slug,
                 'sku' => $category->sku,
                 'image' => $category->image ? asset('storage/' . $category->image) : null, // Add full image URL or null
+                'specifications' => $category->specifications->map(function ($specification) {
+                return [
+                    'id' => $specification->id,
+                    'name' => $specification->name,
+                ];
+            }),
             ],
         ]);
     }
@@ -116,6 +132,9 @@ class CategoryController extends Controller
             'name' => ['required', 'max:255'],
             'slug' => ['required', 'max:255', 'unique:categories,slug,' . $category->id],
             'sku' => ['required', 'max:3', 'unique:categories,sku,' . $category->id],
+            'specifications' => ['nullable', 'array'], // Specifications as array
+            'specifications.*.id' => ['nullable', 'integer'], // Validate IDs for existing specifications
+            'specifications.*.name' => ['nullable', 'string', 'max:255'], // Validate names for all specifications
         ]);
 
     //Image
@@ -131,6 +150,27 @@ class CategoryController extends Controller
         }
 
         $category->update($categoryFields);
+
+
+
+    // Update specifications
+        $existingIds = $category->specifications()->pluck('id')->toArray(); // Get current specification IDs
+        $updatedIds = []; // To track IDs that were updated or added
+
+        foreach ($categoryFields['specifications'] ?? [] as $spec) {
+            if (isset($spec['id']) && in_array($spec['id'], $existingIds)) {
+                // Update existing specification
+                $category->specifications()->where('id', $spec['id'])->update(['name' => $spec['name']]);
+                $updatedIds[] = $spec['id']; // Add to updated IDs
+            } elseif (!empty($spec['name'])) {
+                // Add new specification
+                $newSpec = $category->specifications()->create(['name' => $spec['name']]);
+                $updatedIds[] = $newSpec->id; // Add new ID to updated IDs
+            }
+        }
+
+        // Delete removed specifications
+        $category->specifications()->whereNotIn('id', $updatedIds)->delete();
 
         return redirect()->route('categories.index');
     }

@@ -115,6 +115,48 @@
                 <small class="text-red-700">{{ form.errors.image }}</small>
               </div>
 
+              <!-- Dynamic Specifications -->
+              <div class="p-4 mb-6">
+                <h2 class="text-lg font-medium mb-4">Specifications</h2>
+
+                <!-- Existing Specifications -->
+                <div
+                  v-for="(spec, index) in form.specifications"
+                  :key="spec.id || index"
+                  class="mb-4"
+                >
+                  <label class="block text-sm font-medium text-gray-700 mb-1">
+                    Specification #{{ index + 1 }}
+                  </label>
+                  <div class="flex items-center space-x-4">
+                    <!-- Input for Specification -->
+                    <input
+                      v-model="spec.name"
+                      type="text"
+                      class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      :placeholder="`Enter specification #${index + 1}`"
+                    />
+
+                    <!-- Remove Button -->
+                    <button
+                      @click.prevent="removeSpecification(index)"
+                      type="button"
+                      class="px-2 py-1 bg-red-500 text-white text-sm rounded hover:bg-red-600"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Add New Specification -->
+                <button
+                  @click.prevent="addSpecification"
+                  class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                >
+                  Add another specification
+                </button>
+              </div>
+
               <!-- Form Actions -->
               <div class="flex justify-end space-x-4">
                 <Link
@@ -156,11 +198,13 @@ const props = defineProps({
 });
 const imagePreview = ref(props.category.image); // Display the current image
 
+// Initialize form with existing data
 const form = useForm({
   name: props.category.name,
   slug: props.category.slug,
   sku: props.category.sku,
   image: null,
+  specifications: props.category.specifications || [], // Load existing specifications
   _method: "PUT",
 });
 
@@ -176,7 +220,17 @@ watch(
   }
 );
 
-// Methods
+// Add a new specification
+const addSpecification = () => {
+  form.specifications.push({ id: null, name: "" }); // Add empty specification
+};
+
+// Remove a specification
+const removeSpecification = (index) => {
+  form.specifications.splice(index, 1); // Remove specification at index
+};
+
+// Handle file upload
 const handleFileUpload = (event) => {
   const file = event.target.files[0];
   if (file) {
