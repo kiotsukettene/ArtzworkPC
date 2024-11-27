@@ -23,6 +23,8 @@ Route::resource(
     'brands', BrandController::class,
 );
 
+Route::inertia('/products/create', 'AdminSide/Products/Create');
+
 // Route::inertia('/categories', 'AdminSide/Categories/Index',
 //     ['categories' => Category::paginate(5)])
 //     ->name('category.index');
