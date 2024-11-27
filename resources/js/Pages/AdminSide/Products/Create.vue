@@ -1,4 +1,5 @@
 <template>
+    <Head title=" | Create Product"></Head>
   <div class="min-h-screen bg-gray-50">
     <!-- Mobile Sidebar Toggle -->
     <Sidebar></Sidebar>
@@ -6,7 +7,7 @@
     <!-- Main Content -->
     <main class="lg:ml-64 min-h-screen">
       <!-- Header -->
-      <Header title="Create Products"></Header>
+      <Header title="Create Product" :showSearch="false"></Header>
 
       <!-- Create Product Form -->
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -35,6 +36,7 @@
                   <input
                     v-model="form.slug"
                     type="text"
+                    disabled
                     class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
@@ -42,6 +44,7 @@
                   <label class="block text-sm font-medium text-gray-700 mb-1">SKU</label>
                   <input
                     v-model="form.sku"
+                    disabled
                     type="text"
                     class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
@@ -59,75 +62,68 @@
                   class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 ></textarea>
               </div>
-            </div>
-            <!-- Image Upload -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Images</label>
-              <div
-                class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md"
-                @dragover.prevent
-                @drop.prevent="handleDrop"
-              >
-                <div class="space-y-1 text-center">
-                  <!-- Image Previews -->
-                  <div
-                    v-if="imagePreviews.length"
-                    class="mb-4 flex flex-wrap gap-4 justify-center"
-                  >
-                    <div
-                      v-for="(preview, index) in imagePreviews"
-                      :key="index"
-                      class="relative"
-                    >
-                      <img :src="preview" alt="Preview" class="h-32 w-auto" />
-                      <button
-                        @click="removeImage(index)"
-                        type="button"
-                        class="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
-                      >
-                        ✕
-                      </button>
+              <!-- Image Upload -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Images</label>
+                <div
+                  class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md"
+                  @dragover.prevent
+                  @drop.prevent="handleDrop"
+                >
+                  <div class="space-y-1 text-center">
+                    <!-- Image Previews -->
+                    <div v-if="imagePreviews.length" class="mb-4 flex flex-wrap gap-4 justify-center">
+                      <div v-for="(preview, index) in imagePreviews" :key="index" class="relative group">
+                        <img :src="preview" alt="Preview" class="h-32 w-auto rounded-md shadow-md" />
+                        <button
+                          @click="removeImage(index)"
+                          type="button"
+                          class="absolute top-1 right-1 text-red-600 w-6 h-6 rounded-full flex items-center justify-center shadow-lg"
+                        >
+                          ✕
+                        </button>
+                      </div>
                     </div>
+
+                    <div v-else class="flex text-sm text-gray-600">
+                      <label
+                        for="file-upload"
+                        class="relative cursor-pointer rounded-md font-medium text-blue-600 hover:text-blue-500"
+                      >
+                        <span>Upload files</span>
+                        <input
+                          id="file-upload"
+                          type="file"
+                          multiple
+                          accept="image/*"
+                          class="sr-only"
+                          @change="handleFileUpload"
+                        />
+                      </label>
+                      <p class="pl-1">or drag and drop</p>
+                    </div>
+                    <p class="text-xs text-gray-500">PNG, JPG, GIF up to 10MB each</p>
                   </div>
-                  <div v-else class="flex text-sm text-gray-600">
-                    <label
-                      for="file-upload"
-                      class="relative cursor-pointer rounded-md font-medium text-blue-600 hover:text-blue-500"
-                    >
-                      <span>Upload files</span>
-                      <input
-                        id="file-upload"
-                        type="file"
-                        multiple
-                        class="sr-only"
-                        @change="handleFileUpload"
-                      />
-                    </label>
-                    <p class="pl-1">or drag and drop</p>
-                  </div>
-                  <p class="text-xs text-gray-500">PNG, JPG, GIF up to 10MB each</p>
                 </div>
               </div>
             </div>
 
             <!-- Specifications -->
             <div class="bg-white rounded-lg shadow p-6">
-              <h2 class="text-lg font-medium mb-4">Specifications</h2>
+                <h2 class="text-lg font-medium mb-4">Specifications</h2>
 
-              <div class="space-y-4">
-                <div v-for="field in currentSpecificationFields" :key="field.key">
-                  <label class="block text-sm font-medium text-gray-700 mb-1">{{
-                    field.label
-                  }}</label>
-                  <input
-                    v-model="form.specifications[field.key]"
-                    type="text"
-                    :placeholder="field.placeholder"
-                    class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
+                <div class="space-y-4">
+                    <div v-for="spec in currentSpecifications" :key="spec.id">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">{{ spec.name }}</label>
+                    <input
+                        v-model="form.specifications[spec.id]"
+                        type="text"
+                        :placeholder="`Enter ${spec.name}`"
+                        class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    </div>
                 </div>
-              </div>
-            </div>
+                </div>
           </div>
 
           <!-- Side Panel -->
@@ -165,45 +161,42 @@
               <h2 class="text-lg font-medium mb-4">Associations</h2>
               <div class="space-y-4">
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1"
-                    >Category</label
-                  >
-                  <select
-                    v-model="form.category"
-                    @change="handleCategoryChange"
-                    class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="">Select Category</option>
-                    <option
-                      v-for="category in categories"
-                      :key="category.id"
-                      :value="category.id"
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                    <select
+                        v-model="form.category_id"
+                        @change="handleCategoryChange"
+                        class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
-                      {{ category.name }}
-                    </option>
-                  </select>
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1"
-                    >Brand</label
-                  >
-                  <select
-                    v-model="form.brand"
-                    class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="">Select</option>
-                  </select>
-                </div>
+                        <option value="">Select Category</option>
+                        <option v-for="category in categories" :key="category.id" :value="category.id">
+                        {{ category.name }}
+                        </option>
+                    </select>
+                    </div>
+
+                    <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Brand</label>
+                    <select
+                        v-model="form.brand_id"
+                        class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                        <option value="">Select Brand</option>
+                        <option v-for="brand in brands" :key="brand.id" :value="brand.id">
+                        {{ brand.name }}
+                        </option>
+                    </select>
+                    </div>
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-1"
                     >Warranty</label
                   >
-                  <select
+                  <input
                     v-model="form.warranty"
+                    type="name"
+                    placeholder="e.g 12 months"
                     class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
-                    <option value="">Select</option>
-                  </select>
+                  </input>
                 </div>
               </div>
             </div>
@@ -218,10 +211,12 @@
               </Link>
               <button
                 type="submit"
-                class="px-4 py-2 bg-navy-600 text-white rounded-md hover:bg-navy-700"
-              >
-                Create
-              </button>
+                :disabled="form.processing"
+                class="px-4 py-2 bg-navy-600 text-white rounded-md hover:bg-navy-700 disabled:opacity-50"
+                >
+                <span v-if="form.processing">Creating...</span>
+                <span v-else>Create</span>
+                </button>
             </div>
           </div>
         </form>
@@ -231,93 +226,18 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
-import { Link } from "@inertiajs/vue3";
-import {
-  HomeIcon,
-  TagIcon,
-  ShoppingBagIcon,
-  UsersIcon,
-  ClipboardListIcon,
-  MenuIcon,
-  XIcon,
-} from "lucide-vue-next";
+import { ref, computed, watch } from "vue";
+import { Link, useForm, } from "@inertiajs/vue3";
 import Sidebar from "../../../Components/Sidebar.vue";
 import Header from "../../../Components/Header.vue";
 // State
 
-const imagePreview = ref(null);
+const props = defineProps({
+  categories: Array,
+  brands: Array,
+});
 
-// Categories data
-const categories = [
-  { id: "laptop", name: "Laptop" },
-  { id: "desktop", name: "Desktop" },
-  { id: "memory", name: "Memory" },
-  { id: "storage", name: "Storage" },
-  { id: "monitor", name: "Monitor" },
-];
-
-// Specification fields by category
-const specificationFieldsByCategory = {
-  laptop: [
-    { key: "cpu", label: "CPU", placeholder: "Intel Core i5-12400, AMD Ryzen 5 5600X" },
-    { key: "ram", label: "RAM", placeholder: "16GB DDR4 (2x8GB)" },
-    { key: "storage", label: "Storage", placeholder: "1TB NVMe SSD" },
-    { key: "gpu", label: "GPU", placeholder: "NVIDIA RTX 3060, AMD RX 6600" },
-    { key: "operatingSystem", label: "Operating System", placeholder: "Windows 11 Pro" },
-    { key: "motherboard", label: "Motherboard", placeholder: "MSI B550-A PRO" },
-    { key: "weight", label: "Weight", placeholder: "2 grams to kg" },
-    { key: "batteryLife", label: "Battery Life", placeholder: "Battery capacity mAH" },
-    {
-      key: "display",
-      label: "Display",
-      placeholder: "Screen size, resolution, refresh rate (IPS, OLED)",
-    },
-  ],
-  desktop: [
-    { key: "cpu", label: "CPU", placeholder: "Intel Core i5-12400, AMD Ryzen 5 5600X" },
-    { key: "ram", label: "RAM", placeholder: "16GB DDR4 (2x8GB)" },
-    { key: "storage", label: "Storage", placeholder: "1TB NVMe SSD" },
-    { key: "gpu", label: "GPU", placeholder: "NVIDIA RTX 3060, AMD RX 6600" },
-    { key: "operatingSystem", label: "Operating System", placeholder: "Windows 11 Pro" },
-    { key: "motherboard", label: "Motherboard", placeholder: "MSI B550-A PRO" },
-    { key: "powerSupply", label: "Power Supply Unit", placeholder: "650W 80+ Gold PSU" },
-    {
-      key: "coolingSystem",
-      label: "Cooling System",
-      placeholder: "Air cooling, 240mm AIO",
-    },
-  ],
-  memory: [
-    { key: "type", label: "Type", placeholder: "DDR4, DDR5" },
-    { key: "capacity", label: "Capacity", placeholder: "16GB, 32GB" },
-    { key: "speed", label: "Speed", placeholder: "3200MHz, 3600MHz" },
-    { key: "formFactor", label: "Form Factor", placeholder: "DIMM, SO-DIMM" },
-    { key: "rgbLighting", label: "RGB Lighting", placeholder: "Yes/No" },
-  ],
-  storage: [
-    { key: "type", label: "Type", placeholder: "SSD, HDD, NVMe" },
-    { key: "capacity", label: "Capacity", placeholder: "500GB, 1TB, 2TB" },
-    { key: "interface", label: "Interface", placeholder: "SATA III, PCIe 4.0" },
-    { key: "formFactor", label: "Form Factor", placeholder: '2.5", M.2' },
-    { key: "readSpeed", label: "Read Speed", placeholder: "3500MB/s" },
-    { key: "writeSpeed", label: "Write Speed", placeholder: "3000MB/s" },
-  ],
-  monitor: [
-    { key: "size", label: "Size", placeholder: '24", 27", 32"' },
-    {
-      key: "resolution",
-      label: "Resolution",
-      placeholder: "1920x1080, 2560x1440, 3840x2160",
-    },
-    { key: "refreshRate", label: "Refresh Rate", placeholder: "60Hz, 144Hz, 240Hz" },
-    { key: "panelType", label: "Panel Type", placeholder: "IPS, VA, TN" },
-    { key: "responseTime", label: "Response Time", placeholder: "1ms, 4ms" },
-    { key: "hdrSupport", label: "HDR Support", placeholder: "HDR400, HDR600, HDR1000" },
-  ],
-};
-
-const form = ref({
+const form = useForm({
   name: "",
   slug: "",
   sku: "",
@@ -325,22 +245,39 @@ const form = ref({
   images: [],
   price: "",
   stock: "",
-  category: "",
-  brand: "",
+  category_id: "",
+  brand_id: "",
   warranty: "",
-  specifications: {},
+  specifications: [],
 });
 
-// Computed property for current specification fields based on selected category
-const currentSpecificationFields = computed(() => {
-  return specificationFieldsByCategory[form.value.category] || [];
-});
+const currentSpecifications = ref([]);
 
-// Menu Items
+// Watch for changes to the selected category
+watch(
+  () => form.category_id, // Watch the correct property
+  (newCategoryId) => {
+    const selectedCategory = props.categories.find((category) => category.id === newCategoryId);
+    currentSpecifications.value = selectedCategory ? selectedCategory.specifications : [];
+  }
+);
+
+watch(
+  () => form.name,
+  (newName) => {
+    form.slug = newName.toLowerCase().trim().replace(/\s+/g, "-");
+  }
+);
+
+const handleCategoryChange = () => {
+  form.specifications = {};
+};
+
 
 // Methods
 const imagePreviews = ref([]); // Array to store image previews
 
+// Handle file upload
 // Handle file upload
 const handleFileUpload = (event) => {
   const files = Array.from(event.target.files); // Convert FileList to Array
@@ -349,6 +286,7 @@ const handleFileUpload = (event) => {
 
 // Handle drag-and-drop
 const handleDrop = (event) => {
+  event.preventDefault(); // Prevent default behavior
   const files = Array.from(event.dataTransfer.files);
   addFiles(files);
 };
@@ -356,11 +294,18 @@ const handleDrop = (event) => {
 // Add files to the form
 const addFiles = (files) => {
   files.forEach((file) => {
-    if (file.type.startsWith("image/") && file.size <= 10 * 1024 * 1024) {
-      // Validate file type and size
-      form.value.images.push(file);
-      createImagePreview(file);
+    if (!file.type.startsWith("image/")) {
+      alert("Only image files are allowed.");
+      return;
     }
+
+    if (file.size > 10 * 1024 * 1024) {
+      alert("File size must not exceed 10MB.");
+      return;
+    }
+
+    form.images.push(file); // Add the file to form.images
+    createImagePreview(file); // Create a preview for the image
   });
 };
 
@@ -368,20 +313,28 @@ const addFiles = (files) => {
 const createImagePreview = (file) => {
   const reader = new FileReader();
   reader.onload = (e) => {
-    imagePreviews.value.push(e.target.result);
+    imagePreviews.value.push(e.target.result); // Store the base64 preview
   };
   reader.readAsDataURL(file);
 };
 
 // Remove an image
 const removeImage = (index) => {
-  form.value.images.splice(index, 1); // Remove file from form data
+  form.images.splice(index, 1); // Remove file from form data
   imagePreviews.value.splice(index, 1); // Remove preview
 };
 
 const submitForm = () => {
-  // Handle form submission logic
-  console.log("Form submitted:", form.value);
+  form.post(route("products.store"), {
+    onSuccess: () => {
+      // Optional: Redirect to the product index or reset the form
+      form.reset();
+    },
+    onError: (errors) => {
+      // Handle validation errors if necessary
+      console.error(errors);
+    },
+  });
 };
 </script>
 

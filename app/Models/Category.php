@@ -17,4 +17,8 @@ class Category extends Model
     public function specifications() {
         return $this->hasMany(Specification::class);
     }
+
+    public function products() {
+        return $this->hasMany(Product::class);
+    }
 }

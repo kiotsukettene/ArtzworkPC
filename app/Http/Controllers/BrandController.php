@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Brands;
+use App\Models\Brand;
 use Inertia\Inertia;
 use App\Models\Category;
 use Illuminate\Http\Request;
@@ -16,7 +16,7 @@ class BrandController extends Controller
     public function index()
     {
         return Inertia::render("AdminSide/Brands/Index", [
-            "brands" => Brands::paginate(5),
+            "brands" => Brand::paginate(5),
         ]);
     }
 
@@ -55,7 +55,7 @@ class BrandController extends Controller
             $brandFields['image'] = Storage::disk('public')->put('brandImages', $request->image);
         }
         //Store
-        Brands::create($brandFields);
+        Brand::create($brandFields);
 
         //Redirect
         return redirect()->route('brands.index');
@@ -72,7 +72,7 @@ class BrandController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Brands $brand)
+    public function edit(Brand $brand)
     {
 
         return Inertia::render('AdminSide/Brands/Edit', [
@@ -88,7 +88,7 @@ class BrandController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Brands $brand)
+    public function update(Request $request, Brand $brand)
     {
         $request->merge([
             'slug' => $request->filled('name')
@@ -124,7 +124,7 @@ class BrandController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Brands $brand)
+    public function destroy(Brand $brand)
     {
         if($brand->image) {
             Storage::disk('public')->delete($brand->image);

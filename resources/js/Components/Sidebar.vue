@@ -13,7 +13,7 @@
   >
     <div class="h-full flex flex-col">
       <div class="p-4 border-b">
-        <h1 class="text-xl font-bold">ArtzworkPC</h1>
+        <h1 class="text-2xl text-navy-900 font-bold">ArtzworkPC</h1>
       </div>
 
       <nav class="flex-1 p-4 space-y-2">

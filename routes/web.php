@@ -5,6 +5,7 @@ use App\Models\Brands;
 use App\Models\Category;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BrandController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 
@@ -13,7 +14,7 @@ use App\Http\Controllers\DashboardController;
 Route::get('/dashboard',
     [ DashboardController::class,'index'])
     ->name('dashboard');
-
+Route::inertia('/home', 'ClientSide/Home');
 
 Route::resource(
     'categories', CategoryController::class,
@@ -23,7 +24,11 @@ Route::resource(
     'brands', BrandController::class,
 );
 
-Route::inertia('/products/create', 'AdminSide/Products/Create');
+Route::resource(
+    'products', ProductController::class,
+);
+
+// Route::inertia('/products/create', 'AdminSide/Products/Create');
 
 // Route::inertia('/categories', 'AdminSide/Categories/Index',
 //     ['categories' => Category::paginate(5)])
