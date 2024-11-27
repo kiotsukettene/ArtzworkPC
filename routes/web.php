@@ -1,10 +1,12 @@
 <?php
 
+use Inertia\Inertia;
+use App\Models\Brands;
+use App\Models\Category;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
-use App\Models\Category;
-use Inertia\Inertia;
-use Illuminate\Support\Facades\Route;
 
 // Route::inertia('/dashboard', 'Dashboard');
 
@@ -13,7 +15,13 @@ Route::get('/dashboard',
     ->name('dashboard');
 
 
-Route::resource('categories', CategoryController::class);
+Route::resource(
+    'categories', CategoryController::class,
+);
+
+Route::resource(
+    'brands', BrandController::class,
+);
 
 // Route::inertia('/categories', 'AdminSide/Categories/Index',
 //     ['categories' => Category::paginate(5)])

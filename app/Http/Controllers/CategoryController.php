@@ -127,7 +127,7 @@ class CategoryController extends Controller
 
             $categoryFields['image'] = Storage::disk('public')->put('categoryImages', $request->image);
         } else {
-            $categoryFields['image'] = null;
+            $categoryFields['image'] = $category->image;
         }
 
         $category->update($categoryFields);

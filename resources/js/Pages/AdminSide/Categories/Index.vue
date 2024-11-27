@@ -55,7 +55,7 @@
                     :src="
                       category.image
                         ? '/storage/' + category.image
-                        : 'storage/categoryImages/default.jpg'
+                        : 'storage/default.jpg'
                     "
                     class="h-16 w-24 object-cover rounded-md shadow-sm"
                   />
