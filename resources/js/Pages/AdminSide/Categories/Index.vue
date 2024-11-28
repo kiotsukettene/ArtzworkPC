@@ -39,7 +39,7 @@
             <thead class="bg-gray-50">
               <tr>
                 <th
-                  v-for="header in ['NAME', 'IMG', 'SKU', 'SLUG', 'CREATED_AT', '']"
+                  v-for="header in headers"
                   :key="header"
                   class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
@@ -57,7 +57,7 @@
                         ? '/storage/' + category.image
                         : 'storage/default.jpg'
                     "
-                    class="h-16 w-24 object-cover rounded-md shadow-sm"
+                    class="h-12 w-24 object-cover rounded-md shadow-sm"
                   />
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">{{ category.sku }}</td>
@@ -65,63 +65,20 @@
                 <td class="px-6 py-4 whitespace-nowrap">
                   {{ getDate(category.created_at) }}
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-right relative">
-                  <!-- MoreVerticalIcon Button -->
+                <td class="px-6 py-4 whitespace-nowrap text-right">
                   <button
-                    @click="toggleActionMenu(index)"
-                    class="text-gray-400 hover:text-gray-500"
+                    @click="openActionMenu(index, $event)"
+                    class="text-gray-400 hover:text-gray-500 focus:outline-none"
                   >
                     <MoreVerticalIcon class="h-5 w-5" />
                   </button>
-                  <!-- Action Menu -->
-                  <div
-                    v-if="activeActionMenu === index"
-                    :class="[
-                      'absolute z-10 w-40 bg-white shadow-lg rounded-md',
-                      index === categories.data.length - 1 ? 'bottom-0' : 'mt-2',
-                    ]"
-                    :style="{
-                      right: '0',
-                      transform:
-                        index === categories.data.length - 1
-                          ? 'translateY(-100%)'
-                          : 'none',
-                    }"
-                  >
-                    <Link>
-                      <button
-                        @click="
-                          () => {
-                            console.log('Viewing', category);
-                          }
-                        "
-                        class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      >
-                        View
-                      </button>
-                    </Link>
-                    <Link :href="route('categories.edit', category.id)">
-                      <button
-                        class="block w-full text-left px-4 py-2 text-sm text-green-500 hover:bg-green-100"
-                      >
-                        Edit
-                      </button>
-                    </Link>
-
-                    <button
-                      @click="() => openDeleteModal(category)"
-                      class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100"
-                    >
-                      Delete
-                    </button>
-                  </div>
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
 
-        <!-- Pagination Links-->
+        <!-- Pagination Links -->
         <div class="flex items-center justify-between mt-6">
           <div class="flex items-center">
             <span class="text-sm text-gray-700"
@@ -140,7 +97,7 @@
                 {
                   'text-slate-300': !link.url,
                   'text-white bg-navy-600 font-medium hover:bg-navy-700': link.active,
-                  ' bg-stone-100': !link.active,
+                  'bg-stone-100': !link.active,
                 },
               ]"
             />
@@ -148,6 +105,33 @@
         </div>
       </div>
     </main>
+
+    <!-- Action Menu -->
+    <div
+      v-if="activeActionMenu !== null"
+      class="fixed z-50 bg-white border border-gray-200 shadow-lg rounded-md"
+      :style="{ top: dropdownPosition.top + 'px', left: dropdownPosition.left + 'px' }"
+    >
+      <button
+        @click="viewCategory"
+        class="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 text-left"
+      >
+        View
+      </button>
+      <Link :href="route('categories.edit', categories.data[activeActionMenu].id)">
+        <button
+          class="block w-full px-4 py-2 text-sm text-green-500 hover:bg-green-100 text-left"
+        >
+          Edit
+        </button>
+      </Link>
+      <button
+        @click="openDeleteModal(categories.data[activeActionMenu])"
+        class="block w-full px-4 py-2 text-sm text-red-600 hover:bg-red-100 text-left"
+      >
+        Delete
+      </button>
+    </div>
 
     <!-- Delete Confirmation Modal -->
     <div v-if="showDeleteModal" class="fixed inset-0 z-50 overflow-y-auto">
@@ -182,6 +166,7 @@
     </div>
   </div>
 </template>
+
 <script setup>
 import { ref } from "vue";
 import { Link, router } from "@inertiajs/vue3";
@@ -194,45 +179,45 @@ const props = defineProps({
   categories: Object,
 });
 
-const isFilterOpen = ref(false);
-const showDeleteModal = ref(false); // Tracks if the delete modal is visible
-const categoryToDelete = ref(null);
-const activeActionMenu = ref(null); // Tracks the row index for which the modal is active
+const headers = ["NAME", "IMG", "SKU", "SLUG", "CREATED_AT", ""];
 
-const toggleActionMenu = (index) => {
-  // Toggle the active modal for the given row index
-  activeActionMenu.value = activeActionMenu.value === index ? null : index;
+const isFilterOpen = ref(false);
+const showDeleteModal = ref(false);
+const categoryToDelete = ref(null);
+
+const activeActionMenu = ref(null);
+const dropdownPosition = ref({ top: 0, left: 0 });
+
+const openActionMenu = (index, event) => {
+  if (activeActionMenu.value === index) {
+    closeActionMenu();
+  } else {
+    activeActionMenu.value = index;
+    dropdownPosition.value = {
+      top: event.target.getBoundingClientRect().bottom + window.scrollY,
+      left: event.target.getBoundingClientRect().right - 100 + window.scrollX,
+    };
+  }
 };
 
 const closeActionMenu = () => {
-  // Close all action menus
   activeActionMenu.value = null;
 };
 
-const openDeleteModal = (item) => {
-  categoryToDelete.value = item;
-  activeActionMenu.value = null;
+const openDeleteModal = (category) => {
+  categoryToDelete.value = category;
+  closeActionMenu();
   showDeleteModal.value = true;
 };
 
 const confirmDelete = () => {
   router.delete(route("categories.destroy", categoryToDelete.value.id), {
     onSuccess: () => {
-      showDeleteModal.value = false; // Close the modal after success
-      activeActionMenu.value = null;
+      showDeleteModal.value = false;
+      closeActionMenu();
     },
   });
 };
-const logout = () => {
-  // Implement logout logic
-};
-
-const getDate = (date) =>
-  new Date(date).toLocaleDateString("en-us", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
 
 const makeLabel = (label) => {
   if (label.includes("Previous")) {
@@ -243,7 +228,15 @@ const makeLabel = (label) => {
     return label;
   }
 };
+
+const getDate = (date) =>
+  new Date(date).toLocaleDateString("en-us", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 </script>
+
 <style scoped>
 .bg-navy-600 {
   background-color: #001044;

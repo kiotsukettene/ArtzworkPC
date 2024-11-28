@@ -93,7 +93,7 @@
                           id="file-upload"
                           type="file"
                           class="sr-only"
-                          accept=".jpg,.jpeg,.png,.gif"
+                          accept="image/*"
                           @change="handleFileUpload"
                         />
                       </label>
