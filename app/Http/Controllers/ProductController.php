@@ -7,6 +7,7 @@ use App\Models\Brand;
 use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use App\Models\ProductSpecification;
 
 class ProductController extends Controller
 {
@@ -46,14 +47,15 @@ class ProductController extends Controller
         'stock' => 'required|integer|min:0',
         'category_id' => 'required|exists:categories,id',
         'brand_id' => 'required|exists:brands,id',
-        'warranty' => 'nullable|string|max:255',
-        'images.*' => 'nullable|file|image|max:10240', // Max size: 10MB
-        'specifications' => 'nullable|array', // Specifications as an array
-        'specifications.*.id' => 'nullable|integer|exists:specifications,id',
-        'specifications.*.value' => 'nullable|string|max:255',
+        'warranty' => 'required|string|max:255',
+        'images.*' => 'nullable|file|image|max:10240',
+        'specifications' => 'nullable|array',
+        'specifications.*.id' => 'required|integer|exists:specifications,id',
+        'specifications.*.value' => 'required|string|max:255',
     ]);
 
     try {
+        // Handle image uploads
         $images = [];
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
@@ -61,33 +63,31 @@ class ProductController extends Controller
             }
         }
 
-        // Save the product without SKU initially
+        // Save product
         $product = Product::create(array_merge($validated, [
-            'product_images' => $images, // Store the image paths in JSON
-            'sku' => '', // Placeholder SKU; it will be updated after the product is created
+            'product_images' => $images,
+            'sku' => '', // Placeholder SKU
         ]));
 
-        // Generate the SKU based on category SKU and product ID
+        // Generate SKU
         $category = Category::find($validated['category_id']);
-        $product->update([
-            'sku' => $category->sku . '-' . $product->id,
-        ]);
+        $product->update(['sku' => $category->sku . '-' . $product->id]);
 
-        // Attach specifications with values
+        // Attach specifications
         if (!empty($validated['specifications'])) {
             foreach ($validated['specifications'] as $spec) {
-                $product->specifications()->attach($spec['id'], ['value' => $spec['value']]);
+                ProductSpecification::create([
+                    'product_id' => $product->id,
+                    'spec_id' => $spec['id'],
+                    'value' => $spec['value'],
+                ]);
             }
         }
 
         return redirect()->route('products.index')->with('success', 'Product created successfully!');
-    }
-
-    catch(\Exception $e) {
+    } catch (\Exception $e) {
         return back()->withErrors(['error' => $e->getMessage()]);
     }
-    // Handle file uploads for images
-
 }
 
     /**
@@ -101,11 +101,10 @@ class ProductController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
-    {
-        //
-    }
+    public function edit(Product $product)
+{
 
+}
     /**
      * Update the specified resource in storage.
      */

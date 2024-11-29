@@ -17,7 +17,7 @@ class Specification extends Model
     }
 
     public function product() {
-        return $this->belongsToMany(Product::class, 'product_specifications')
+        return $this->belongsToMany(Product::class, 'product_specifications', 'spec_id', 'product_id')
         ->withPivot('value')
         ->withTimestamps();
     }

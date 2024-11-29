@@ -27,6 +27,7 @@
                   type="text"
                   class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
+                <small class="text-red-700">{{ form.errors.name }}</small>
               </div>
 
               <!-- Slug and SKU -->
@@ -39,6 +40,7 @@
                     disabled
                     class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
+                  <small class="text-red-700">{{ form.errors.slug }}</small>
                 </div>
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-1">SKU</label>
@@ -61,6 +63,7 @@
                   rows="4"
                   class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 ></textarea>
+                <small class="text-red-700">{{ form.errors.description }}</small>
               </div>
               <!-- Image Upload -->
               <div>
@@ -99,31 +102,46 @@
                           class="sr-only"
                           @change="handleFileUpload"
                         />
+
                       </label>
                       <p class="pl-1">or drag and drop</p>
                     </div>
                     <p class="text-xs text-gray-500">PNG, JPG, GIF up to 10MB each</p>
                   </div>
                 </div>
+                <small class="text-red-700">{{ form.errors.image }}</small>
               </div>
             </div>
 
             <!-- Specifications -->
-            <div class="bg-white rounded-lg shadow p-6">
-                <h2 class="text-lg font-medium mb-4">Specifications</h2>
-
-                <div class="space-y-4">
-                    <div v-for="spec in currentSpecifications" :key="spec.id">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">{{ spec.name }}</label>
-                    <input
-                        v-model="form.specifications[spec.id]"
-                        type="text"
-                        :placeholder="`Enter ${spec.name}`"
-                        class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                    </div>
-                </div>
-                </div>
+            <!-- Specifications -->
+<div class="bg-white rounded-lg shadow p-6">
+  <h2 class="text-lg font-medium mb-4">Specifications</h2>
+  <div class="space-y-4">
+    <div v-for="(spec, index) in currentSpecifications" :key="spec.id">
+      <label class="block text-sm font-medium text-gray-700 mb-1">
+        {{ spec.name }}
+      </label>
+      <input
+        v-model="form.specifications[index].value"
+        type="text"
+        :placeholder="`Enter ${spec.name}`"
+        class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+      <input
+        type="hidden"
+        value="spec.id"
+        v-model="form.specifications[index].id"
+      />
+      <small
+        v-if="form.errors[`specifications.${index}.value`]"
+        class="text-red-700"
+      >
+        {{ form.errors[`specifications.${index}.value`] }}
+      </small>
+    </div>
+  </div>
+</div>
           </div>
 
           <!-- Side Panel -->
@@ -139,6 +157,7 @@
                   placeholder="Enter price"
                   class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
+                <small class="text-red-700">{{ form.errors.price }}</small>
               </div>
             </div>
 
@@ -153,6 +172,7 @@
                   placeholder="Enter Stock"
                   class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
+                <small class="text-red-700">{{ form.errors.stock }}</small>
               </div>
             </div>
 
@@ -172,6 +192,7 @@
                         {{ category.name }}
                         </option>
                     </select>
+                    <small class="text-red-700">{{ form.errors.category_id }}</small>
                     </div>
 
                     <div>
@@ -185,6 +206,7 @@
                         {{ brand.name }}
                         </option>
                     </select>
+                    <small class="text-red-700">{{ form.errors.brand_id }}</small>
                     </div>
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-1"
@@ -196,6 +218,7 @@
                     placeholder="e.g 12 months"
                     class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
+                  <small class="text-red-700">{{ form.errors.warranty }}</small>
                   </input>
                 </div>
               </div>
@@ -255,10 +278,9 @@ const currentSpecifications = ref([]);
 
 // Watch for changes to the selected category
 watch(
-  () => form.category_id, // Watch the correct property
-  (newCategoryId) => {
-    const selectedCategory = props.categories.find((category) => category.id === newCategoryId);
-    currentSpecifications.value = selectedCategory ? selectedCategory.specifications : [];
+  () => form.category_id, // Watch for changes to the selected category
+  () => {
+    handleCategoryChange(); // Populate specifications dynamically
   }
 );
 
@@ -270,9 +292,17 @@ watch(
 );
 
 const handleCategoryChange = () => {
-  form.specifications = {};
+  const selectedCategory = props.categories.find(
+    (category) => category.id === form.category_id
+  );
+  currentSpecifications.value = selectedCategory
+    ? selectedCategory.specifications
+    : [];
+  form.specifications = currentSpecifications.value.map((spec) => ({
+    id: spec.id,
+    value: "", // Initialize the value as empty
+  }));
 };
-
 
 // Methods
 const imagePreviews = ref([]); // Array to store image previews
@@ -329,9 +359,10 @@ const submitForm = () => {
     onSuccess: () => {
       // Optional: Redirect to the product index or reset the form
       form.reset();
+      currentSpecifications.value = [];
     },
     onError: (errors) => {
-      // Handle validation errors if necessary
+      // Handle validation errors
       console.error(errors);
     },
   });

@@ -32,8 +32,9 @@ class Product extends Model
         return $this->belongsTo(Brand::class);
     }
 
-    public function specifications() {
-        return $this->belongsToMany(Specification::class, 'product_specifications')
+    public function specifications()
+    {
+        return $this->belongsToMany(Specification::class, 'product_specifications', 'product_id', 'spec_id')
             ->withPivot('value')
             ->withTimestamps();
     }
