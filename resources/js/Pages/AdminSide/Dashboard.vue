@@ -11,6 +11,10 @@
 
       <!-- Dashboard Content -->
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Welcome Message -->
+        <div class="mb-6">
+          <h2 class="text-3xl font-bold text-gray-800">Welcome back, {{ userName }}!</h2>
+        </div>
         <!-- Metrics -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div
@@ -127,8 +131,8 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-import { Link, Head } from "@inertiajs/vue3";
+import { ref, computed } from "vue";
+import { Link, Head, usePage } from "@inertiajs/vue3";
 import Header from "@/Components/Header.vue";
 import {
   SearchIcon,
@@ -138,8 +142,8 @@ import {
   TrendingUpIcon,
 } from "lucide-vue-next";
 import Sidebar from "@/Components/Sidebar.vue";
-const isSidebarOpen = ref(false);
-const isProfileOpen = ref(false);
+const page = usePage();
+const userName = computed(() => page.props.auth?.user?.first_name || "User");
 
 const metrics = [
   {

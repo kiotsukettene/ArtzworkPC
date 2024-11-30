@@ -32,3 +32,14 @@
   .hover\:bg-navy-800:hover {
     background-color: #0d1147;
   }
+
+  .footer-color {
+    background-color: #191c1f;
+  }
+
+  .primary-text {
+    color: #0a192f;
+  }
+  .main {
+    background-color: #e2e8f0;
+  }

@@ -22,20 +22,28 @@
         <slot name="actions"></slot>
 
         <!-- Profile Section -->
-        <div class="relative">
-          <img
-            :src="profileImage"
-            alt="User Profile"
-            class="h-10 w-10 rounded-full cursor-pointer"
-            @click="toggleProfile"
-          />
+        <div v-if="user" class="relative">
+          <div
+            class="flex items-center justify-center w-10 h-10 rounded-full bg-navy-900 text-white cursor-pointer"
+          >
+            <button
+              @click="toggleProfile"
+              class="text-sm font-medium focus:outline-none w-full h-full rounded-full flex items-center justify-center"
+            >
+              {{ user.charAt(0).toUpperCase() }}
+              <!-- Display the first letter of the user's name -->
+            </button>
+          </div>
+
           <div
             v-if="isProfileOpen"
             class="absolute right-0 mt-2 w-45 bg-white border rounded-lg shadow-lg z-50"
           >
             <slot name="profile-menu">
               <Link
-                href="/logout"
+                method="post"
+                as="button"
+                :href="route('logout')"
                 class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
               >
                 Logout
@@ -49,8 +57,17 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { SearchIcon } from "lucide-vue-next";
+import { usePage } from "@inertiajs/vue3";
+
+// Fetch page props using Inertia.js
+const page = usePage();
+
+// Safely access user's first name or default to "Guest"
+const user = computed(() => {
+  return page.props.auth?.user?.first_name || "Guest";
+});
 
 // Props for dynamic content
 defineProps({
@@ -62,11 +79,6 @@ defineProps({
   showSearch: {
     type: Boolean,
     default: true,
-  },
-  profileImage: {
-    type: String,
-    required: false,
-    default: "", // Provide a default profile image if necessary
   },
 });
 

@@ -1,77 +1,10 @@
 <template>
   <div class="min-h-screen bg-white">
     <!-- Header/Navigation -->
-    <header class="sticky top-0 z-50 bg-white shadow-sm">
-      <nav class="container mx-auto px-4 py-4">
-        <div class="flex items-center justify-between">
-          <!-- Logo -->
-          <Link href="/" class="text-2xl font-bold text-navy-900">ArtzworkPC</Link>
-
-          <!-- Desktop Navigation -->
-          <div class="hidden md:flex items-center space-x-8">
-            <Link
-              v-for="item in navigationItems"
-              :key="item.name"
-              :href="item.href"
-              class="text-gray-700 hover:text-navy-600"
-            >
-              {{ item.name }}
-            </Link>
-          </div>
-
-          <!-- Search, Cart, Account -->
-          <div class="flex items-center space-x-4">
-            <div class="hidden sm:block relative">
-              <input
-                type="text"
-                placeholder="Search for products..."
-                class="w-64 pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500"
-              />
-              <SearchIcon class="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
-            </div>
-            <button class="text-gray-700 hover:text-navy-600">
-              <ShoppingCartIcon class="h-6 w-6" />
-            </button>
-            <button class="text-gray-700 hover:text-navy-600">
-              <UserIcon class="h-6 w-6" />
-            </button>
-            <!-- Mobile Menu Button -->
-            <button
-              @click="isMenuOpen = !isMenuOpen"
-              class="md:hidden text-gray-700 hover:text-navy-600"
-            >
-              <MenuIcon v-if="!isMenuOpen" class="h-6 w-6" />
-              <XIcon v-else class="h-6 w-6" />
-            </button>
-          </div>
-        </div>
-
-        <!-- Mobile Navigation -->
-        <div v-if="isMenuOpen" class="md:hidden mt-4 pb-4 border-t">
-          <Link
-            v-for="item in navigationItems"
-            :key="item.name"
-            :href="item.href"
-            class="block py-2 text-gray-700 hover:text-navy-600"
-          >
-            {{ item.name }}
-          </Link>
-          <!-- Mobile Search -->
-          <div class="mt-4 relative">
-            <input
-              type="text"
-              placeholder="Search for products..."
-              class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500"
-            />
-            <SearchIcon class="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
-          </div>
-        </div>
-      </nav>
-    </header>
-
+    <NavLink />
     <!-- Hero Section -->
-    <section class="white">
-      <div class="container rounded-lg bg-gray-200 mt-3 mx-auto px-4 py-8">
+    <section class="py-16 main">
+      <div class="container rounded-lg main mt-1 mx-auto px-4 py-8">
         <div class="grid md:grid-cols-2 gap-8 items-center">
           <!-- Text Section -->
           <div>
@@ -145,7 +78,7 @@
             </div>
           </div>
           <div class="flex items-center space-x-4">
-            <div class="p-3 bg-gray-100 rounded-lg">
+            <div class="p-3 main rounded-lg">
               <TruckIcon class="h-6 w-6 text-navy-600" />
             </div>
             <div>
@@ -154,7 +87,7 @@
             </div>
           </div>
           <div class="flex items-center space-x-4">
-            <div class="p-3 bg-gray-100 rounded-lg">
+            <div class="p-3 main rounded-lg">
               <HeadphonesIcon class="h-6 w-6 text-navy-600" />
             </div>
             <div>
@@ -163,7 +96,7 @@
             </div>
           </div>
           <div class="flex items-center space-x-4">
-            <div class="p-3 bg-gray-100 rounded-lg">
+            <div class="p-3 main rounded-lg">
               <ShieldIcon class="h-6 w-6 text-navy-600" />
             </div>
             <div>
@@ -176,8 +109,9 @@
     </section>
 
     <!-- Latest Products Section -->
-    <section class="py-12 bg-gray-100">
+    <section class="py-12 main">
       <div class="container mx-auto px-4">
+        <!-- Section Header -->
         <div class="flex justify-between items-center mb-8">
           <div>
             <div class="flex items-center space-x-2 mb-2">
@@ -186,39 +120,60 @@
             </div>
             <h2 class="text-2xl font-bold">Latest Products</h2>
           </div>
-          <!-- <Link
-            href="/products"
-            class="px-4 py-2 bg-navy-900 text-white rounded-md hover:text-navy-700 flex items-center"
-          >
-            View All
-            <ArrowRightIcon class="h-4 w-4 ml-1" />
-          </Link> -->
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="relative overflow-hidden">
+          <!-- Carousel Wrapper -->
           <div
-            v-for="product in latestProducts"
-            :key="product.id"
-            class="bg-white rounded-lg shadow-lg overflow-hidden"
+            class="flex transition-transform duration-300"
+            :style="{ transform: `translateX(-${currentSlide * (100 / visibleCards)}%)` }"
+            ref="productCarousel"
           >
-            <img
-              :src="product.image"
-              :alt="product.name"
-              class="w-full h-48 object-cover"
-            />
-            <div class="p-4">
-              <h3 class="font-medium mb-2">{{ product.name }}</h3>
-              <div class="flex items-center justify-between">
-                <div class="flex items-center">
-                  <span class="text-lg font-bold">${{ product.price }}</span>
-                  <div class="flex items-center ml-2">
-                    <StarIcon class="h-4 w-4 text-yellow-400 fill-current" />
-                    <span class="text-sm ml-1">{{ product.rating }}</span>
+            <div
+              v-for="product in latestProducts"
+              :key="product.id"
+              class="flex-none px-2"
+              :class="{
+                'w-1/2': visibleCards === 2,
+                'w-1/3': visibleCards === 3,
+                'w-1/5': visibleCards === 5,
+              }"
+            >
+              <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                <img
+                  src="../ClientSide/assets/ryzen.webp"
+                  :alt="product.name"
+                  class="w-full h-48 object-cover"
+                />
+                <div class="p-4">
+                  <h3 class="font-medium mb-2">{{ product.name }}</h3>
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                      <span class="text-lg font-bold">${{ product.price }}</span>
+                      <div class="flex items-center ml-2">
+                        <StarIcon class="h-4 w-4 text-yellow-400 fill-current" />
+                        <span class="text-sm ml-1">{{ product.rating }}</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+
+          <!-- Navigation Buttons -->
+          <button
+            @click="prevSlide"
+            class="absolute left-0 top-1/2 -translate-y-1/2 bg-navy-600 p-2 rounded-full hover:bg-navy-700 transition sm:p-1 lg:p-2"
+          >
+            <ChevronLeft class="h-6 w-6 text-white" />
+          </button>
+          <button
+            @click="nextSlide"
+            class="absolute right-0 top-1/2 -translate-y-1/2 bg-navy-600 p-2 rounded-full hover:bg-navy-700 transition sm:p-1 lg:p-2"
+          >
+            <ChevronRight class="h-6 w-6 text-white" />
+          </button>
         </div>
       </div>
     </section>
@@ -227,12 +182,30 @@
     <section class="py-12 bg-navy-900 text-white">
       <div class="container mx-auto px-4">
         <h2 class="text-2xl font-bold mb-8">Categories</h2>
-        <div class="relative">
-          <div class="flex overflow-x-auto space-x-6 pb-4 -mx-4 px-4">
-            <div v-for="category in categories" :key="category.id" class="flex-none w-64">
+        <div class="relative overflow-hidden">
+          <!-- Carousel Wrapper -->
+          <div
+            class="flex transition-transform duration-300"
+            :style="{
+              transform: `translateX(-${
+                currentCategorySlide * (100 / visibleCategoryCards)
+              }%)`,
+            }"
+            ref="categoryCarousel"
+          >
+            <div
+              v-for="category in categories"
+              :key="category.id"
+              class="flex-none px-2"
+              :class="{
+                'w-1/2': visibleCategoryCards === 2,
+                'w-1/3': visibleCategoryCards === 3,
+                'w-1/5': visibleCategoryCards === 5,
+              }"
+            >
               <div class="bg-navy-800 rounded-lg overflow-hidden">
                 <img
-                  :src="category.image"
+                  src="../ClientSide/assets/laptop.webp"
                   :alt="category.name"
                   class="w-full h-48 object-cover"
                 />
@@ -242,13 +215,28 @@
               </div>
             </div>
           </div>
+
+          <!-- Navigation Buttons -->
+          <button
+            @click="prevCategorySlide"
+            class="absolute left-0 top-1/2 -translate-y-1/2 bg-navy-800 p-2 rounded-full hover:bg-navy-700 transition sm:p-1 lg:p-2"
+          >
+            <ChevronLeft class="h-6 w-6 text-white" />
+          </button>
+          <button
+            @click="nextCategorySlide"
+            class="absolute right-0 top-1/2 -translate-y-1/2 bg-navy-800 p-2 rounded-full hover:bg-navy-700 transition sm:p-1 lg:p-2"
+          >
+            <ChevronRight class="h-6 w-6 text-white" />
+          </button>
         </div>
       </div>
     </section>
 
     <!-- Explore Products Section -->
-    <section class="py-12 bg-white">
+    <section class="py-12 main">
       <div class="container mx-auto px-4">
+        <!-- Section Header -->
         <div class="flex items-center space-x-2 mb-2">
           <div class="w-4 h-8 bg-navy-600 rounded"></div>
           <span class="text-sm font-medium">Our Products</span>
@@ -263,19 +251,29 @@
           </Link>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Responsive Products Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
           <div
             v-for="product in exploreProducts"
             :key="product.id"
-            class="bg-navy-900 rounded-lg p-4"
+            class="bg-white rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow duration-300 border border-gray-200"
           >
-            <img
-              :src="product.image"
-              :alt="product.name"
-              class="w-full h-48 object-cover rounded-lg mb-4"
-            />
-            <h3 class="text-white font-medium mb-2">{{ product.name }}</h3>
+            <!-- Brand Name -->
+            <span class="text-end text-sm font-semibold text-black uppercase mb-2 block">
+              {{ product.brand }}
+            </span>
+            <!-- Product Image -->
+            <div class="flex justify-center items-center mb-4 aspect-w-1 aspect-h-1">
+              <img
+                src="../ClientSide/assets/product.webp"
+                :alt="product.name"
+                class="w-full object-contain rounded-lg"
+              />
+            </div>
+            <!-- Product Name -->
+            <h3 class="primary-text font-medium mb-2">{{ product.name }}</h3>
             <div class="flex items-center justify-between">
+              <!-- Product Details -->
               <div>
                 <div class="flex items-center mb-1">
                   <StarIcon
@@ -288,15 +286,18 @@
                         : 'text-gray-400'
                     "
                   />
-                  <span class="text-gray-400 text-sm ml-2">({{ product.reviews }})</span>
+                  <span class="text-gray-400 text-sm ml-2">
+                    ({{ product.reviews }})
+                  </span>
                 </div>
-                <span class="text-white font-bold">${{ product.price }}</span>
+                <span class="primary-text font-bold text-lg">${{ product.price }}</span>
               </div>
+              <!-- Action Buttons -->
               <div class="flex space-x-2">
-                <button class="p-2 text-white hover:text-navy-300">
+                <button class="p-2 primary-text main rounded-lg">
                   <HeartIcon class="h-5 w-5" />
                 </button>
-                <button class="p-2 text-white hover:text-navy-300">
+                <button class="p-2 text-white bg-navy-900 rounded-lg">
                   <ShoppingCartIcon class="h-5 w-5" />
                 </button>
               </div>
@@ -340,7 +341,7 @@
     </section>
 
     <!-- Footer -->
-    <footer class="bg-navy-900 text-white pt-12 pb-6">
+    <footer class="footer-color text-white pt-12 pb-6">
       <div class="container mx-auto px-4">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
           <div>
@@ -478,8 +479,8 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-import { Link } from "@inertiajs/vue3";
+import { ref, computed, onMounted, onBeforeUnmount } from "vue";
+import { Link, router } from "@inertiajs/vue3";
 import {
   MenuIcon,
   XIcon,
@@ -493,7 +494,10 @@ import {
   HeadphonesIcon,
   ShieldIcon,
   ArrowRightIcon,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-vue-next";
+import NavLink from "../../Components/NavLink.vue";
 
 // State
 const isMenuOpen = ref(false);
@@ -509,65 +513,111 @@ const navigationItems = [
 
 // Latest Products Data
 const latestProducts = [
-  {
-    id: 1,
-    name: "Mini Robin Black",
-    price: "32.30",
-    rating: "4.1",
-    image: "",
-  },
-  {
-    id: 2,
-    name: "Coolman Cyborg Pink",
-    price: "32.30",
-    rating: "4.1",
-    image: "",
-  },
-  {
-    id: 3,
-    name: "Ming Mini Blk",
-    price: "32.30",
-    rating: "4.1",
-    image: "",
-  },
-  {
-    id: 4,
-    name: "Coolmax Cyborg White",
-    price: "32.30",
-    rating: "4.1",
-    image: "",
-  },
+  { id: 1, name: "Product 1", price: "32.30", rating: "4.1" },
+  { id: 2, name: "Product 2", price: "32.30", rating: "4.1" },
+  { id: 3, name: "Product 3", price: "32.30", rating: "4.1" },
+  { id: 4, name: "Product 4", price: "32.30", rating: "4.1" },
+  { id: 5, name: "Product 5", price: "32.30", rating: "4.1" },
+  { id: 6, name: "Product 6", price: "32.30", rating: "4.1" },
+  { id: 7, name: "Product 7", price: "32.30", rating: "4.1" },
+  { id: 8, name: "Product 8", price: "32.30", rating: "4.1" },
+];
+const currentSlide = ref(0);
+const visibleCards = ref(5);
+
+// State for Categories Section
+const currentCategorySlide = ref(0);
+const visibleCategoryCards = ref(5);
+
+// Update visible cards based on screen size
+const updateVisibleCards = () => {
+  if (window.innerWidth < 640) {
+    visibleCards.value = 2;
+    visibleCategoryCards.value = 2;
+  } else if (window.innerWidth < 1024) {
+    visibleCards.value = 3;
+    visibleCategoryCards.value = 3;
+  } else {
+    visibleCards.value = 5;
+    visibleCategoryCards.value = 5;
+  }
+};
+
+// Scroll functionality for Latest Products Section
+const prevSlide = () => {
+  currentSlide.value = Math.max(currentSlide.value - 1, 0);
+};
+const nextSlide = () => {
+  currentSlide.value = Math.min(
+    currentSlide.value + 1,
+    latestProducts.length - visibleCards.value
+  );
+};
+
+// Scroll functionality for Categories Section
+const prevCategorySlide = () => {
+  currentCategorySlide.value = Math.max(currentCategorySlide.value - 1, 0);
+};
+const nextCategorySlide = () => {
+  currentCategorySlide.value = Math.min(
+    currentCategorySlide.value + 1,
+    categories.length - visibleCategoryCards.value
+  );
+};
+
+// Add event listener for window resize
+onMounted(() => {
+  updateVisibleCards();
+  window.addEventListener("resize", updateVisibleCards);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener("resize", updateVisibleCards);
+});
+// Sample categories (replace with your dynamic data)
+const categories = [
+  { id: 1, name: "Laptops" },
+  { id: 2, name: "Desktops" },
+  { id: 3, name: "Accessories" },
+  { id: 4, name: "Gaming" },
+  { id: 5, name: "Monitors" },
+  { id: 6, name: "Monitors" },
+  { id: 6, name: "Monitors" },
+  { id: 6, name: "Monitors" },
+  { id: 6, name: "Monitors" },
+  { id: 6, name: "Monitors" },
 ];
 
-// Categories Data
-const categories = [
-  {
-    id: 1,
-    name: "Mousepad Extended",
-    image: "",
-  },
-  {
-    id: 2,
-    name: "CCTV Dome Hikvision HD",
-    image: "",
-  },
-  {
-    id: 3,
-    name: "PSU - AVR",
-    image: "",
-  },
-  {
-    id: 4,
-    name: "Mouse",
-    image: "",
-  },
-];
+// // State for category carousel
+// const currentCategorySlide = ref(0);
+// const visibleCategoryCards = 5; // Number of visible cards
+
+// // Compute the maximum slide index for categories
+// const maxCategorySlide = computed(() =>
+//   Math.max(0, categories.length - visibleCategoryCards)
+// );
+
+// // Slide left
+// const prevCategorySlide = () => {
+//   currentCategorySlide.value = Math.max(currentCategorySlide.value - 1, 0);
+// };
+
+// // Slide right
+// const nextCategorySlide = () => {
+//   currentCategorySlide.value = Math.min(
+//     currentCategorySlide.value + 1,
+//     maxCategorySlide.value
+//   );
+// };
+
+// References for carousels
 
 // Explore Products Data
 const exploreProducts = [
   {
     id: 1,
     name: "PROCESSOR RYZEN 7 5700",
+    brand: "AMD",
     price: "400",
     rating: 5,
     reviews: "325",
@@ -576,6 +626,7 @@ const exploreProducts = [
   {
     id: 2,
     name: "PROCESSOR RYZEN 7 5700X",
+    brand: "AMD",
     price: "400",
     rating: 3,
     reviews: "325",
@@ -584,6 +635,7 @@ const exploreProducts = [
   {
     id: 3,
     name: "PROCESSOR I5 6TH",
+    brand: "AMD",
     price: "400",
     rating: 4,
     reviews: "325",
@@ -592,6 +644,43 @@ const exploreProducts = [
   {
     id: 4,
     name: "PROCESSOR CORE I3- 6TH GEN",
+    brand: "AMD",
+    price: "400",
+    rating: 2,
+    reviews: "325",
+    image: "",
+  },
+  {
+    id: 4,
+    name: "PROCESSOR CORE I3- 6TH GEN",
+    brand: "AMD",
+    price: "400",
+    rating: 2,
+    reviews: "325",
+    image: "",
+  },
+  {
+    id: 4,
+    name: "PROCESSOR CORE I3- 6TH GEN",
+    brand: "AMD",
+    price: "400",
+    rating: 2,
+    reviews: "325",
+    image: "",
+  },
+  {
+    id: 4,
+    name: "PROCESSOR CORE I3- 6TH GEN",
+    brand: "AMD",
+    price: "400",
+    rating: 2,
+    reviews: "325",
+    image: "",
+  },
+  {
+    id: 4,
+    name: "PROCESSOR CORE I3- 6TH GEN",
+    brand: "AMD",
     price: "400",
     rating: 2,
     reviews: "325",
