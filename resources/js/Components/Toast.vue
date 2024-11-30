@@ -1,116 +1,79 @@
 <template>
-  <div
-    :class="[
-      'fixed z-50 p-4 rounded-lg shadow-lg max-w-md transition-all duration-300 ease-in-out',
-      positionClasses,
-      typeClasses[type],
-    ]"
-    :style="{ top: `${index * 5 + 1}rem` }"
-  >
-    <div class="flex items-center">
-      <component :is="icon" class="w-5 h-5 mr-3" />
-      <div class="flex-grow">
-        <h3 class="font-semibold text-sm">{{ title }}</h3>
-        <p class="text-sm">{{ message }}</p>
+  <div class="fixed top-4 right-4 z-50">
+    <TransitionGroup
+      tag="div"
+      enter-active-class="transform ease-out duration-300 transition"
+      enter-from-class="translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-4"
+      enter-to-class="translate-y-0 opacity-100 sm:translate-x-0"
+      leave-active-class="transition ease-in duration-100"
+      leave-from-class="opacity-100"
+      leave-to-class="opacity-0"
+      class="flex flex-col gap-2"
+    >
+      <div
+        v-for="toast in toasts"
+        :key="toast.id"
+        :class="[
+          'w-[300px] shadow-lg rounded-lg pointer-events-auto overflow-hidden',
+          toast.type === 'success' ? 'bg-green-50 border border-green-400' : '',
+          toast.type === 'error' ? 'bg-red-50 border border-red-400' : '',
+        ]"
+      >
+        <div class="p-3">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <CheckCircle2Icon
+                v-if="toast.type === 'success'"
+                class="h-5 w-5 text-green-400"
+              />
+              <XCircleIcon v-if="toast.type === 'error'" class="h-5 w-5 text-red-400" />
+            </div>
+            <div class="ml-2 flex-1">
+              <p
+                :class="[
+                  'text-sm',
+                  toast.type === 'success' ? 'text-green-800' : '',
+                  toast.type === 'error' ? 'text-red-800' : '',
+                ]"
+              >
+                {{ toast.message }}
+              </p>
+            </div>
+            <div class="ml-2 flex-shrink-0">
+              <button
+                @click="removeToast(toast.id)"
+                class="inline-flex text-gray-400 hover:text-gray-500"
+              >
+                <XIcon class="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
-      <button @click="close" class="ml-4 text-current hover:text-gray-700">
-        <XIcon class="w-5 h-5" />
-      </button>
-    </div>
+    </TransitionGroup>
   </div>
 </template>
 
 <script setup>
-import { computed } from "vue";
-import {
-  XIcon,
-  CheckCircleIcon,
-  AlertCircleIcon,
-  InfoIcon,
-  AlertTriangleIcon,
-  StarIcon, // Assuming you have an appropriate icon for the new success
-} from "lucide-vue-next";
+import { ref } from "vue";
+import { TransitionGroup } from "vue";
+import { CheckCircle2Icon, XCircleIcon, XIcon } from "lucide-vue-next";
 
-const props = defineProps({
-  type: {
-    type: String,
-    default: "info",
-    validator: (value) =>
-      [
-        "success",
-        "new-success",
-        "info",
-        "warn",
-        "error",
-        "secondary",
-        "contrast",
-      ].includes(value),
-  },
-  title: {
-    type: String,
-    required: true,
-  },
-  message: {
-    type: String,
-    required: true,
-  },
-  position: {
-    type: String,
-    default: "top-right",
-    validator: (value) =>
-      ["top-right", "top-left", "bottom-right", "bottom-left"].includes(value),
-  },
-  index: {
-    type: Number,
-    default: 0,
-  },
-});
+const toasts = ref([]);
+let toastId = 0;
 
-const emit = defineEmits(["close"]);
-
-const close = () => {
-  emit("close");
+const addToast = (message, type = "success") => {
+  const id = toastId++;
+  toasts.value.push({ id, message, type });
+  setTimeout(() => removeToast(id), 5000);
 };
 
-const typeClasses = {
-  success: "bg-green-100 text-green-800",
-  "new-success": "bg-teal-100 text-teal-800", // New category with teal colors
-  info: "bg-blue-100 text-blue-800",
-  warn: "bg-yellow-100 text-yellow-800",
-  error: "bg-red-100 text-red-800",
-  secondary: "bg-gray-100 text-gray-800",
-  contrast: "bg-black text-white",
+const removeToast = (id) => {
+  const index = toasts.value.findIndex((toast) => toast.id === id);
+  if (index > -1) {
+    toasts.value.splice(index, 1);
+  }
 };
 
-const icon = computed(() => {
-  switch (props.type) {
-    case "success":
-      return CheckCircleIcon;
-    case "new-success":
-      return StarIcon; // Use StarIcon or another relevant icon for the new category
-    case "info":
-      return InfoIcon;
-    case "warn":
-      return AlertTriangleIcon;
-    case "error":
-      return AlertCircleIcon;
-    default:
-      return InfoIcon;
-  }
-});
-
-const positionClasses = computed(() => {
-  switch (props.position) {
-    case "top-right":
-      return "top-4 right-4";
-    case "top-left":
-      return "top-4 left-4";
-    case "bottom-right":
-      return "bottom-4 right-4";
-    case "bottom-left":
-      return "bottom-4 left-4";
-    default:
-      return "top-4 right-4";
-  }
-});
+defineExpose({ addToast });
 </script>

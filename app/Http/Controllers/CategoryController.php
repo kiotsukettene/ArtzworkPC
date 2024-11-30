@@ -74,7 +74,9 @@ class CategoryController extends Controller
         }
 
         //Redirect
-        return redirect()->route('categories.index');
+        return redirect()->route('categories.index')
+            ->with('message', 'Category created successfully')
+            ->with('type', 'success');
     }
 
     /**
@@ -172,7 +174,9 @@ class CategoryController extends Controller
         // Delete removed specifications
         $category->specifications()->whereNotIn('id', $updatedIds)->delete();
 
-        return redirect()->route('categories.index');
+        return redirect()->route('categories.index')
+            ->with('message', 'Category updated successfully')
+            ->with('type', 'success');
     }
 
 
@@ -184,7 +188,14 @@ class CategoryController extends Controller
             Storage::disk('public')->delete($category->image);
         }
 
-        $category->delete();
-        return redirect()->route('categories.index');
+        try {
+            $category->delete();
+
+            return redirect()->route('categories.index')
+                ->with('message', 'Category deleted successfully')
+                ->with('type', 'success');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Error deleting category: ' . $e->getMessage()]);
+        }
     }
 }

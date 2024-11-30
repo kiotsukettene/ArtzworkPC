@@ -1,5 +1,6 @@
 <template>
   <Head title=" | Employees" />
+  <Toast ref="toast" />
   <div class="min-h-screen bg-gray-50">
     <!-- Mobile Sidebar Toggle -->
     <Sidebar></Sidebar>
@@ -93,13 +94,13 @@
               v-for="link in users.links"
               :key="link.label"
               v-html="makeLabel(link.label)"
-              :href="link.url"
+              :href="link.url || '#'"
               :class="[
                 'px-3 py-1 rounded-md',
                 {
-                  'text-slate-300': !link.url,
+                  'pointer-events-none text-slate-300': !link.url,
                   'text-white bg-navy-900 font-medium hover:bg-navy-700': link.active,
-                  'bg-stone-100': !link.active,
+                  'bg-stone-100': !link.active && link.url,
                 },
               ]"
             />
@@ -152,7 +153,7 @@
             </p>
             <div class="mt-6 flex gap-4">
               <button
-                @click="showDeleteModal = false"
+                @click="closeModal"
                 class="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200"
               >
                 Cancel
@@ -172,11 +173,12 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-import { Link, router } from "@inertiajs/vue3";
+import { ref, onMounted } from "vue";
+import { Link, router, usePage } from "@inertiajs/vue3";
 import { MoreVerticalIcon, ChevronDownIcon, TrashIcon } from "lucide-vue-next";
 import Sidebar from "../../../Components/Sidebar.vue";
 import Header from "../../../Components/Header.vue";
+import Toast from "../../../Components/Toast.vue";
 
 const props = defineProps({
   users: Object,
@@ -205,6 +207,26 @@ const isFilterOpen = ref(false);
 const showDeleteModal = ref(false);
 const activeActionMenu = ref(null);
 const dropdownPosition = ref({ top: 0, left: 0 });
+const userToDelete = ref(null);
+const errorMessage = ref(null);
+const toast = ref(null);
+
+onMounted(() => {
+  const page = usePage().props;
+
+  if (page.flash) {
+    if (page.flash.message && toast.value) {
+      toast.value.addToast(page.flash.message, page.flash.type || "success");
+    }
+
+    if (page.errors && Object.keys(page.errors).length > 0) {
+      const errorMessage = Object.values(page.errors)[0];
+      if (toast.value) {
+        toast.value.addToast(errorMessage, "error");
+      }
+    }
+  }
+});
 
 const openActionMenu = (user, event) => {
   if (activeActionMenu.value === user) {
@@ -219,8 +241,8 @@ const openActionMenu = (user, event) => {
 };
 
 const openDeleteModal = (user) => {
-  activeActionMenu.value = user;
-  closeActionMenu();
+  userToDelete.value = user;
+  activeActionMenu.value = null;
   showDeleteModal.value = true;
 };
 
@@ -229,17 +251,35 @@ const closeActionMenu = () => {
 };
 
 const confirmDelete = () => {
-  router.delete(route("employees.destroy", activeActionMenu.value.id), {
+  if (!userToDelete.value) return;
+
+  router.delete(route("employees.destroy", userToDelete.value.id), {
+    preserveScroll: true,
     onSuccess: () => {
       showDeleteModal.value = false;
-      activeActionMenu.value = null;
+      userToDelete.value = null;
+    },
+    onError: (errors) => {
+      showDeleteModal.value = false;
+      if (errors.error) {
+        toast.value.addToast(errors.error, "error");
+      }
     },
   });
+};
+
+const closeModal = () => {
+  showDeleteModal.value = false;
+  userToDelete.value = null;
 };
 
 const makeLabel = (label) => {
   if (label.includes("Previous")) return "<";
   if (label.includes("Next")) return ">";
   return label;
+};
+
+const clearError = () => {
+  errorMessage.value = null;
 };
 </script>

@@ -86,13 +86,13 @@
               v-for="link in brands.links"
               :key="link.label"
               v-html="makeLabel(link.label)"
-              :href="link.url"
+              :href="link.url || '#'"
               :class="[
                 'px-3 py-1 rounded-md',
                 {
-                  'text-slate-300': !link.url,
-                  'text-white bg-navy-600 font-medium hover:bg-navy-700': link.active,
-                  'bg-stone-100': !link.active,
+                  'pointer-events-none text-slate-300': !link.url,
+                  'text-white bg-navy-900 font-medium hover:bg-navy-700': link.active,
+                  'bg-stone-100': !link.active && link.url,
                 },
               ]"
             />
@@ -215,13 +215,9 @@ const confirmDelete = () => {
 };
 
 const makeLabel = (label) => {
-  if (label.includes("Previous")) {
-    return "<";
-  } else if (label.includes("Next")) {
-    return ">";
-  } else {
-    return label;
-  }
+  if (label.includes("Previous")) return "<";
+  if (label.includes("Next")) return ">";
+  return label;
 };
 
 const getDate = (date) =>

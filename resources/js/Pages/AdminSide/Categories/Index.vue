@@ -1,5 +1,6 @@
 <template>
   <Head title=" | Category" />
+  <Toast ref="toast" />
   <div class="min-h-screen bg-gray-50">
     <!-- Mobile Sidebar Toggle -->
     <Sidebar></Sidebar>
@@ -91,13 +92,13 @@
               v-for="link in categories.links"
               :key="link.label"
               v-html="makeLabel(link.label)"
-              :href="link.url"
+              :href="link.url || '#'"
               :class="[
                 'px-3 py-1 rounded-md',
                 {
-                  'text-slate-300': !link.url,
-                  'text-white bg-navy-600 font-medium hover:bg-navy-700': link.active,
-                  'bg-stone-100': !link.active,
+                  'pointer-events-none text-slate-300': !link.url,
+                  'text-white bg-navy-900 font-medium hover:bg-navy-700': link.active,
+                  'bg-stone-100': !link.active && link.url,
                 },
               ]"
             />
@@ -168,12 +169,13 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-import { Link, router } from "@inertiajs/vue3";
+import { ref, onMounted } from "vue";
+import { Link, router, usePage } from "@inertiajs/vue3";
 import { MoreVerticalIcon, ChevronDownIcon, TrashIcon } from "lucide-vue-next";
 import Sidebar from "../../../Components/Sidebar.vue";
 import Header from "../../../Components/Header.vue";
 import { route } from "../../../../../vendor/tightenco/ziggy/src/js";
+import Toast from "@/Components/Toast.vue";
 
 const props = defineProps({
   categories: Object,
@@ -187,6 +189,25 @@ const categoryToDelete = ref(null);
 
 const activeActionMenu = ref(null);
 const dropdownPosition = ref({ top: 0, left: 0 });
+
+const toast = ref(null);
+
+onMounted(() => {
+  const page = usePage().props;
+
+  if (page.flash) {
+    if (page.flash.message && toast.value) {
+      toast.value.addToast(page.flash.message, page.flash.type || "success");
+    }
+
+    if (page.errors && Object.keys(page.errors).length > 0) {
+      const errorMessage = Object.values(page.errors)[0];
+      if (toast.value) {
+        toast.value.addToast(errorMessage, "error");
+      }
+    }
+  }
+});
 
 const openActionMenu = (index, event) => {
   if (activeActionMenu.value === index) {
@@ -211,22 +232,27 @@ const openDeleteModal = (category) => {
 };
 
 const confirmDelete = () => {
+  if (!categoryToDelete.value) return;
+
   router.delete(route("categories.destroy", categoryToDelete.value.id), {
+    preserveScroll: true,
     onSuccess: () => {
       showDeleteModal.value = false;
-      closeActionMenu();
+      categoryToDelete.value = null;
+    },
+    onError: (errors) => {
+      showDeleteModal.value = false;
+      if (errors.error) {
+        toast.value.addToast(errors.error, "error");
+      }
     },
   });
 };
 
 const makeLabel = (label) => {
-  if (label.includes("Previous")) {
-    return "<";
-  } else if (label.includes("Next")) {
-    return ">";
-  } else {
-    return label;
-  }
+  if (label.includes("Previous")) return "<";
+  if (label.includes("Next")) return ">";
+  return label;
 };
 
 const getDate = (date) =>

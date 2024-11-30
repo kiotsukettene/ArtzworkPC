@@ -31,6 +31,7 @@
           <button class="text-gray-700 hover:text-navy-600">
             <ShoppingCartIcon class="h-6 w-6" />
           </button>
+          <!-- Mobile Menu Toggle -->
           <button
             @click="isMenuOpen = !isMenuOpen"
             class="md:hidden text-gray-700 hover:text-navy-600"
@@ -44,6 +45,27 @@
           >
             Login
           </Link>
+        </div>
+      </div>
+
+      <!-- Mobile Navigation -->
+      <div v-if="isMenuOpen" class="md:hidden mt-4 border-t pt-4">
+        <Link
+          v-for="item in navigationItems"
+          :key="item.name"
+          :href="item.href"
+          class="block py-2 px-4 text-gray-700 hover:text-navy-600"
+        >
+          {{ item.name }}
+        </Link>
+        <!-- Mobile Search -->
+        <div class="mt-4 relative">
+          <input
+            type="text"
+            placeholder="Search for products..."
+            class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500"
+          />
+          <SearchIcon class="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
         </div>
       </div>
     </nav>

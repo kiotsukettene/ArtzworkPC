@@ -1,18 +1,14 @@
 <template>
-  <Head title=" | Create Employee" />
+  <Head title=" | Edit Employee"></Head>
   <div class="min-h-screen bg-gray-50">
-    <!-- Mobile Sidebar Toggle -->
-    <Sidebar> </Sidebar>
-    <!-- Main Content -->
+    <Sidebar></Sidebar>
     <main class="lg:ml-64 min-h-screen">
-      <!-- Header -->
-      <Header title="Create Employee" :showSearch="false"> </Header>
+      <Header title="Edit Employee" :showSearch="false"></Header>
 
-      <!-- Create Category Form -->
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div class="bg-white rounded-lg shadow">
           <div class="p-6">
-            <form @submit.prevent="createForm">
+            <form @submit.prevent="updateForm">
               <!-- Name Input -->
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div>
@@ -30,7 +26,9 @@
                       { 'border-red-500': form.errors.first_name },
                     ]"
                   />
-                  <small class="text-red-700">{{ form.errors.first_name }}</small>
+                  <small v-show="form.errors.first_name" class="text-red-700">{{
+                    form.errors.first_name
+                  }}</small>
                 </div>
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-1"
@@ -47,7 +45,9 @@
                       { 'border-red-500': form.errors.last_name },
                     ]"
                   />
-                  <small class="text-red-700">{{ form.errors.last_name }}</small>
+                  <small v-show="form.errors.last_name" class="text-red-700">{{
+                    form.errors.last_name
+                  }}</small>
                 </div>
               </div>
 
@@ -65,7 +65,9 @@
                       { 'border-red-500': form.errors.email },
                     ]"
                   />
-                  <small class="text-red-700">{{ form.errors.email }}</small>
+                  <small v-show="form.errors.email" class="text-red-700">{{
+                    form.errors.email
+                  }}</small>
                 </div>
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-1"
@@ -81,7 +83,9 @@
                       { 'border-red-500': form.errors.phone_number },
                     ]"
                   />
-                  <small class="text-red-700">{{ form.errors.phone_number }}</small>
+                  <small v-show="form.errors.phone_number" class="text-red-700">{{
+                    form.errors.phone_number
+                  }}</small>
                 </div>
               </div>
 
@@ -98,7 +102,9 @@
                       { 'border-red-500': form.errors.role },
                     ]"
                   />
-                  <small class="text-red-700">{{ form.errors.role }}</small>
+                  <small v-show="form.errors.role" class="text-red-700">{{
+                    form.errors.role
+                  }}</small>
                 </div>
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-1"
@@ -113,10 +119,12 @@
                   </select>
                 </div>
               </div>
+
+              <!-- Password Fields (Optional for Edit) -->
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-1"
-                    >Password</label
+                    >Password (Leave blank to keep current)</label
                   >
                   <input
                     v-model="form.password"
@@ -127,7 +135,9 @@
                       { 'border-red-500': form.errors.password },
                     ]"
                   />
-                  <small class="text-red-700">{{ form.errors.password }}</small>
+                  <small v-show="form.errors.password" class="text-red-700">{{
+                    form.errors.password
+                  }}</small>
                 </div>
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-1"
@@ -142,9 +152,9 @@
                       { 'border-red-500': form.errors.password_confirmation },
                     ]"
                   />
-                  <small class="text-red-700">{{
-                    form.errors.password_confirmation
-                  }}</small>
+                  <small v-show="form.errors.password_confirmation" class="text-red-700">
+                    {{ form.errors.password_confirmation }}
+                  </small>
                 </div>
               </div>
 
@@ -161,8 +171,8 @@
                   class="px-4 py-2 bg-navy-600 text-white rounded-md hover:bg-navy-700"
                   :disabled="form.processing"
                 >
-                  <span v-if="form.processing">Creating...</span>
-                  <span v-else>Create</span>
+                  <span v-if="form.processing">Updating...</span>
+                  <span v-else>Update</span>
                 </button>
               </div>
             </form>
@@ -175,24 +185,35 @@
 
 <script setup>
 import { useForm } from "@inertiajs/vue3";
-import { ref, watch } from "vue";
 import { Link } from "@inertiajs/vue3";
 import Sidebar from "../../../Components/Sidebar.vue";
 import Header from "../../../Components/Header.vue";
 
-const form = useForm({
-  first_name: "",
-  last_name: "",
-  email: "",
-  phone_number: "",
-  role: "",
-  status: "Inactive",
-  password: "",
-  password_confirmation: "",
+const props = defineProps({
+  employee: Object,
 });
 
-const createForm = () => {
-  form.post(route("employees.store"));
+// Initialize form with employee data
+const form = useForm({
+  first_name: props.employee.first_name,
+  last_name: props.employee.last_name,
+  email: props.employee.email,
+  phone_number: props.employee.phone_number,
+  role: props.employee.role,
+  status: props.employee.status,
+  password: "",
+  password_confirmation: "",
+  _method: "PUT",
+});
+
+const updateForm = () => {
+  form.post(route("employees.update", props.employee.id), {
+    preserveScroll: true,
+    onSuccess: () => {
+      // Optional: Reset password fields after successful update
+      form.reset("password", "password_confirmation");
+    },
+  });
 };
 </script>
 

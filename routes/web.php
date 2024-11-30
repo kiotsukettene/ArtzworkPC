@@ -24,6 +24,7 @@ Route::middleware('guest')->group(function () {
         return Inertia::render('Auth/ForgotPassword');
     })->name('password.request');
     Route::inertia('/', 'ClientSide/GuestHome'); // Guest Home
+    Route::inertia('/product-list', 'ClientSide/ProductList');
 });
 
 // Protected Routes (requires login)

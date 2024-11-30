@@ -114,13 +114,13 @@
               v-for="link in products.links"
               :key="link.label"
               v-html="makeLabel(link.label)"
-              :href="link.url"
+              :href="link.url || '#'"
               :class="[
                 'px-3 py-1 rounded-md',
                 {
-                  'text-slate-300': !link.url,
-                  'text-white bg-navy-600 font-medium hover:bg-navy-700': link.active,
-                  ' bg-stone-100': !link.active,
+                  'pointer-events-none text-slate-300': !link.url,
+                  'text-white bg-navy-900 font-medium hover:bg-navy-700': link.active,
+                  'bg-stone-100': !link.active && link.url,
                 },
               ]"
             />
@@ -176,8 +176,8 @@ const props = defineProps({
 });
 
 const isFilterOpen = ref(false);
-const showDeleteModal = ref(false); // Tracks if the delete modal is visible
-const categoryToDelete = ref(null);
+const showDeleteModal = ref(false);
+const productToDelete = ref(null);
 
 const headers = ["NAME", "SKU", "CATEGORY", "BRAND", "PRICE", "STOCKS", ""];
 
@@ -203,19 +203,23 @@ const closeActionMenu = () => {
 };
 
 const openDeleteModal = (item) => {
-  categoryToDelete.value = item;
+  productToDelete.value = item;
   activeActionMenu.value = null;
   showDeleteModal.value = true;
 };
 
 const confirmDelete = () => {
-  router.delete(route("categories.destroy", categoryToDelete.value.id), {
+  router.delete(route("products.destroy", productToDelete.value.id), {
     onSuccess: () => {
-      showDeleteModal.value = false; // Close the modal after success
+      showDeleteModal.value = false;
       activeActionMenu.value = null;
+    },
+    onError: (errors) => {
+      console.error(errors);
     },
   });
 };
+
 const logout = () => {
   // Implement logout logic
 };
@@ -228,13 +232,9 @@ const getDate = (date) =>
   });
 
 const makeLabel = (label) => {
-  if (label.includes("Previous")) {
-    return "<";
-  } else if (label.includes("Next")) {
-    return ">";
-  } else {
-    return label;
-  }
+  if (label.includes("Previous")) return "<";
+  if (label.includes("Next")) return ">";
+  return label;
 };
 </script>
 <style scoped>

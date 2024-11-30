@@ -23,7 +23,11 @@
                   id="name"
                   v-model="form.name"
                   type="text"
-                  class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  @focus="clearRelatedErrors"
+                  :class="[
+                    'w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500',
+                    { 'border-red-500': form.errors.name },
+                  ]"
                 />
                 <small class="text-red-700">{{ form.errors.name }}</small>
               </div>
@@ -37,7 +41,11 @@
                   id="slug"
                   v-model="form.slug"
                   type="text"
-                  class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  @focus="form.clearErrors('slug')"
+                  :class="[
+                    'w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500',
+                    { 'border-red-500': form.errors.slug },
+                  ]"
                   disabled
                 />
                 <small class="text-red-700">{{ form.errors.slug }}</small>
@@ -52,7 +60,11 @@
                   id="sku"
                   v-model="form.sku"
                   type="text"
-                  class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  @focus="form.clearErrors('sku')"
+                  :class="[
+                    'w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500',
+                    { 'border-red-500': form.errors.sku },
+                  ]"
                   disabled
                 />
                 <small class="text-red-700">{{ form.errors.sku }}</small>
@@ -62,9 +74,11 @@
               <div class="mb-6">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Image</label>
                 <div
-                  class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg"
+                  class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-dashed rounded-lg"
+                  :class="['border-gray-300', { 'border-red-500': form.errors.image }]"
                   @dragover.prevent
                   @drop="handleDrop"
+                  @click="form.clearErrors('image')"
                 >
                   <div class="space-y-1 text-center">
                     <!-- Preview Section -->
@@ -116,7 +130,11 @@
                     <input
                       v-model="spec.value"
                       type="text"
-                      class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      @focus="form.clearErrors('specifications')"
+                      :class="[
+                        'w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500',
+                        { 'border-red-500': form.errors.specifications },
+                      ]"
                       :placeholder="`Enter specification #${index + 1}`"
                     />
 
@@ -248,6 +266,13 @@ const submitForm = () => {
     preserveScroll: true,
     onSuccess: () => form.reset(),
   });
+};
+
+// Add this function in the script setup section
+const clearRelatedErrors = () => {
+  form.clearErrors("name");
+  form.clearErrors("slug");
+  form.clearErrors("sku");
 };
 </script>
 
