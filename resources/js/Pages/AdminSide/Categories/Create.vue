@@ -82,12 +82,19 @@
                 >
                   <div class="space-y-1 text-center">
                     <!-- Preview Section -->
-                    <div v-if="imagePreview" class="mb-4">
+                    <div v-if="imagePreview" class="mb-4 relative">
                       <img
                         :src="imagePreview"
                         alt="Preview"
-                        class="mx-auto h-32 w-auto"
+                        class="h-32 w-auto rounded-md shadow-md"
                       />
+                      <button
+                        @click="removeImage"
+                        type="button"
+                        class="absolute top-1 right-1 text-red-600 w-6 h-6 rounded-full flex items-center justify-center shadow-lg"
+                      >
+                        ✕
+                      </button>
                     </div>
                     <!-- Upload Instructions -->
                     <div v-else class="flex text-sm text-gray-600">
@@ -273,6 +280,15 @@ const clearRelatedErrors = () => {
   form.clearErrors("name");
   form.clearErrors("slug");
   form.clearErrors("sku");
+};
+
+// In the script setup section, update the removeImage function:
+const removeImage = () => {
+  imagePreview.value = null;
+  form.image = null;
+  // Reset the file input
+  const fileInput = document.getElementById("file-upload");
+  if (fileInput) fileInput.value = "";
 };
 </script>
 
