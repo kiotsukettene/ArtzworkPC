@@ -16,7 +16,7 @@ class BrandController extends Controller
     public function index()
     {
         return Inertia::render("AdminSide/Brands/Index", [
-            "brands" => Brand::paginate(5),
+            "brands" => Brand::paginate(10),
         ]);
     }
 

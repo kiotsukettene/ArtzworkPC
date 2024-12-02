@@ -16,7 +16,7 @@ class CategoryController extends Controller
     public function index()
     {
         return Inertia::render("AdminSide/Categories/Index", [
-            'categories' => Category::paginate(5)
+            'categories' => Category::paginate(10)
         ]);
     }
 
