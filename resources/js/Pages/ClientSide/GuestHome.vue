@@ -129,48 +129,96 @@
             :style="{ transform: `translateX(-${currentSlide * (100 / visibleCards)}%)` }"
             ref="productCarousel"
           >
-            <div
-              v-for="product in latestProducts"
-              :key="product.id"
+            <Link
+              v-for="latestProduct in latestProducts"
+              :key="latestProduct.id"
               class="flex-none px-2"
               :class="{
                 'w-1/2': visibleCards === 2,
                 'w-1/3': visibleCards === 3,
+                'w-1/4': visibleCards === 4,
                 'w-1/5': visibleCards === 5,
               }"
             >
-              <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-                <img
-                  src="../ClientSide/assets/ryzen.webp"
-                  :alt="product.name"
-                  class="w-full h-48 object-cover"
-                />
-                <div class="p-4">
-                  <h3 class="font-medium mb-2">{{ product.name }}</h3>
-                  <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                      <span class="text-lg font-bold">${{ product.price }}</span>
-                      <div class="flex items-center ml-2">
-                        <StarIcon class="h-4 w-4 text-yellow-400 fill-current" />
-                        <span class="text-sm ml-1">{{ product.rating }}</span>
-                      </div>
+              <div
+                class="bg-white rounded-lg p-2 sm:p-3 shadow-md hover:shadow-lg transition-all duration-300 border border-gray-200 hover:border-blue-500"
+              >
+                <!-- Brand Name -->
+                <span
+                  class="text-end text-xs sm:text-sm font-semibold text-black uppercase mb-1 sm:mb-2 block"
+                >
+                  {{ latestProduct.brand }}
+                </span>
+
+                <!-- Product Image -->
+                <div
+                  class="flex justify-center items-center mb-2 sm:mb-3 aspect-w-1 aspect-h-1"
+                >
+                  <img
+                    :src="
+                      latestProduct.image
+                        ? '/storage/' + latestProduct.image
+                        : 'storage/default.jpg'
+                    "
+                    :alt="latestProduct.name"
+                    class="w-full h-28 sm:h-32 md:h-36 lg:h-40 object-contain rounded-lg"
+                  />
+                </div>
+
+                <!-- Product Name -->
+                <h3
+                  class="primary-text text-sm sm:text-base font-medium mb-1 sm:mb-2 truncate whitespace-nowrap overflow-hidden"
+                >
+                  {{ latestProduct.name }}
+                </h3>
+
+                <div class="flex items-center justify-between">
+                  <!-- Product Details -->
+                  <div>
+                    <div class="flex items-center mb-1">
+                      <StarIcon
+                        v-for="n in 5"
+                        :key="n"
+                        class="h-3 w-3 sm:h-4 sm:w-4"
+                        :class="
+                          n <= latestProduct.rating
+                            ? 'text-yellow-400 fill-current'
+                            : 'text-gray-400'
+                        "
+                      />
+                      <span class="text-gray-400 text-xs sm:text-sm ml-1 sm:ml-2">
+                        ({{ latestProduct.stock }})
+                      </span>
                     </div>
+                    <span class="primary-text font-bold text-sm sm:text-base lg:text-lg">
+                      ${{ latestProduct.price }}
+                    </span>
+                  </div>
+
+                  <!-- Action Buttons -->
+                  <div class="flex space-x-1 sm:space-x-2 mt-1 sm:mt-2">
+                    <button class="p-1.5 sm:p-1.5 primary-text main rounded-lg">
+                      <HeartIcon class="h-4 w-4 sm:h-5 sm:w-5" />
+                    </button>
+                    <button class="p-1.5 sm:p-1.5 text-white bg-navy-900 rounded-lg">
+                      <ShoppingCartIcon class="h-4 w-4 sm:h-5 sm:w-5" />
+                    </button>
                   </div>
                 </div>
               </div>
-            </div>
+            </Link>
           </div>
 
           <!-- Navigation Buttons -->
           <button
             @click="prevSlide"
-            class="absolute left-0 top-1/2 -translate-y-1/2 bg-navy-600 p-2 rounded-full hover:bg-navy-700 transition sm:p-1 lg:p-2"
+            class="absolute left-0 top-1/2 -translate-y-1/2 bg-navy-800 p-2 rounded-full hover:bg-navy-700 transition sm:p-1 lg:p-2"
           >
             <ChevronLeft class="h-6 w-6 text-white" />
           </button>
           <button
             @click="nextSlide"
-            class="absolute right-0 top-1/2 -translate-y-1/2 bg-navy-600 p-2 rounded-full hover:bg-navy-700 transition sm:p-1 lg:p-2"
+            class="absolute right-0 top-1/2 -translate-y-1/2 bg-navy-800 p-2 rounded-full hover:bg-navy-700 transition sm:p-1 lg:p-2"
           >
             <ChevronRight class="h-6 w-6 text-white" />
           </button>
@@ -193,27 +241,32 @@
             }"
             ref="categoryCarousel"
           >
-            <div
+            <Link
               v-for="category in categories"
               :key="category.id"
               class="flex-none px-2"
               :class="{
                 'w-1/2': visibleCategoryCards === 2,
                 'w-1/3': visibleCategoryCards === 3,
+                'w-1/4': visibleCategoryCards === 4,
                 'w-1/5': visibleCategoryCards === 5,
               }"
             >
               <div class="bg-navy-800 rounded-lg overflow-hidden">
                 <img
-                  src="../ClientSide/assets/laptop.webp"
+                  :src="
+                    category.image ? '/storage/' + category.image : 'storage/default.jpg'
+                  "
                   :alt="category.name"
                   class="w-full h-48 object-cover"
                 />
                 <div class="p-4">
-                  <h3 class="font-medium">{{ category.name }}</h3>
+                  <h3 class="font-medium truncate whitespace-nowrap overflow-hidden">
+                    {{ category.name }}
+                  </h3>
                 </div>
               </div>
-            </div>
+            </Link>
           </div>
 
           <!-- Navigation Buttons -->
@@ -244,7 +297,7 @@
         <div class="flex justify-between items-center mb-8">
           <h2 class="text-2xl font-bold">Explore Our Products</h2>
           <Link
-            href="/products"
+            :href="route('product.list')"
             class="px-4 py-2 bg-navy-900 text-white rounded-lg hover:bg-navy-800"
           >
             Browse All Products
@@ -252,26 +305,39 @@
         </div>
 
         <!-- Responsive Products Grid -->
-        <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-          <div
+        <div
+          class="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-6"
+        >
+          <Link
             v-for="product in exploreProducts"
             :key="product.id"
-            class="bg-white rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow duration-300 border border-gray-200"
+            class="group relative bg-white rounded-lg p-2 sm:p-3 shadow-md hover:shadow-lg transition-all duration-300 border border-gray-200 block hover:border-blue-500"
           >
             <!-- Brand Name -->
-            <span class="text-end text-sm font-semibold text-black uppercase mb-2 block">
-              {{ product.brand }}
+            <span
+              class="text-end text-xs sm:text-sm font-semibold text-black uppercase mb-1 sm:mb-2 block"
+            >
+              {{ product.brand.name }}
             </span>
+
             <!-- Product Image -->
-            <div class="flex justify-center items-center mb-4 aspect-w-1 aspect-h-1">
+            <div
+              class="flex justify-center items-center mb-2 sm:mb-3 aspect-w-1 aspect-h-1"
+            >
               <img
-                src="../ClientSide/assets/product.webp"
+                :src="product.image ? '/storage/' + product.image : 'storage/default.jpg'"
                 :alt="product.name"
-                class="w-full object-contain rounded-lg"
+                class="w-full h-28 sm:h-32 md:h-36 lg:h-40 object-contain rounded-lg"
               />
             </div>
+
             <!-- Product Name -->
-            <h3 class="primary-text font-medium mb-2">{{ product.name }}</h3>
+            <h3
+              class="primary-text text-sm sm:text-base font-medium mb-1 sm:mb-2 truncate whitespace-nowrap overflow-hidden"
+            >
+              {{ product.name }}
+            </h3>
+
             <div class="flex items-center justify-between">
               <!-- Product Details -->
               <div>
@@ -279,30 +345,33 @@
                   <StarIcon
                     v-for="n in 5"
                     :key="n"
-                    class="h-4 w-4"
+                    class="h-3 w-3 sm:h-4 sm:w-4"
                     :class="
                       n <= product.rating
                         ? 'text-yellow-400 fill-current'
                         : 'text-gray-400'
                     "
                   />
-                  <span class="text-gray-400 text-sm ml-2">
-                    ({{ product.reviews }})
-                  </span>
+                  <span class="text-gray-400 text-xs sm:text-sm ml-1 sm:ml-2"
+                    >({{ product.stock }})</span
+                  >
                 </div>
-                <span class="primary-text font-bold text-lg">${{ product.price }}</span>
+                <span class="primary-text font-bold text-sm sm:text-base lg:text-lg"
+                  >${{ product.price }}</span
+                >
               </div>
+
               <!-- Action Buttons -->
-              <div class="flex space-x-2">
-                <button class="p-2 primary-text main rounded-lg">
-                  <HeartIcon class="h-5 w-5" />
+              <div class="flex space-x-1 sm:space-x-2 mt-1 sm:mt-2">
+                <button class="p-1.5 sm:p-1.5 primary-text main rounded-lg">
+                  <HeartIcon class="h-4 w-4 sm:h-5 sm:w-5" />
                 </button>
-                <button class="p-2 text-white bg-navy-900 rounded-lg">
-                  <ShoppingCartIcon class="h-5 w-5" />
+                <button class="p-1.5 sm:p-1.5 text-white bg-navy-900 rounded-lg">
+                  <ShoppingCartIcon class="h-4 w-4 sm:h-5 sm:w-5" />
                 </button>
               </div>
             </div>
-          </div>
+          </Link>
         </div>
       </div>
     </section>
@@ -498,30 +567,18 @@ import {
   ChevronRight,
 } from "lucide-vue-next";
 import NavLink from "../../Components/NavLink.vue";
+import { route } from "../../../../vendor/tightenco/ziggy/src/js";
 
 // State
 const isMenuOpen = ref(false);
 
-// Navigation Items
-const navigationItems = [
-  { name: "Home", href: "/" },
-  { name: "Products", href: "/products" },
-  { name: "PC Builder", href: "/pc-builder" },
-  { name: "Laptops", href: "/laptops" },
-  { name: "Desktops", href: "/desktops" },
-];
+const props = defineProps({
+  exploreProducts: Object,
+  latestProducts: Object,
+  products: Object,
+  categories: Object,
+});
 
-// Latest Products Data
-const latestProducts = [
-  { id: 1, name: "Product 1", price: "32.30", rating: "4.1" },
-  { id: 2, name: "Product 2", price: "32.30", rating: "4.1" },
-  { id: 3, name: "Product 3", price: "32.30", rating: "4.1" },
-  { id: 4, name: "Product 4", price: "32.30", rating: "4.1" },
-  { id: 5, name: "Product 5", price: "32.30", rating: "4.1" },
-  { id: 6, name: "Product 6", price: "32.30", rating: "4.1" },
-  { id: 7, name: "Product 7", price: "32.30", rating: "4.1" },
-  { id: 8, name: "Product 8", price: "32.30", rating: "4.1" },
-];
 const currentSlide = ref(0);
 const visibleCards = ref(5);
 
@@ -537,6 +594,9 @@ const updateVisibleCards = () => {
   } else if (window.innerWidth < 1024) {
     visibleCards.value = 3;
     visibleCategoryCards.value = 3;
+  } else if (window.innerWidth < 1280) {
+    visibleCards.value = 4;
+    visibleCategoryCards.value = 4;
   } else {
     visibleCards.value = 5;
     visibleCategoryCards.value = 5;
@@ -550,7 +610,7 @@ const prevSlide = () => {
 const nextSlide = () => {
   currentSlide.value = Math.min(
     currentSlide.value + 1,
-    latestProducts.length - visibleCards.value
+    props.latestProducts.length - visibleCards.value
   );
 };
 
@@ -561,7 +621,7 @@ const prevCategorySlide = () => {
 const nextCategorySlide = () => {
   currentCategorySlide.value = Math.min(
     currentCategorySlide.value + 1,
-    categories.length - visibleCategoryCards.value
+    props.categories.length - visibleCategoryCards.value
   );
 };
 
@@ -575,118 +635,6 @@ onBeforeUnmount(() => {
   window.removeEventListener("resize", updateVisibleCards);
 });
 // Sample categories (replace with your dynamic data)
-const categories = [
-  { id: 1, name: "Laptops" },
-  { id: 2, name: "Desktops" },
-  { id: 3, name: "Accessories" },
-  { id: 4, name: "Gaming" },
-  { id: 5, name: "Monitors" },
-  { id: 6, name: "Monitors" },
-  { id: 6, name: "Monitors" },
-  { id: 6, name: "Monitors" },
-  { id: 6, name: "Monitors" },
-  { id: 6, name: "Monitors" },
-];
-
-// // State for category carousel
-// const currentCategorySlide = ref(0);
-// const visibleCategoryCards = 5; // Number of visible cards
-
-// // Compute the maximum slide index for categories
-// const maxCategorySlide = computed(() =>
-//   Math.max(0, categories.length - visibleCategoryCards)
-// );
-
-// // Slide left
-// const prevCategorySlide = () => {
-//   currentCategorySlide.value = Math.max(currentCategorySlide.value - 1, 0);
-// };
-
-// // Slide right
-// const nextCategorySlide = () => {
-//   currentCategorySlide.value = Math.min(
-//     currentCategorySlide.value + 1,
-//     maxCategorySlide.value
-//   );
-// };
-
-// References for carousels
-
-// Explore Products Data
-const exploreProducts = [
-  {
-    id: 1,
-    name: "PROCESSOR RYZEN 7 5700",
-    brand: "AMD",
-    price: "400",
-    rating: 5,
-    reviews: "325",
-    image: "",
-  },
-  {
-    id: 2,
-    name: "PROCESSOR RYZEN 7 5700X",
-    brand: "AMD",
-    price: "400",
-    rating: 3,
-    reviews: "325",
-    image: "",
-  },
-  {
-    id: 3,
-    name: "PROCESSOR I5 6TH",
-    brand: "AMD",
-    price: "400",
-    rating: 4,
-    reviews: "325",
-    image: "",
-  },
-  {
-    id: 4,
-    name: "PROCESSOR CORE I3- 6TH GEN",
-    brand: "AMD",
-    price: "400",
-    rating: 2,
-    reviews: "325",
-    image: "",
-  },
-  {
-    id: 4,
-    name: "PROCESSOR CORE I3- 6TH GEN",
-    brand: "AMD",
-    price: "400",
-    rating: 2,
-    reviews: "325",
-    image: "",
-  },
-  {
-    id: 4,
-    name: "PROCESSOR CORE I3- 6TH GEN",
-    brand: "AMD",
-    price: "400",
-    rating: 2,
-    reviews: "325",
-    image: "",
-  },
-  {
-    id: 4,
-    name: "PROCESSOR CORE I3- 6TH GEN",
-    brand: "AMD",
-    price: "400",
-    rating: 2,
-    reviews: "325",
-    image: "",
-  },
-  {
-    id: 4,
-    name: "PROCESSOR CORE I3- 6TH GEN",
-    brand: "AMD",
-    price: "400",
-    rating: 2,
-    reviews: "325",
-    image: "",
-  },
-];
 
 // Reviews Data
 const reviews = [

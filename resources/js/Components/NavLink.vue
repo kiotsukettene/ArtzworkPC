@@ -21,12 +21,15 @@
         <!-- Search and Cart -->
         <div class="flex items-center space-x-4">
           <div class="hidden sm:block relative">
-            <input
-              type="text"
-              placeholder="Search for products..."
-              class="w-64 pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500"
-            />
-            <SearchIcon class="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+            <form @submit.prevent="searchProducts">
+              <input
+                type="search"
+                placeholder="Search for products..."
+                class="w-64 pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500"
+                v-model="form.search"
+              />
+              <SearchIcon class="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+            </form>
           </div>
           <button class="text-gray-700 hover:text-navy-600">
             <ShoppingCartIcon class="h-6 w-6" />
@@ -60,12 +63,15 @@
         </Link>
         <!-- Mobile Search -->
         <div class="mt-4 relative">
-          <input
-            type="text"
-            placeholder="Search for products..."
-            class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500"
-          />
-          <SearchIcon class="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+          <form @submit.prevent="searchProducts">
+            <input
+              type="text"
+              placeholder="Search for products..."
+              class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500"
+              v-model="form.search"
+            />
+            <SearchIcon class="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+          </form>
         </div>
       </div>
     </nav>
@@ -74,15 +80,29 @@
 
 <script setup>
 import { ref } from "vue";
-import { Link, useForm } from "@inertiajs/vue3";
+import { Link, useForm, router } from "@inertiajs/vue3";
 import { MenuIcon, XIcon, SearchIcon, ShoppingCartIcon } from "lucide-vue-next";
 
 // State
 const isMenuOpen = ref(false);
 
+const props = defineProps({
+  searchTerm: {
+    type: String,
+    required: false,
+  },
+});
+const form = useForm({
+  search: props.searchTerm,
+});
+
+const searchProducts = () => {
+  router.get(route("product.list", { search: form.search }));
+};
+
 const navigationItems = [
   { name: "Home", href: "/" },
-  { name: "Products", href: "/products" },
+  { name: "Products", href: "/product-list" },
   { name: "PC Builder", href: "/pc-builder" },
   { name: "Laptops", href: "/laptops" },
   { name: "Desktops", href: "/desktops" },

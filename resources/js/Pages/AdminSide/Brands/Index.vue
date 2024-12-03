@@ -85,7 +85,6 @@
             <Link
               v-for="link in brands.links"
               :key="link.label"
-              v-html="makeLabel(link.label)"
               :href="link.url || '#'"
               :class="[
                 'px-3 py-1 rounded-md',
@@ -95,7 +94,17 @@
                   'bg-stone-100': !link.active && link.url,
                 },
               ]"
-            />
+            >
+              <template v-if="link.label.includes('Previous')">
+                <ChevronLeftIcon class="h-5 w-5" />
+              </template>
+              <template v-else-if="link.label.includes('Next')">
+                <ChevronRightIcon class="h-5 w-5" />
+              </template>
+              <template v-else>
+                {{ link.label }}
+              </template>
+            </Link>
           </div>
         </div>
       </div>
@@ -165,7 +174,13 @@
 <script setup>
 import { ref } from "vue";
 import { Link, router } from "@inertiajs/vue3";
-import { MoreVerticalIcon, ChevronDownIcon, TrashIcon } from "lucide-vue-next";
+import {
+  MoreVerticalIcon,
+  ChevronDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  TrashIcon,
+} from "lucide-vue-next";
 import Sidebar from "../../../Components/Sidebar.vue";
 import Header from "../../../Components/Header.vue";
 import { route } from "../../../../../vendor/tightenco/ziggy/src/js";

@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\AuthenticateController;
 use Inertia\Inertia;
 use App\Models\Brands;
 use App\Models\Category;
@@ -8,9 +7,12 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\ClientRegisterController;
-use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Client\HomeController;
+use App\Http\Controllers\AuthenticateController;
+use App\Http\Controllers\ClientRegisterController;
+use App\Http\Controllers\Client\ProductListController;
 
 // Route::inertia('/dashboard', 'Dashboard');
 
@@ -23,8 +25,8 @@ Route::middleware('guest')->group(function () {
     Route::get('/forgot-password', function () {
         return Inertia::render('Auth/ForgotPassword');
     })->name('password.request');
-    Route::inertia('/', 'ClientSide/GuestHome'); // Guest Home
-    Route::inertia('/product-list', 'ClientSide/ProductList');
+    Route::get('/', [HomeController::class, 'index'])->name('home'); // Guest Home
+    Route::get('/product-list', [ProductListController::class, 'index'])->name('product.list');
 
 });
 
