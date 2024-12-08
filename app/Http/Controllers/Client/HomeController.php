@@ -15,7 +15,6 @@ class HomeController extends Controller
     {
         $categories = Category::all();
         $brands = Brand::all();
-        $products = Product::with(['category', 'brand', 'specifications'])->get();
         $exploreProducts = Product::with(['category', 'brand', 'specifications'])->take(15)->get()->random(15);
         $latestProducts = Product::with(['category', 'brand', 'specifications'])
             ->latest()
@@ -25,6 +24,7 @@ class HomeController extends Controller
                 return [
                     'id' => $product->id,
                     'name' => $product->name,
+                    'slug' => $product->slug,
                     'brand' => $product->brand->name,
                     'category' => $product->category->name,
                     'price' => $product->price,
@@ -39,7 +39,6 @@ class HomeController extends Controller
             });
 
         return Inertia::render('ClientSide/GuestHome', [
-            'products' => $products,
             'exploreProducts' => $exploreProducts,
             'latestProducts' => $latestProducts,
             'categories' => $categories,

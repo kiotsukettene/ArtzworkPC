@@ -1,8 +1,6 @@
 <?php
 
 use Inertia\Inertia;
-use App\Models\Brands;
-use App\Models\Category;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\ProductController;
@@ -10,9 +8,11 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Client\HomeController;
+
 use App\Http\Controllers\AuthenticateController;
 use App\Http\Controllers\ClientRegisterController;
 use App\Http\Controllers\Client\ProductListController;
+use App\Http\Controllers\Client\ProductViewController;
 
 // Route::inertia('/dashboard', 'Dashboard');
 
@@ -27,6 +27,8 @@ Route::middleware('guest')->group(function () {
     })->name('password.request');
     Route::get('/', [HomeController::class, 'index'])->name('home'); // Guest Home
     Route::get('/product-list', [ProductListController::class, 'index'])->name('product.list');
+
+    Route::get('/product-list/{slug}', [ProductViewController::class, 'index'])->name('product.view');
 
 });
 

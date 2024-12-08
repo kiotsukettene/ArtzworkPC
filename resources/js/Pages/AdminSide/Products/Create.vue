@@ -328,7 +328,7 @@ watch(
 watch(
   () => form.name,
   (newName) => {
-    form.slug = newName.toLowerCase().trim().replace(/\s+/g, "-");
+    form.slug = newName.toLowerCase().trim().replace(/[\s\/]+/g, "-");
   }
 );
 

@@ -249,7 +249,7 @@ const openActionMenu = (user, event) => {
   } else {
     activeActionMenu.value = user;
     dropdownPosition.value = {
-      top: event.target.getBoundingClientRect().bottom + window.scrollY,
+      top: event.target.getBoundingClientRect().bottom + window.scrollY - 70,
       left: event.target.getBoundingClientRect().right - 100 + window.scrollX,
     };
   }

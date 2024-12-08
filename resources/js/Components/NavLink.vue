@@ -7,7 +7,7 @@
         <Link href="/" class="text-2xl font-bold text-navy-900">ArtzworkPC</Link>
 
         <!-- Desktop Navigation -->
-        <div class="hidden md:flex items-center space-x-8">
+        <div class="hidden md:hidden lg:flex items-center space-x-8">
           <Link
             v-for="item in navigationItems"
             :key="item.name"
@@ -20,7 +20,7 @@
 
         <!-- Search and Cart -->
         <div class="flex items-center space-x-4">
-          <div class="hidden sm:block relative">
+          <div class="hidden md:block lg:block relative">
             <form @submit.prevent="searchProducts">
               <input
                 type="search"
@@ -37,7 +37,7 @@
           <!-- Mobile Menu Toggle -->
           <button
             @click="isMenuOpen = !isMenuOpen"
-            class="md:hidden text-gray-700 hover:text-navy-600"
+            class="lg:hidden text-gray-700 hover:text-navy-600"
           >
             <MenuIcon v-if="!isMenuOpen" class="h-6 w-6" />
             <XIcon v-else class="h-6 w-6" />
@@ -52,7 +52,7 @@
       </div>
 
       <!-- Mobile Navigation -->
-      <div v-if="isMenuOpen" class="md:hidden mt-4 border-t pt-4">
+      <div v-if="isMenuOpen" class="lg:hidden mt-4 border-t pt-4">
         <Link
           v-for="item in navigationItems"
           :key="item.name"

@@ -15,10 +15,13 @@ class ProductListController extends Controller
     public function index(Request $request)
     {
         $query = Product::query()
-            ->select(['id', 'name', 'price', 'stock', 'brand_id', 'category_id', 'product_images'])
+            ->select(['id', 'name', 'slug', 'price', 'stock', 'brand_id', 'category_id', 'product_images', 'description', 'warranty'])
             ->with([
                 'category:id,name',
                 'brand:id,name',
+                'specifications' => function($query) {
+                    $query->select('specifications.id', 'specifications.name', 'product_specifications.value', 'product_specifications.product_id');
+                }
             ])
             ->filter($request->only([
                 'search',
@@ -35,11 +38,20 @@ class ProductListController extends Controller
                 'id' => $product->id,
                 'name' => $product->name,
                 'price' => $product->price,
+                'slug' => $product->slug,
                 'stock' => $product->stock,
                 'brand' => $product->brand->name,
                 'category' => $product->category->name,
                 'image' => $product->product_images[0] ?? null,
-                'rating' => 4
+                'rating' => 4,
+                'description' => $product->description,
+                'warranty' => $product->warranty,
+                'specifications' => $product->specifications->map(function($spec) {
+                    return [
+                        'name' => $spec->name,
+                        'value' => $spec->value
+                    ];
+                })
             ];
         });
 

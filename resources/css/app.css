@@ -40,8 +40,23 @@
   .primary-text {
     color: #0a192f;
   }
+
+  .primary-color {
+    color: #0a192f;
+  }
+
   .main {
     background-color: #e2e8f0;
+  }
+
+  .button-primary {
+    background-color: #0a192f;
+    color: #fff;
+  }
+
+  .button-secondary {
+    background-color: #e2e8f0;
+    color: #0a192f;
   }
 
 

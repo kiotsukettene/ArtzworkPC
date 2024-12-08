@@ -72,21 +72,28 @@
                   <ChevronDownIcon v-else class="h-4 w-4" />
                 </span>
               </h3>
-              <div v-show="dropdowns.brands" class="space-y-2">
-                <label
-                  v-for="brand in brands"
-                  :key="brand.id"
-                  class="flex items-center space-x-3 cursor-pointer"
-                >
-                  <input
-                    type="checkbox"
-                    v-model="form.brands"
-                    :value="brand.id"
-                    class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                  />
-                  <span class="text-sm text-gray-600">{{ brand.name }}</span>
-                  <span class="text-xs text-gray-400">({{ brand.products_count }})</span>
-                </label>
+              <div
+                v-show="dropdowns.brands"
+                class="max-h-48 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100"
+              >
+                <div class="space-y-2">
+                  <label
+                    v-for="brand in brands"
+                    :key="brand.id"
+                    class="flex items-center space-x-3 cursor-pointer"
+                  >
+                    <input
+                      type="checkbox"
+                      v-model="form.brands"
+                      :value="brand.id"
+                      class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    />
+                    <span class="text-sm text-gray-600">{{ brand.name }}</span>
+                    <span class="text-xs text-gray-400"
+                      >({{ brand.products_count }})</span
+                    >
+                  </label>
+                </div>
               </div>
             </div>
 
@@ -102,23 +109,28 @@
                   <ChevronDownIcon v-else class="h-4 w-4" />
                 </span>
               </h3>
-              <div v-show="dropdowns.categories" class="space-y-2">
-                <label
-                  v-for="category in categories"
-                  :key="category.id"
-                  class="flex items-center space-x-3 cursor-pointer"
-                >
-                  <input
-                    type="checkbox"
-                    v-model="form.categories"
-                    :value="category.id"
-                    class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                  />
-                  <span class="text-sm text-gray-600">{{ category.name }}</span>
-                  <span class="text-xs text-gray-400"
-                    >({{ category.products_count }})</span
+              <div
+                v-show="dropdowns.categories"
+                class="max-h-48 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100"
+              >
+                <div class="space-y-2">
+                  <label
+                    v-for="category in categories"
+                    :key="category.id"
+                    class="flex items-center space-x-3 cursor-pointer"
                   >
-                </label>
+                    <input
+                      type="checkbox"
+                      v-model="form.categories"
+                      :value="category.id"
+                      class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    />
+                    <span class="text-sm text-gray-600">{{ category.name }}</span>
+                    <span class="text-xs text-gray-400"
+                      >({{ category.products_count }})</span
+                    >
+                  </label>
+                </div>
               </div>
             </div>
 
@@ -141,7 +153,7 @@
             <Link
               v-for="product in props.products.data"
               :key="product.id"
-              :href="`/products/${product.id}`"
+              :href="route('product.view', { slug: product.slug })"
               class="group relative bg-white rounded-lg p-3 sm:p-4 shadow-md hover:shadow-lg transition-all duration-300 border border-gray-200 block hover:border-blue-500"
             >
               <!-- Brand Name -->
@@ -261,6 +273,7 @@
         </div>
       </div>
     </div>
+    <Footer />
   </div>
 </template>
 
@@ -277,6 +290,7 @@ import {
   ChevronRightIcon,
 } from "lucide-vue-next";
 import NavLink from "../../Components/NavLink.vue";
+import Footer from "../../Components/Footer.vue";
 import { usePage } from "@inertiajs/vue3";
 import debounce from "lodash/debounce";
 

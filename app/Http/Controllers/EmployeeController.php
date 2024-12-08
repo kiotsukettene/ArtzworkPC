@@ -16,7 +16,7 @@ class EmployeeController extends Controller
     {
 
         return Inertia::render("AdminSide/Employees/Index", [
-            "users" => User::paginate(5),
+            "users" => User::paginate(9),
         ]);
     }
 
