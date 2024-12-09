@@ -114,8 +114,8 @@ const navigationItems = [
   { name: "Home", href: "/" },
   { name: "Products", href: "/product-list" },
   { name: "PC Builder", href: "/pc-builder" },
-  { name: "Laptops", href: "/laptops" },
-  { name: "Desktops", href: "/desktops" },
+  { name: "Laptops", href: "/category-products/laptop" },
+  { name: "Desktops", href: "/category-products/desktop" },
 ];
 
 // Get cart count directly from session cart items

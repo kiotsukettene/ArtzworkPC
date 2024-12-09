@@ -5,7 +5,9 @@
     <!-- Main Content -->
 
     <div class="container mx-auto px-4 py-8">
-      <h1 class="text-4xl font-bold text-gray-900 mb-5">Products</h1>
+      <h1 class="text-4xl font-bold text-gray-900 mb-5">
+        {{ props.currentCategory.name }}
+      </h1>
       <div class="flex flex-col md:flex-row gap-8">
         <!-- Filters Sidebar -->
         <div class="w-full md:w-64 shrink-0">
@@ -307,6 +309,7 @@ const props = defineProps({
   brands: Array,
   searchTerm: String,
   filters: Object,
+  currentCategory: Object,
 });
 const page = usePage();
 // State
@@ -323,12 +326,16 @@ const form = useForm({
 // Debounced filter function
 const debouncedFilter = debounce(() => {
   if (!form.processing) {
-    form.get(route("product.list"), {
+    const routeParams = props.currentCategory
+      ? { categorySlug: props.currentCategory.slug }
+      : {};
+
+    form.get(route("category.products", routeParams), {
       preserveState: true,
       preserveScroll: true,
     });
   }
-}, 1000); // Increased to 1 second
+}, 1000);
 
 // Watch specific form properties instead of the entire form
 watch(
@@ -352,7 +359,12 @@ const clearFilters = () => {
   form.inStock = false;
   form.brands = [];
   form.categories = [];
-  form.get(route("product.list"), {
+
+  const routeParams = props.currentCategory
+    ? { categorySlug: props.currentCategory.slug }
+    : {};
+
+  form.get(route("category.products", routeParams), {
     preserveState: true,
     preserveScroll: true,
   });

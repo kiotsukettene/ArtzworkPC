@@ -268,7 +268,7 @@
             <!-- Form Actions -->
             <div class="flex justify-end space-x-4">
               <Link
-                href="/products"
+                :href="route('products.index')"
                 class="px-4 py-2 border rounded-md text-gray-700 hover:bg-gray-50"
               >
                 Cancel

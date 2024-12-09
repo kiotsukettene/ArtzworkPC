@@ -219,6 +219,7 @@
 
               <!-- Add to Cart Button -->
               <button
+                @click="addToCart"
                 class="flex-1 bg-navy-600 text-white h-12 rounded-lg hover:bg-navy-700 transition-colors duration-200 flex items-center justify-center space-x-2"
               >
                 <ShoppingCartIcon class="h-5 w-5" />
@@ -443,7 +444,7 @@
                       <HeartIcon class="h-4 w-4 sm:h-5 sm:w-5" />
                     </button>
                     <button
-                      @click.prevent="addToCart(product.id)"
+                      @click.prevent="addSimilarToCart(product)"
                       class="p-1.5 sm:p-1.5 text-white bg-navy-900 rounded-lg"
                     >
                       <ShoppingCartIcon class="h-4 w-4 sm:h-5 sm:w-5" />
@@ -471,6 +472,11 @@
       </div>
     </main>
     <Footer />
+    <AddToCartModal
+      :is-open="showSuccessModal"
+      :product="addedProduct"
+      @close="showSuccessModal = false"
+    />
   </div>
 </template>
 
@@ -488,6 +494,7 @@ import {
 } from "lucide-vue-next";
 import NavLink from "../../Components/NavLink.vue";
 import Footer from "../../Components/Footer.vue";
+import AddToCartModal from "../../Components/AddToCartModal.vue";
 const props = defineProps({
   product: Object,
   similarProducts: Object,
@@ -579,23 +586,68 @@ const toggleWishlist = (productId) => {
   console.log("Toggle wishlist for product:", productId);
 };
 
+const showSuccessModal = ref(false);
+const addedProduct = ref(null);
+
 const addToCart = () => {
-  router.post(route('cart.add'), {
-    product_id: props.product.id,
-    name: props.product.name,
-    price: props.product.price,
-    quantity: quantity.value,
-    image: props.product.image ? '/storage/' + props.product.image : '/storage/default.jpg',
-  }, {
-    preserveScroll: true,
-    onSuccess: () => {
-      // Optional: Show success message
+  router.post(
+    route("cart.add"),
+    {
+      product_id: props.product.id,
+      name: props.product.name,
+      price: props.product.price,
+      quantity: quantity.value,
+      image:
+        props.product.product_images && props.product.product_images.length > 0
+          ? "/storage/" + props.product.product_images[0]
+          : "/storage/default.jpg",
     },
-  })
-}
+    {
+      preserveScroll: true,
+      onSuccess: () => {
+        addedProduct.value = {
+          name: props.product.name,
+          price: props.product.price,
+          quantity: quantity.value,
+          image:
+            props.product.product_images && props.product.product_images.length > 0
+              ? "/storage/" + props.product.product_images[0]
+              : "/storage/default.jpg",
+        };
+        showSuccessModal.value = true;
+      },
+    }
+  );
+};
 
 // Add this with your other refs
 const isCollapsed = ref(true);
+
+// Add this new function for similar items
+const addSimilarToCart = (product) => {
+  router.post(
+    route("cart.add"),
+    {
+      product_id: product.id,
+      name: product.name,
+      price: product.price,
+      quantity: 1,
+      image: product.image ? "/storage/" + product.image : "/storage/default.jpg",
+    },
+    {
+      preserveScroll: true,
+      onSuccess: () => {
+        addedProduct.value = {
+          name: product.name,
+          price: product.price,
+          quantity: 1,
+          image: product.image ? "/storage/" + product.image : "/storage/default.jpg",
+        };
+        showSuccessModal.value = true;
+      },
+    }
+  );
+};
 </script>
 
 <style scoped>

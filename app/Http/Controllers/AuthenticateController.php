@@ -26,7 +26,7 @@ class AuthenticateController extends Controller
 
             User::where('id', Auth::id())->update(['status' => 'Active']);
 
-            return redirect()->intended('/dashboard');
+            return redirect()->intended('admin/dashboard');
         }
         return back()->withErrors([
             'email' => 'The provided credentials do not match our records.',

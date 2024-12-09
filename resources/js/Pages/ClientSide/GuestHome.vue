@@ -129,11 +129,11 @@
             :style="{ transform: `translateX(-${currentSlide * (100 / visibleCards)}%)` }"
             ref="productCarousel"
           >
-            <div
+            <Link
               v-for="latestProduct in latestProducts"
               :key="latestProduct.id"
               :href="route('product.view', { slug: latestProduct.slug })"
-              class="flex-none px-2"
+              class="flex-none px-1"
               :class="{
                 'w-1/2': visibleCards === 2,
                 'w-1/3': visibleCards === 3,
@@ -141,9 +141,8 @@
                 'w-1/5': visibleCards === 5,
               }"
             >
-
               <div
-                class="bg-white rounded-lg p-2 sm:p-3 shadow-md hover:shadow-lg transition-all duration-300 border border-gray-200 hover:border-blue-500"
+                class="bg-white rounded-lg p-2 sm:p-3 hover:shadow-lg transition-all duration-300 border border-gray-200 hover:border-blue-500"
               >
                 <!-- Brand Name -->
                 <span
@@ -200,7 +199,7 @@
                   <!-- Action Buttons -->
                   <div class="flex space-x-1 sm:space-x-2 mt-1 sm:mt-2">
                     <button class="p-1.5 sm:p-1.5 primary-text main rounded-lg">
-                      <HeartIcon class="h-4 w-4 sm:h-5 sm:w-5" />
+                      <HeartIcon class="h-4 w-4 sm:h-5 sm:w-5 hover:text-red-500" />
                     </button>
                     <button
                       @click.prevent="addToCart(latestProduct)"
@@ -211,7 +210,7 @@
                   </div>
                 </div>
               </div>
-            </div>
+            </Link>
           </div>
 
           <!-- Navigation Buttons -->
@@ -247,9 +246,10 @@
             ref="categoryCarousel"
           >
             <Link
+              :href="route('category.products', { categorySlug: category.slug })"
               v-for="category in categories"
               :key="category.id"
-              class="flex-none px-2"
+              class="flex-none px-1"
               :class="{
                 'w-1/2': visibleCategoryCards === 2,
                 'w-1/3': visibleCategoryCards === 3,
@@ -311,13 +311,13 @@
 
         <!-- Responsive Products Grid -->
         <div
-          class="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-6"
+          class="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-2"
         >
           <Link
             :href="route('product.view', { slug: product.slug })"
             v-for="product in exploreProducts"
             :key="product.id"
-            class="group relative bg-white rounded-lg p-2 sm:p-3 shadow-md hover:shadow-lg transition-all duration-300 border border-gray-200 block hover:border-blue-500"
+            class="group relative bg-white rounded-lg p-2 sm:p-3 hover:shadow-lg transition-all duration-300 border border-gray-200 block hover:border-blue-500"
           >
             <!-- Brand Name -->
             <span
@@ -370,7 +370,7 @@
               <!-- Action Buttons -->
               <div class="flex space-x-1 sm:space-x-2 mt-1 sm:mt-2">
                 <button class="p-1.5 sm:p-1.5 primary-text main rounded-lg">
-                  <HeartIcon class="h-4 w-4 sm:h-5 sm:w-5" />
+                  <HeartIcon class="h-4 w-4 sm:h-5 sm:w-5 hover:text-red-500" />
                 </button>
                 <button
                   @click.prevent="addToCart(product)"
@@ -418,6 +418,11 @@
       </div>
     </section>
     <Footer />
+    <AddToCartModal
+      :is-open="showSuccessModal"
+      :product="addedProduct"
+      @close="showSuccessModal = false"
+    />
   </div>
 </template>
 
@@ -438,6 +443,7 @@ import {
 import NavLink from "../../Components/NavLink.vue";
 import { route } from "../../../../vendor/tightenco/ziggy/src/js";
 import Footer from "../../Components/Footer.vue";
+import AddToCartModal from "../../Components/AddToCartModal.vue";
 
 const props = defineProps({
   exploreProducts: Object,
@@ -534,20 +540,33 @@ const reviews = [
   },
 ];
 
+const showSuccessModal = ref(false);
+const addedProduct = ref(null);
+
 const addToCart = (product) => {
-  router.post(route('cart.add'), {
-    product_id: product.id,
-    name: product.name,
-    price: product.price,
-    quantity: 1, // Default quantity for quick add
-    image: product.image,
-  }, {
-    preserveScroll: true,
-    onSuccess: () => {
-      // Optional: Show success message
+  router.post(
+    route("cart.add"),
+    {
+      product_id: product.id,
+      name: product.name,
+      price: product.price,
+      quantity: 1,
+      image: product.image ? "/storage/" + product.image : "/storage/default.jpg",
     },
-  })
-}
+    {
+      preserveScroll: true,
+      onSuccess: () => {
+        addedProduct.value = {
+          name: product.name,
+          price: product.price,
+          quantity: 1,
+          image: product.image ? "/storage/" + product.image : "/storage/default.jpg",
+        };
+        showSuccessModal.value = true;
+      },
+    }
+  );
+};
 </script>
 
 <style scoped></style>

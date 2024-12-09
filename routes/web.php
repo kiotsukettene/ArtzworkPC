@@ -7,13 +7,14 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\Client\HomeController;
 
+use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\AuthenticateController;
 use App\Http\Controllers\ClientRegisterController;
 use App\Http\Controllers\Client\ProductListController;
 use App\Http\Controllers\Client\ProductViewController;
-use App\Http\Controllers\CartController;
+use App\Http\Controllers\Client\CategoryProductsController;
+use App\Http\Controllers\Client\CartController;
 
 // Route::inertia('/dashboard', 'Dashboard');
 
@@ -28,33 +29,34 @@ Route::middleware('guest')->group(function () {
     })->name('password.request');
     Route::get('/', [HomeController::class, 'index'])->name('home'); // Guest Home
     Route::get('/product-list', [ProductListController::class, 'index'])->name('product.list');
-
+    Route::get('/category-products/{categorySlug?}', [CategoryProductsController::class, 'index'])->name('category.products');
     Route::get('/product-list/{slug}', [ProductViewController::class, 'index'])->name('product.view');
-    Route::inertia('/cart', 'ClientSide/Cart');
-
-
+    Route::inertia('/pc-builder', 'ClientSide/PCBuilder');
+    Route::inertia('/component-selection', 'ClientSide/ComponentSelection');
 });
 
 // Protected Routes (requires login)
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::resource('categories', CategoryController::class);
-    Route::resource('brands', BrandController::class);
-    Route::resource('products', ProductController::class);
-    Route::resource('employees', EmployeeController::class);
+    Route::get('admin/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::resource('admin/categories', CategoryController::class)->names('categories');
+    Route::resource('admin/brands', BrandController::class)->names('brands');
+    Route::resource('admin/products', ProductController::class)->names('products');
+    Route::resource('admin/employees', EmployeeController::class)->names('employees');
 
     Route::post('/logout', [AuthenticateController::class, 'destroy'])->name('logout');
 });
 
 Route::middleware(['web'])->group(function () {
-    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-    Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
-    Route::post('/cart/update-quantity', [CartController::class, 'updateQuantity'])->name('cart.updateQuantity');
-    Route::post('/cart/remove', [CartController::class, 'removeFromCart'])->name('cart.remove');
-    Route::post('/cart/update-selection', [CartController::class, 'updateSelection'])->name('cart.updateSelection');
-    Route::post('/cart/clear', [CartController::class, 'clearCart'])->name('cart.clear');
-    Route::post('/cart/update-all-selections', [CartController::class, 'updateAllSelections'])
-        ->name('cart.updateAllSelections');
+    Route::controller(CartController::class)->group(function () {
+        Route::get('/cart', 'index')->name('cart.index');
+        Route::post('/cart/add', 'addToCart')->name('cart.add');
+        Route::post('/cart/update-quantity', 'updateQuantity')->name('cart.updateQuantity');
+        Route::post('/cart/remove', 'removeFromCart')->name('cart.remove');
+        Route::post('/cart/update-selection', 'updateSelection')->name('cart.updateSelection');
+        Route::post('/cart/clear', 'clearCart')->name('cart.clear');
+        Route::post('/cart/update-all-selections', 'updateAllSelections')
+            ->name('cart.updateAllSelections');
+    });
 });
 
 require __DIR__ . '/auth.php';

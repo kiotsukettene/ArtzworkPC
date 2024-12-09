@@ -15,7 +15,23 @@ class HomeController extends Controller
     {
         $categories = Category::all();
         $brands = Brand::all();
-        $exploreProducts = Product::with(['category', 'brand', 'specifications'])->take(15)->get()->random(15);
+        $exploreProducts = Product::with(['category', 'brand', 'specifications'])
+            ->take(15)
+            ->get()
+            ->map(function ($product) {
+                return [
+                    'id' => $product->id,
+                    'name' => $product->name,
+                    'slug' => $product->slug,
+                    'brand' => $product->brand->name,
+                    'category' => $product->category->name,
+                    'price' => $product->price,
+                    'stock' => $product->stock,
+                    'image' => $product->product_images[0] ?? null,
+                    'specifications' => $product->specifications
+                ];
+            })
+            ->random(15);
         $latestProducts = Product::with(['category', 'brand', 'specifications'])
             ->latest()
             ->take(8)

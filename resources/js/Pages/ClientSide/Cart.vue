@@ -15,7 +15,9 @@
                 <ShoppingCart class="w-full h-full text-gray-400" />
               </div>
               <h3 class="text-lg font-medium text-gray-900 mb-2">Your cart is empty</h3>
-              <p class="text-gray-500 mb-4">Looks like you haven't added any items yet.</p>
+              <p class="text-gray-500 mb-4">
+                Looks like you haven't added any items yet.
+              </p>
               <Link
                 href="/product-list"
                 class="inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-navy-600 hover:bg-navy-700"
@@ -26,7 +28,11 @@
 
             <!-- Cart Items -->
             <template v-else>
-              <div v-for="item in cartItemsArray" :key="item[0]" class="p-6 flex items-center border-b last:border-0">
+              <div
+                v-for="item in cartItemsArray"
+                :key="item[0]"
+                class="p-6 flex items-center border-b last:border-0"
+              >
                 <!-- Add Selection Checkbox -->
                 <div class="flex-shrink-0 mr-4">
                   <input
@@ -34,7 +40,7 @@
                     :checked="item[5]"
                     @change="updateSelection(item)"
                     class="w-5 h-5 rounded border-gray-300 text-navy-600 focus:ring-navy-500 cursor-pointer"
-                  >
+                  />
                 </div>
 
                 <!-- Product Image & Details -->
@@ -43,13 +49,15 @@
                     :src="item[4]"
                     :alt="item[1]"
                     class="w-24 h-24 object-cover rounded-lg"
-                  >
+                  />
                 </div>
 
                 <div class="flex-grow">
                   <div class="flex justify-between mb-2">
                     <h3 class="text-lg font-medium text-gray-900">{{ item[1] }}</h3>
-                    <p class="text-lg font-medium text-gray-900">₱{{ formatPrice(item[2] * item[3]) }}</p>
+                    <p class="text-lg font-medium text-gray-900">
+                      ₱{{ formatPrice(item[2] * item[3]) }}
+                    </p>
                   </div>
 
                   <div class="flex items-center justify-between">
@@ -93,7 +101,7 @@
                     :checked="selectAll"
                     @change="toggleSelectAll"
                     class="w-5 h-5 rounded border-gray-300 text-navy-600 focus:ring-navy-500"
-                  >
+                  />
                   <span class="text-sm text-gray-600">Select All Items</span>
                 </label>
               </div>
@@ -109,27 +117,34 @@
             <div class="space-y-4">
               <div class="flex justify-between text-sm">
                 <span class="text-gray-600">Subtotal</span>
-                <span class="text-gray-900 font-medium">₱{{ formatPrice(subtotal) }}</span>
+                <span class="text-gray-900 font-medium"
+                  >₱{{ formatPrice(subtotal) }}</span
+                >
               </div>
 
               <div class="flex justify-between text-sm">
                 <span class="text-gray-600">Shipping Fee</span>
-                <span class="text-gray-900 font-medium">₱{{ formatPrice(shippingFee) }}</span>
+                <span class="text-gray-900 font-medium"
+                  >₱{{ formatPrice(shippingFee) }}</span
+                >
               </div>
 
               <div class="border-t pt-4">
                 <div class="flex justify-between">
                   <span class="text-base font-medium text-gray-900">Total</span>
-                  <span class="text-xl font-bold text-navy-600">₱{{ formatPrice(total) }}</span>
+                  <span class="text-xl font-bold text-navy-600"
+                    >₱{{ formatPrice(total) }}</span
+                  >
                 </div>
               </div>
 
               <button
                 @click="checkout"
                 class="w-full bg-navy-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-navy-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-navy-500 transition-colors"
-                :disabled="!cartItemsArray.some(item => item[5])"
+                :disabled="!cartItemsArray.some((item) => item[5])"
               >
-                Proceed to Checkout ({{ cartItemsArray.filter(item => item[5]).length }} items)
+                Proceed to Checkout ({{ cartItemsArray.filter((item) => item[5]).length }}
+                items)
               </button>
 
               <Link
@@ -147,148 +162,163 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
-import { router } from '@inertiajs/vue3'
-import { Link } from '@inertiajs/vue3'
-import {
-  ShoppingCart,
-  Plus,
-  Minus,
-  Trash2
-} from 'lucide-vue-next'
-import debounce from 'lodash/debounce'
+import { ref, computed, watch } from "vue";
+import { router } from "@inertiajs/vue3";
+import { Link } from "@inertiajs/vue3";
+import { ShoppingCart, Plus, Minus, Trash2 } from "lucide-vue-next";
+import debounce from "lodash/debounce";
 
-import NavLink from '../../Components/NavLink.vue';
+import NavLink from "../../Components/NavLink.vue";
 // Navigation
 
 const props = defineProps({
-  cartItems: {
+  cart: {
     type: Object,
-    default: () => ({})
-  }
-})
+    default: () => ({}),
+  },
+});
 
 // Local state management
 const cartItemsArray = computed(() => {
-  return Object.values(props.cartItems || {})
-})
+  return Object.values(props.cart || {});
+});
 
-const selectAll = ref(false)
-const pendingUpdates = ref(new Set())
+const selectAll = ref(false);
+const pendingUpdates = ref(new Set());
 
 // Debounced server update function
 const updateServer = debounce((updates) => {
-  if (updates.type === 'quantity') {
-    router.post(route('cart.updateQuantity'), {
-      product_id: updates.productId,
-      quantity: updates.value
-    }, {
-      preserveScroll: true,
-      preserveState: true,
-      progress: false
-    })
-  } else if (updates.type === 'selection') {
-    router.post(route('cart.updateSelection'), {
-      product_id: updates.productId,
-      selected: updates.value
-    }, {
-      preserveScroll: true,
-      preserveState: true,
-      progress: false
-    })
+  if (updates.type === "quantity") {
+    router.post(
+      route("cart.updateQuantity"),
+      {
+        product_id: updates.productId,
+        quantity: updates.value,
+      },
+      {
+        preserveScroll: true,
+        preserveState: true,
+        progress: false,
+      }
+    );
+  } else if (updates.type === "selection") {
+    router.post(
+      route("cart.updateSelection"),
+      {
+        product_id: updates.productId,
+        selected: updates.value,
+      },
+      {
+        preserveScroll: true,
+        preserveState: true,
+        progress: false,
+      }
+    );
   }
-}, 500)
+}, 500);
 
 // Optimistic updates with debounced server sync
 const incrementQuantity = (item) => {
-  item[3]++
-  updateServer({ type: 'quantity', productId: item[0], value: item[3] })
-}
+  item[3]++;
+  updateServer({ type: "quantity", productId: item[0], value: item[3] });
+};
 
 const decrementQuantity = (item) => {
   if (item[3] > 1) {
-    item[3]--
-    updateServer({ type: 'quantity', productId: item[0], value: item[3] })
+    item[3]--;
+    updateServer({ type: "quantity", productId: item[0], value: item[3] });
   }
-}
+};
 
 const updateSelection = (item) => {
-  item[5] = !item[5]
-  updateServer({ type: 'selection', productId: item[0], value: item[5] })
-}
+  item[5] = !item[5];
+  updateServer({ type: "selection", productId: item[0], value: item[5] });
+};
 
 const toggleSelectAll = () => {
-  const newValue = !selectAll.value
-  selectAll.value = newValue
+  const newValue = !selectAll.value;
+  selectAll.value = newValue;
 
   // Optimistic update
-  cartItemsArray.value.forEach(item => {
-    item[5] = newValue
-  })
+  cartItemsArray.value.forEach((item) => {
+    item[5] = newValue;
+  });
 
   // Single request to update all
-  router.post(route('cart.updateAllSelections'), {
-    selected: newValue
-  }, {
-    preserveScroll: true,
-    preserveState: true,
-    progress: false
-  })
-}
+  router.post(
+    route("cart.updateAllSelections"),
+    {
+      selected: newValue,
+    },
+    {
+      preserveScroll: true,
+      preserveState: true,
+      progress: false,
+    }
+  );
+};
 
 const removeItem = (item) => {
   // Optimistic update
-  const index = cartItemsArray.value.findIndex(i => i[0] === item[0])
+  const index = cartItemsArray.value.findIndex((i) => i[0] === item[0]);
   if (index !== -1) {
-    cartItemsArray.value.splice(index, 1)
+    cartItemsArray.value.splice(index, 1);
   }
 
-  router.post(route('cart.remove'), {
-    product_id: item[0]
-  }, {
-    preserveScroll: true,
-    preserveState: true,
-    progress: false
-  })
-}
+  router.post(
+    route("cart.remove"),
+    {
+      product_id: item[0],
+    },
+    {
+      preserveScroll: true,
+      preserveState: true,
+      progress: false,
+    }
+  );
+};
 
 // Computed values with memoization
 const subtotal = computed(() => {
   return cartItemsArray.value.reduce((total, item) => {
-    return total + (item[5] ? item[2] * item[3] : 0)
-  }, 0)
-})
+    return total + (item[5] ? item[2] * item[3] : 0);
+  }, 0);
+});
 
 const shippingFee = computed(() => {
-  return subtotal.value > 0 ? 450 : 0
-})
+  return subtotal.value > 0 ? 450 : 0;
+});
 
 const total = computed(() => {
-  return subtotal.value + shippingFee.value
-})
+  return subtotal.value + shippingFee.value;
+});
 
 // Watch for selection changes
-watch(cartItemsArray, (items) => {
-  if (items.length > 0) {
-    selectAll.value = items.every(item => item[5] === true)
-  } else {
-    selectAll.value = false
-  }
-}, { deep: true })
+watch(
+  cartItemsArray,
+  (items) => {
+    if (items.length > 0) {
+      selectAll.value = items.every((item) => item[5] === true);
+    } else {
+      selectAll.value = false;
+    }
+  },
+  { deep: true }
+);
 
 // Methods
 const formatPrice = (price) => {
-  return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-}
+  return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
 
 const checkout = () => {
-  const selectedItems = cartItemsArray.value.filter(item => item.selected)
+  const selectedItems = cartItemsArray.value.filter((item) => item.selected);
   if (selectedItems.length === 0) {
-    alert('Please select at least one item to checkout')
-    return
+    alert("Please select at least one item to checkout");
+    return;
   }
-  console.log('Proceeding to checkout with selected items:', selectedItems)
-}
+  console.log("Proceeding to checkout with selected items:", selectedItems);
+};
 </script>
 
 <style scoped>
@@ -312,10 +342,18 @@ const checkout = () => {
   --tw-ring-color: #1e2b8f;
 }
 
-/* Add these styles for checkbox customization */
+/* Updated minimalist checkbox styles */
 input[type="checkbox"] {
-  border-radius: 0.25rem;
-  border-color: #D1D5DB;
+  appearance: none;
+  -webkit-appearance: none;
+  width: 1rem;
+  height: 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+  background-color: white;
 }
 
 input[type="checkbox"]:checked {
@@ -323,10 +361,19 @@ input[type="checkbox"]:checked {
   border-color: #1a237e;
 }
 
-input[type="checkbox"]:focus {
-  outline: 2px solid transparent;
-  outline-offset: 2px;
-  --tw-ring-offset-width: 2px;
-  --tw-ring-color: #1e2b8f;
+input[type="checkbox"]:checked::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  width: 6px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+input[type="checkbox"]:hover {
+  border-color: #1a237e;
 }
 </style>

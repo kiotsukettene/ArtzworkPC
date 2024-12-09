@@ -68,15 +68,15 @@ const currentPath = computed(() => usePage().url);
 
 const menuItems = computed(() =>
   [
-    { name: "Dashboard", icon: HomeIcon, href: "/dashboard" },
-    { name: "Category", icon: TagIcon, href: "/categories" },
-    { name: "Brands", icon: ShoppingBagIcon, href: "/brands" },
-    { name: "Products", icon: PackageIcon, href: "/products" },
-    { name: "Transactions", icon: ClipboardListIcon, href: "/transactions" },
-    { name: "Order History", icon: ClipboardListIcon, href: "/order-history" },
-    { name: "Return / Refund", icon: ClipboardListIcon, href: "/return-refund" },
-    { name: "Customers", icon: UsersIcon, href: "/customers" },
-    { name: "Employees", icon: UsersIcon, href: "/employees" },
+    { name: "Dashboard", icon: HomeIcon, href: route("dashboard") },
+    { name: "Category", icon: TagIcon, href: route("categories.index") },
+    { name: "Brands", icon: ShoppingBagIcon, href: route("brands.index") },
+    { name: "Products", icon: PackageIcon, href: route("products.index") },
+    { name: "Transactions", icon: ClipboardListIcon, href: "admin/transactions" },
+    { name: "Order History", icon: ClipboardListIcon, href: "admin/order-history" },
+    { name: "Return / Refund", icon: ClipboardListIcon, href: "admin/return-refund" },
+    { name: "Customers", icon: UsersIcon, href: "admin/customers" },
+    { name: "Employees", icon: UsersIcon, href: route("employees.index") },
   ].map((item) => ({
     ...item,
     current: currentPath.value.startsWith(item.href),
