@@ -31,9 +31,19 @@
               <SearchIcon class="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
             </form>
           </div>
-          <button class="text-gray-700 hover:text-navy-600">
+          <Link
+            href="/cart"
+            class="relative inline-flex items-center p-2 text-gray-600 hover:text-gray-900"
+          >
             <ShoppingCartIcon class="h-6 w-6" />
-          </button>
+            <!-- Badge -->
+            <div
+              v-if="cartCount > 0"
+              class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center"
+            >
+              {{ cartCount }}
+            </div>
+          </Link>
           <!-- Mobile Menu Toggle -->
           <button
             @click="isMenuOpen = !isMenuOpen"
@@ -79,8 +89,8 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-import { Link, useForm, router } from "@inertiajs/vue3";
+import { ref, computed } from "vue";
+import { Link, useForm, router, usePage } from "@inertiajs/vue3";
 import { MenuIcon, XIcon, SearchIcon, ShoppingCartIcon } from "lucide-vue-next";
 
 // State
@@ -107,4 +117,17 @@ const navigationItems = [
   { name: "Laptops", href: "/laptops" },
   { name: "Desktops", href: "/desktops" },
 ];
+
+// Get cart count directly from session cart items
+const cartCount = computed(() => {
+  const cart = usePage().props.auth?.cart || {};
+  return Object.keys(cart).length;
+});
 </script>
+
+<style scoped>
+/* Optional: Add animation for badge */
+.absolute {
+  transition: all 0.2s ease-in-out;
+}
+</style>

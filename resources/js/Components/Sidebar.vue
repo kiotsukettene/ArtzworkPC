@@ -8,7 +8,7 @@
   </button>
 
   <aside
-    class="fixed inset-y-0 left-0 z-40 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0"
+    class="fixed inset-y-0 left-0 z-40 w-64 bg-white shadow-sm transform transition-transform duration-300 ease-in-out lg:translate-x-0"
     :class="{ 'translate-x-0': isSidebarOpen, '-translate-x-full': !isSidebarOpen }"
   >
     <div class="h-full flex flex-col">

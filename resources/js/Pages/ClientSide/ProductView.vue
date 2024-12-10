@@ -476,7 +476,7 @@
 
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from "vue";
-import { Link } from "@inertiajs/vue3";
+import { Link, router } from "@inertiajs/vue3";
 import {
   SearchIcon,
   ShoppingCartIcon,
@@ -579,10 +579,20 @@ const toggleWishlist = (productId) => {
   console.log("Toggle wishlist for product:", productId);
 };
 
-const addToCart = (productId) => {
-  // Implement add to cart functionality
-  console.log("Add to cart product:", productId);
-};
+const addToCart = () => {
+  router.post(route('cart.add'), {
+    product_id: props.product.id,
+    name: props.product.name,
+    price: props.product.price,
+    quantity: quantity.value,
+    image: props.product.image ? '/storage/' + props.product.image : '/storage/default.jpg',
+  }, {
+    preserveScroll: true,
+    onSuccess: () => {
+      // Optional: Show success message
+    },
+  })
+}
 
 // Add this with your other refs
 const isCollapsed = ref(true);

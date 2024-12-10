@@ -213,7 +213,7 @@
                     <HeartIcon class="h-4 w-4 sm:h-5 sm:w-5" />
                   </button>
                   <button
-                    @click.prevent="addToCart(product.id)"
+                    @click.prevent="addToCart(product)"
                     class="p-1.5 sm:p-1.5 text-white bg-navy-900 rounded-lg"
                   >
                     <ShoppingCartIcon class="h-4 w-4 sm:h-5 sm:w-5" />
@@ -279,7 +279,7 @@
 
 <script setup>
 import { ref, watch } from "vue";
-import { Link, useForm } from "@inertiajs/vue3";
+import { Link, useForm, router } from "@inertiajs/vue3";
 import {
   HeartIcon,
   ShoppingCartIcon,
@@ -354,6 +354,21 @@ const clearFilters = () => {
 const toggleDropdown = (dropdown) => {
   dropdowns.value[dropdown] = !dropdowns.value[dropdown];
 };
+
+const addToCart = (product) => {
+  router.post(route('cart.add'), {
+    product_id: product.id,
+    name: product.name,
+    price: product.price,
+    quantity: 1, // Default quantity for quick add
+    image: product.image,
+  }, {
+    preserveScroll: true,
+    onSuccess: () => {
+      // Optional: Show success message
+    },
+  })
+}
 </script>
 
 <style scoped>

@@ -3,8 +3,8 @@
     <!-- Header/Navigation -->
     <NavLink />
     <!-- Hero Section -->
-    <section class="py-16 main">
-      <div class="container rounded-lg main mt-1 mx-auto px-4 py-8">
+    <section class="py-16 bg-gray-50">
+      <div class="container rounded-lg bg-gray-50 mt-1 mx-auto px-4 py-8">
         <div class="grid md:grid-cols-2 gap-8 items-center">
           <!-- Text Section -->
           <div>
@@ -129,7 +129,7 @@
             :style="{ transform: `translateX(-${currentSlide * (100 / visibleCards)}%)` }"
             ref="productCarousel"
           >
-            <Link
+            <div
               v-for="latestProduct in latestProducts"
               :key="latestProduct.id"
               :href="route('product.view', { slug: latestProduct.slug })"
@@ -141,6 +141,7 @@
                 'w-1/5': visibleCards === 5,
               }"
             >
+
               <div
                 class="bg-white rounded-lg p-2 sm:p-3 shadow-md hover:shadow-lg transition-all duration-300 border border-gray-200 hover:border-blue-500"
               >
@@ -201,13 +202,16 @@
                     <button class="p-1.5 sm:p-1.5 primary-text main rounded-lg">
                       <HeartIcon class="h-4 w-4 sm:h-5 sm:w-5" />
                     </button>
-                    <button class="p-1.5 sm:p-1.5 text-white bg-navy-900 rounded-lg">
+                    <button
+                      @click.prevent="addToCart(latestProduct)"
+                      class="p-1.5 sm:p-1.5 text-white bg-navy-900 rounded-lg"
+                    >
                       <ShoppingCartIcon class="h-4 w-4 sm:h-5 sm:w-5" />
                     </button>
                   </div>
                 </div>
               </div>
-            </Link>
+            </div>
           </div>
 
           <!-- Navigation Buttons -->
@@ -368,7 +372,10 @@
                 <button class="p-1.5 sm:p-1.5 primary-text main rounded-lg">
                   <HeartIcon class="h-4 w-4 sm:h-5 sm:w-5" />
                 </button>
-                <button class="p-1.5 sm:p-1.5 text-white bg-navy-900 rounded-lg">
+                <button
+                  @click.prevent="addToCart(product)"
+                  class="p-1.5 sm:p-1.5 text-white bg-navy-900 rounded-lg"
+                >
                   <ShoppingCartIcon class="h-4 w-4 sm:h-5 sm:w-5" />
                 </button>
               </div>
@@ -416,7 +423,7 @@
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from "vue";
-import { Link } from "@inertiajs/vue3";
+import { Link, router } from "@inertiajs/vue3";
 import {
   ShoppingCartIcon,
   StarIcon,
@@ -526,6 +533,21 @@ const reviews = [
     avatar: "",
   },
 ];
+
+const addToCart = (product) => {
+  router.post(route('cart.add'), {
+    product_id: product.id,
+    name: product.name,
+    price: product.price,
+    quantity: 1, // Default quantity for quick add
+    image: product.image,
+  }, {
+    preserveScroll: true,
+    onSuccess: () => {
+      // Optional: Show success message
+    },
+  })
+}
 </script>
 
 <style scoped></style>

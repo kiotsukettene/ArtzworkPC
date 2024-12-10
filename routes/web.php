@@ -13,6 +13,7 @@ use App\Http\Controllers\AuthenticateController;
 use App\Http\Controllers\ClientRegisterController;
 use App\Http\Controllers\Client\ProductListController;
 use App\Http\Controllers\Client\ProductViewController;
+use App\Http\Controllers\CartController;
 
 // Route::inertia('/dashboard', 'Dashboard');
 
@@ -29,6 +30,8 @@ Route::middleware('guest')->group(function () {
     Route::get('/product-list', [ProductListController::class, 'index'])->name('product.list');
 
     Route::get('/product-list/{slug}', [ProductViewController::class, 'index'])->name('product.view');
+    Route::inertia('/cart', 'ClientSide/Cart');
+
 
 });
 
@@ -43,7 +46,16 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthenticateController::class, 'destroy'])->name('logout');
 });
 
-
+Route::middleware(['web'])->group(function () {
+    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+    Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
+    Route::post('/cart/update-quantity', [CartController::class, 'updateQuantity'])->name('cart.updateQuantity');
+    Route::post('/cart/remove', [CartController::class, 'removeFromCart'])->name('cart.remove');
+    Route::post('/cart/update-selection', [CartController::class, 'updateSelection'])->name('cart.updateSelection');
+    Route::post('/cart/clear', [CartController::class, 'clearCart'])->name('cart.clear');
+    Route::post('/cart/update-all-selections', [CartController::class, 'updateAllSelections'])
+        ->name('cart.updateAllSelections');
+});
 
 require __DIR__ . '/auth.php';
 
