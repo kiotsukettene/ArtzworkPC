@@ -52,12 +52,61 @@
             <MenuIcon v-if="!isMenuOpen" class="h-6 w-6" />
             <XIcon v-else class="h-6 w-6" />
           </button>
-          <Link
-            href="/login"
-            class="py-2 px-4 border bg-navy-900 text-white border-navy-600 rounded-md"
-          >
-            Login
-          </Link>
+          <!-- Login/User Profile -->
+          <template v-if="customer">
+            <div class="flex items-center space-x-2">
+              <div class="relative group">
+                <button
+                  class="flex items-center space-x-2 focus:outline-none"
+                  @click="isProfileMenuOpen = !isProfileMenuOpen"
+                >
+                  <div
+                    class="h-8 w-8 rounded-full bg-navy-600 flex items-center justify-center text-white font-medium"
+                  >
+                    {{ customerInitials }}
+                  </div>
+                  <span class="text-gray-700">{{ customer.first_name }}</span>
+                  <ChevronDown class="h-4 w-4 text-gray-500" />
+                </button>
+
+                <!-- Dropdown Menu -->
+                <div
+                  v-if="isProfileMenuOpen"
+                  class="absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5"
+                >
+                  <Link
+                    href="/customer/dashboard"
+                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    <User2 class="h-4 w-4 inline-block mr-2" />
+                    My Profile
+                  </Link>
+                  <Link
+                    href="/customer/orders"
+                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    <Package class="h-4 w-4 inline-block mr-2" />
+                    My Orders
+                  </Link>
+                  <button
+                    @click="logout"
+                    class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    <LogOut class="h-4 w-4 inline-block mr-2" />
+                    Logout
+                  </button>
+                </div>
+              </div>
+            </div>
+          </template>
+          <template v-else>
+            <Link
+              href="/customer/login"
+              class="py-2 px-4 border bg-navy-900 text-white border-navy-600 rounded-md"
+            >
+              Login
+            </Link>
+          </template>
         </div>
       </div>
 
@@ -89,12 +138,22 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted, onUnmounted } from "vue";
 import { Link, useForm, router, usePage } from "@inertiajs/vue3";
-import { MenuIcon, XIcon, SearchIcon, ShoppingCartIcon } from "lucide-vue-next";
+import {
+  MenuIcon,
+  XIcon,
+  SearchIcon,
+  ShoppingCartIcon,
+  User2,
+  Package,
+  LogOut,
+  ChevronDown,
+} from "lucide-vue-next";
 
 // State
 const isMenuOpen = ref(false);
+const isProfileMenuOpen = ref(false);
 
 const props = defineProps({
   searchTerm: {
@@ -123,10 +182,51 @@ const cartCount = computed(() => {
   const cart = usePage().props.auth?.cart || {};
   return Object.keys(cart).length;
 });
+
+// Add these new refs and computed properties
+const customer = computed(() => usePage().props.auth?.customer);
+
+const customerInitials = computed(() => {
+  if (!customer.value) return "";
+  return `${customer.value.first_name.charAt(0)}${customer.value.last_name.charAt(
+    0
+  )}`.toUpperCase();
+});
+
+// Add logout function
+const logout = () => {
+  router.post(route("customer.logout"));
+};
+
+// Close profile menu when clicking outside
+const closeProfileMenu = (e) => {
+  if (!e.target.closest(".relative.group")) {
+    isProfileMenuOpen.value = false;
+  }
+};
+
+// Add click outside listener
+onMounted(() => {
+  document.addEventListener("click", closeProfileMenu);
+});
+
+onUnmounted(() => {
+  document.removeEventListener("click", closeProfileMenu);
+});
 </script>
 
 <style scoped>
 /* Optional: Add animation for badge */
+.absolute {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Add these new styles */
+.relative.group {
+  position: relative;
+}
+
+/* Optional: Add transition for dropdown */
 .absolute {
   transition: all 0.2s ease-in-out;
 }

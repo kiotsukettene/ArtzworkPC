@@ -6,9 +6,15 @@ use App\Models\CustomerAddresses;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use App\Notifications\CustomerVerifyEmail;
 
-class Customer extends Model
+class Customer extends Authenticatable implements MustVerifyEmail
 {
+
+    use Notifiable;
     protected $fillable = [
         'first_name',
         'last_name',
@@ -23,6 +29,24 @@ class Customer extends Model
         'created_by',
         'updated_by'
     ];
+
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+     /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+        ];
+    }
 
     // Relationship with CustomerAddress
     public function addresses()
@@ -41,4 +65,11 @@ class Customer extends Model
     {
         return "{$this->first_name} {$this->last_name}";
     }
+
+    /**
+     * Send the email verification notification.
+     *
+     * @return void
+     */
+
 }

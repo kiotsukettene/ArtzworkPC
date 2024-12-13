@@ -423,6 +423,41 @@
       :product="addedProduct"
       @close="showSuccessModal = false"
     />
+
+    <!-- Floating Messenger Icon -->
+    <div
+      class="fixed bottom-6 right-6 z-50 group"
+      @mouseenter="showMessengerTooltip = true"
+      @mouseleave="showMessengerTooltip = false"
+    >
+      <!-- Tooltip -->
+
+      <div
+        v-if="showMessengerTooltip"
+        class="absolute bottom-full right-0 mb-2 bg-white text-gray-800 px-4 py-2 rounded-lg shadow-lg text-sm whitespace-nowrap transform transition-opacity duration-200"
+      >
+        Chat with us
+        <div
+          class="absolute bottom-0 right-4 transform translate-y-1/2 rotate-45 w-2 h-2 bg-white"
+        ></div>
+      </div>
+
+      <!-- Messenger Button -->
+      <button
+        @click="openMessenger"
+        class="bg-navy-600 hover:bg-navy-700 text-white rounded-full p-4 shadow-lg transition-all duration-300 hover:scale-110"
+      >
+        <MessageCircle class="h-6 w-6" />
+      </button>
+
+      <!-- Notification Badge -->
+      <div
+        v-if="unreadMessages > 0"
+        class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center"
+      >
+        {{ unreadMessages }}
+      </div>
+    </div>
   </div>
 </template>
 
@@ -439,6 +474,7 @@ import {
   ShieldIcon,
   ChevronLeft,
   ChevronRight,
+  MessageCircle,
 } from "lucide-vue-next";
 import NavLink from "../../Components/NavLink.vue";
 import { route } from "../../../../vendor/tightenco/ziggy/src/js";
@@ -567,6 +603,34 @@ const addToCart = (product) => {
     }
   );
 };
+
+// Add these new refs
+const showMessengerTooltip = ref(false);
+const unreadMessages = ref(0); // You can set this based on your backend data
+
+// Add this new method
+const openMessenger = () => {
+  // You can implement your messenger logic here
+  // For example, open a chat modal or redirect to a chat page
+  window.open("https://www.facebook.com/ArtzworkPc", "_blank");
+};
 </script>
 
-<style scoped></style>
+<style scoped>
+/* Add these styles if you want a pulse animation */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(26, 35, 126, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(26, 35, 126, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(26, 35, 126, 0);
+  }
+}
+
+.group:hover button {
+  animation: pulse 2s infinite;
+}
+</style>

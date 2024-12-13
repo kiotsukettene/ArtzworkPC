@@ -42,9 +42,8 @@
                   First Name
                 </label>
                 <input
-                  v-model="formData.firstName"
+                  v-model="customer.first_name"
                   type="text"
-                  required
                   class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500"
                 />
               </div>
@@ -54,9 +53,8 @@
                   Last Name
                 </label>
                 <input
-                  v-model="formData.lastName"
+                  v-model="customer.last_name"
                   type="text"
-                  required
                   class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500"
                 />
               </div>
@@ -67,9 +65,8 @@
                 Email Address
               </label>
               <input
-                v-model="formData.email"
+                v-model="customer.email_address"
                 type="email"
-                required
                 class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500"
               />
             </div>
@@ -279,10 +276,20 @@
 
 <script setup>
 import { ref, reactive } from "vue";
-import { Link } from "@inertiajs/vue3";
-import { ShoppingCartIcon, UserIcon, UploadIcon } from "lucide-vue-next";
+import { Link, usePage, useForm } from "@inertiajs/vue3";
+import {
+  ShoppingCartIcon,
+  UserIcon,
+  UploadIcon,
+  Mail,
+  Loader2,
+  CheckCircle2,
+  AlertCircle,
+  AlertTriangle,
+} from "lucide-vue-next";
 import NavLink from "@/Components/NavLink.vue";
 
+const customer = usePage().props.customer;
 // Steps configuration
 const steps = [
   { id: 1, name: "User Account" },
@@ -292,7 +299,7 @@ const steps = [
 
 // Form state
 const currentStep = ref(1);
-const formData = reactive({
+const form = useForm({
   firstName: "",
   lastName: "",
   email: "",
@@ -316,6 +323,9 @@ const handleFileUpload = (event) => {
 };
 
 const nextStep = () => {
+  if (!customer.email_verified_at) {
+    return; // Prevent proceeding if email isn't verified
+  }
   currentStep.value++;
 };
 
@@ -355,5 +365,25 @@ input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+/* Add tooltip styles */
+[data-tooltip] {
+  position: relative;
+}
+
+[data-tooltip]:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  right: 0;
+  transform: translateY(-4px);
+  background-color: #1f2937;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  z-index: 10;
 }
 </style>
