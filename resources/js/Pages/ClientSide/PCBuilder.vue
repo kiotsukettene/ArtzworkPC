@@ -84,18 +84,38 @@
                   </div>
                   <div class="flex-1">
                     <h3 class="font-medium text-gray-900">{{ component.name }}</h3>
-                    <p class="text-sm text-gray-500 mb-3">
-                      {{
-                        getSelectedComponentName(component.type) ||
-                        "No component selected"
-                      }}
-                    </p>
-                    <button
-                      @click="openComponentSelection(component.type)"
-                      class="bg-navy-600 text-white px-4 py-1.5 rounded text-sm hover:bg-navy-700 transition-colors"
-                    >
-                      Select
-                    </button>
+                    <div class="flex justify-between items-center mb-2">
+                      <p class="text-sm text-gray-500">
+                        {{ getSelectedComponentName(component.type) }}
+                      </p>
+                      <p
+                        v-if="selectedComponents[component.type]"
+                        class="text-sm font-semibold text-navy-600"
+                      >
+                        ₱{{ formatPrice(selectedComponents[component.type].price) }}
+                      </p>
+                    </div>
+                    <div class="flex space-x-2">
+                      <Link
+                        :href="
+                          route('component.selection', { componentType: component.type })
+                        "
+                        class="inline-block"
+                      >
+                        <button
+                          class="bg-navy-600 text-white px-4 py-1.5 rounded text-sm hover:bg-navy-700 transition-colors"
+                        >
+                          {{ selectedComponents[component.type] ? "Change" : "Select" }}
+                        </button>
+                      </Link>
+                      <button
+                        v-if="selectedComponents[component.type]"
+                        @click="clearComponent(component.type)"
+                        class="bg-red-600 text-white px-4 py-1.5 rounded text-sm hover:bg-red-700 transition-colors"
+                      >
+                        Remove
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -106,7 +126,18 @@
         <!-- Build Summary - Now in its own column -->
         <div class="lg:col-span-1">
           <div class="bg-white rounded-xl shadow-sm p-6 sticky top-4">
-            <h3 class="text-lg font-semibold mb-4">Your Build</h3>
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="text-lg font-semibold">Your Build</h3>
+              <!-- Add Clear All button -->
+              <button
+                v-if="selectedComponentsCount > 0"
+                @click="clearAllComponents"
+                class="text-sm text-red-600 hover:text-red-700 font-medium flex items-center"
+              >
+                <TrashIcon class="w-4 h-4 mr-1" />
+                Clear All
+              </button>
+            </div>
 
             <!-- Progress Bar -->
             <div class="mb-6">
@@ -135,9 +166,7 @@
                 class="flex justify-between text-sm"
               >
                 <span class="text-gray-600">{{ component.name }}:</span>
-                <span class="text-gray-900 font-medium">{{
-                  component.selected || "Not selected"
-                }}</span>
+                <span class="text-gray-900 font-medium">{{ component.price }}</span>
               </div>
             </div>
 
@@ -155,9 +184,9 @@
             <button
               @click="addToCart"
               :disabled="selectedComponentsCount === 0"
-              class="w-full bg-navy-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-navy-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              class="w-full bg-navy-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-navy-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
             >
-              Add to Cart
+              <span>Add to Cart</span>
             </button>
           </div>
         </div>
@@ -211,6 +240,11 @@
         </div>
       </div>
     </div>
+
+    <!-- For debugging purposes, add this temporarily to debug -->
+    <div v-if="false" class="p-4 bg-gray-100">
+      <pre>{{ JSON.stringify(debugComponents, null, 2) }}</pre>
+    </div>
   </div>
 </template>
 
@@ -229,24 +263,32 @@ import {
   Mouse,
   ChevronLeft,
   ChevronRight,
+  TrashIcon,
 } from "lucide-vue-next";
 import NavLink from "../../Components/NavLink.vue";
+import { router } from "@inertiajs/vue3";
+import { Link } from "@inertiajs/vue3";
 // Component definitions
 const components = [
   { type: "processor", name: "Processor", icon: Cpu },
   { type: "case", name: "Case", icon: Box },
   { type: "motherboard", name: "Motherboard", icon: Cpu },
-  { type: "cpuCooler", name: "CPU Cooler", icon: Fan },
+  { type: "cpucooler", name: "CPU Cooler", icon: Fan },
   { type: "memory", name: "Memory", icon: MemoryStick },
   { type: "fan", name: "Fan", icon: Fan },
   { type: "storage", name: "Storage", icon: HardDrive },
   { type: "monitor", name: "Monitor", icon: Monitor },
-  { type: "graphicsCard", name: "Graphics Card", icon: Microchip },
+  { type: "graphicscard", name: "Graphics Card", icon: Microchip },
   { type: "keyboard", name: "Keyboard", icon: Keyboard },
-  { type: "powerSupply", name: "Power Supply", icon: Power },
+  { type: "powersupply", name: "Power Supply", icon: Power },
   { type: "mouse", name: "Mouse", icon: Mouse },
 ];
 
+const props = defineProps({
+  products: Array,
+  categories: Array,
+  brands: Array,
+});
 // State
 const selectedComponents = ref({});
 const showModal = ref(false);
@@ -257,17 +299,7 @@ const selectedComponentsCount = computed(() => {
   return Object.keys(selectedComponents.value).length;
 });
 
-const totalPrice = computed(() => {
-  return Object.values(selectedComponents.value).reduce(
-    (total, component) => total + (component.price || 0),
-    0
-  );
-});
-
 // Methods
-const getSelectedComponentName = (type) => {
-  return selectedComponents.value[type]?.name || "";
-};
 
 const openComponentSelection = (type) => {
   currentComponentType.value = type;
@@ -279,9 +311,59 @@ const selectComponent = (type, component) => {
   showModal.value = false;
 };
 
-const addToCart = () => {
-  // Implement add to cart logic
-  console.log("Adding build to cart:", selectedComponents.value);
+const addToCart = async () => {
+  try {
+    console.log("Selected Components:", selectedComponents.value);
+
+    if (Object.keys(selectedComponents.value).length === 0) {
+      alert("No components selected");
+      return;
+    }
+
+    // Prepare all components data at once
+    const cartItems = Object.values(selectedComponents.value).map((component) => {
+      let imagePath = component.image;
+      if (imagePath && imagePath.startsWith("product_images/")) {
+        imagePath = `/storage/${imagePath}`;
+      } else if (imagePath && !imagePath.startsWith("/storage/")) {
+        imagePath = `/storage/${imagePath}`;
+      }
+
+      return {
+        product_id: component.id,
+        name: component.name,
+        price: parseFloat(component.price),
+        quantity: 1,
+        image: imagePath || "/storage/default.png",
+      };
+    });
+
+    console.log("Attempting to add items to cart:", cartItems);
+
+    // Send all items in a single request
+    router.post(
+      route("cart.add-multiple"),
+      {
+        items: cartItems,
+      },
+      {
+        preserveScroll: true,
+        preserveState: true,
+        onSuccess: () => {
+          console.log("Successfully added all items to cart");
+          clearAllComponents();
+          router.visit(route("cart.index"));
+        },
+        onError: (errors) => {
+          console.error("Cart addition errors:", errors);
+          alert("Failed to add items to cart");
+        },
+      }
+    );
+  } catch (error) {
+    console.error("Error in addToCart:", error);
+    alert("An error occurred while adding items to cart");
+  }
 };
 
 // Carousel Data
@@ -330,14 +412,92 @@ const stopAutoplay = () => {
 
 // Lifecycle hooks
 onMounted(() => {
+  loadSelectedComponents();
   startAutoplay();
+
+  // Listen for storage changes
+  window.addEventListener("storage", () => {
+    loadSelectedComponents();
+  });
 });
 
 onBeforeUnmount(() => {
   stopAutoplay();
 });
-</script>
 
+// Add method to clear component selection
+const clearComponent = (type) => {
+  const stored = JSON.parse(localStorage.getItem("selected_components") || "[]");
+  const updatedComponents = stored.filter((item) => item.type !== type);
+  localStorage.setItem("selected_components", JSON.stringify(updatedComponents));
+  delete selectedComponents.value[type];
+};
+
+// Update the loadSelectedComponents function
+const loadSelectedComponents = () => {
+  const stored = localStorage.getItem("selected_components");
+  if (stored) {
+    try {
+      const parsedComponents = JSON.parse(stored);
+      parsedComponents.forEach((item) => {
+        selectedComponents.value[item.type] = item.product;
+      });
+    } catch (error) {
+      console.error("Error loading components:", error);
+    }
+  }
+};
+
+// Update getSelectedComponentName function
+const getSelectedComponentName = (type) => {
+  const component = selectedComponents.value[type];
+  return component ? component.name : "No component selected";
+};
+
+// Update getSelectedComponentPrice function
+const getSelectedComponentPrice = (type) => {
+  const component = selectedComponents.value[type];
+  if (!component?.price) return null;
+  // Remove the "₱" symbol and any commas from the price string
+  const priceValue = component.price.toString().replace(/[₱,]/g, "");
+  return formatPrice(parseFloat(priceValue));
+};
+
+// Update formatPrice function
+const formatPrice = (price) => {
+  if (!price) return "0.00";
+  return parseFloat(price).toLocaleString("en-PH", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+};
+
+// Update totalPrice computed
+const totalPrice = computed(() => {
+  return Object.values(selectedComponents.value).reduce((total, component) => {
+    if (!component?.price) return total;
+    const priceValue = parseFloat(component.price.toString().replace(/[₱,]/g, ""));
+    return total + priceValue;
+  }, 0);
+});
+
+// Add a debug method (temporary)
+const debugComponents = computed(() => {
+  console.log("Current selectedComponents:", selectedComponents.value);
+  return selectedComponents.value;
+});
+
+// Add clearAllComponents function
+const clearAllComponents = () => {
+  // Clear localStorage
+  localStorage.setItem("selected_components", "[]");
+  // Clear reactive state
+  selectedComponents.value = {};
+
+  // Optional: Show confirmation toast/alert
+  // You can add a toast notification here if you want
+};
+</script>
 <style scoped>
 .bg-navy-600 {
   background-color: #1a237e;

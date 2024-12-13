@@ -205,14 +205,14 @@
             <div class="flex gap-2">
               <!-- Wishlist Button -->
               <button
-                class="flex-none w-20 h-12 flex items-center justify-center rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors"
+                class="flex-none w-20 h-12 flex items-center justify-center rounded-lg border border-gray-300 hover:bg-gray-200 transition-colors"
               >
-                <HeartIcon class="h-5 w-5 text-gray-600" />
+                <HeartIcon class="h-5 w-5 text-gray-600 hover:text-red-500" />
               </button>
 
               <!-- Compare Button -->
               <button
-                class="flex-none w-20 h-12 flex items-center justify-center rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors"
+                class="flex-none w-20 h-12 flex items-center justify-center rounded-lg border border-gray-300 hover:bg-gray-200 transition-colors"
               >
                 <ArrowUpDown class="h-5 w-5 text-gray-600" />
               </button>

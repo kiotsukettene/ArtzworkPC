@@ -109,4 +109,37 @@ class CartController extends Controller
         Session::forget('cart');
         return back()->with('success', 'Cart cleared successfully');
     }
+
+    public function addMultiple(Request $request)
+    {
+        $request->validate([
+            'items' => 'required|array',
+            'items.*.product_id' => 'required',
+            'items.*.name' => 'required|string',
+            'items.*.price' => 'required|numeric',
+            'items.*.quantity' => 'required|integer|min:1',
+            'items.*.image' => 'required|string'
+        ]);
+
+        $cart = Session::get('cart', []);
+
+        foreach ($request->items as $item) {
+            $productId = $item['product_id'];
+
+            if (isset($cart[$productId])) {
+                $cart[$productId]['quantity'] += $item['quantity'];
+            } else {
+                $cart[$productId] = [
+                    'name' => $item['name'],
+                    'price' => $item['price'],
+                    'quantity' => $item['quantity'],
+                    'image' => $item['image'],
+                    'selected' => true
+                ];
+            }
+        }
+
+        Session::put('cart', $cart);
+        return back()->with('success', 'All items added to cart successfully');
+    }
 }

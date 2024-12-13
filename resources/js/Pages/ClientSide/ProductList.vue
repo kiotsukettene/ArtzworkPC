@@ -5,7 +5,7 @@
     <!-- Main Content -->
 
     <div class="container mx-auto px-4 py-8">
-      <h1 class="text-4xl font-bold text-gray-900 mb-5">Products</h1>
+      <h1 class="text-4xl font-bold text-gray-900 mb-5">All Products</h1>
       <div class="flex flex-col md:flex-row gap-8">
         <!-- Filters Sidebar -->
         <div class="w-full md:w-64 shrink-0">

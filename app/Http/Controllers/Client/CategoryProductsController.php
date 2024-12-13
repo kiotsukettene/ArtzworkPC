@@ -14,20 +14,38 @@ class CategoryProductsController extends Controller
 {
     public function index(Request $request, $categorySlug = null)
     {
+        $currentCategory = null;
+        if ($categorySlug) {
+            $currentCategory = Category::where('slug', $categorySlug)
+                ->select(['id', 'name', 'slug'])
+                ->first();
+
+            if (!$currentCategory) {
+                abort(404);
+            }
+        }
+
         $query = Product::query()
-            ->select(['id', 'name', 'slug', 'price', 'stock', 'brand_id', 'category_id', 'product_images', 'description', 'warranty'])
+            ->select([
+                'id', 'name', 'slug', 'price', 'stock',
+                'brand_id', 'category_id', 'product_images',
+                'description', 'warranty'
+            ])
             ->with([
                 'category:id,name,slug',
                 'brand:id,name',
                 'specifications' => function($query) {
-                    $query->select('specifications.id', 'specifications.name', 'product_specifications.value', 'product_specifications.product_id');
+                    $query->select(
+                        'specifications.id',
+                        'specifications.name',
+                        'product_specifications.value',
+                        'product_specifications.product_id'
+                    );
                 }
             ]);
 
-        if ($categorySlug) {
-            $query->whereHas('category', function($q) use ($categorySlug) {
-                $q->where('slug', $categorySlug);
-            });
+        if ($currentCategory) {
+            $query->where('category_id', $currentCategory->id);
         }
 
         $query->filter($request->only([
@@ -39,7 +57,6 @@ class CategoryProductsController extends Controller
         ]));
 
         $products = $query->paginate(16);
-
         $products->getCollection()->transform(function ($product) {
             return [
                 'id' => $product->id,
@@ -74,18 +91,17 @@ class CategoryProductsController extends Controller
                 ->get();
         });
 
-        $currentCategory = null;
-        if ($categorySlug) {
-            $currentCategory = $categories->firstWhere('slug', $categorySlug);
-        }
-
         return Inertia::render('ClientSide/CategoryProducts', [
+            'currentCategory' => $currentCategory ? [
+                'id' => $currentCategory->id,
+                'name' => $currentCategory->name,
+                'slug' => $currentCategory->slug,
+            ] : null,
             'products' => $products,
             'categories' => $categories,
             'brands' => $brands,
             'searchTerm' => $request->search,
             'filters' => $request->only(['priceRange', 'inStock', 'brands', 'categories']),
-            'currentCategory' => $currentCategory
         ]);
     }
 }

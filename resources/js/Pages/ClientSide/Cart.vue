@@ -46,9 +46,10 @@
                 <!-- Product Image & Details -->
                 <div class="flex-shrink-0 mr-6">
                   <img
-                    :src="item[4]"
+                    :src="getImageUrl(item[4])"
                     :alt="item[1]"
                     class="w-24 h-24 object-cover rounded-lg"
+                    @error="(e) => (e.target.src = '/storage/default.png')"
                   />
                 </div>
 
@@ -318,6 +319,31 @@ const checkout = () => {
     return;
   }
   console.log("Proceeding to checkout with selected items:", selectedItems);
+};
+
+const getImageUrl = (imagePath) => {
+  if (!imagePath) return "/storage/default.png";
+
+  // If it's already a full URL, return as is
+  if (imagePath.startsWith("http")) {
+    return imagePath;
+  }
+
+  // Remove any duplicate '/storage/' prefixes
+  const cleanPath = imagePath.replace(/^\/storage\/+/, "");
+
+  // Handle different path formats
+  if (cleanPath.startsWith("product_images/")) {
+    return `/storage/${cleanPath}`;
+  }
+
+  // For paths that might already include storage
+  if (cleanPath.includes("storage/")) {
+    return `/${cleanPath}`;
+  }
+
+  // Default case: prepend /storage/
+  return `/storage/${cleanPath}`;
 };
 </script>
 

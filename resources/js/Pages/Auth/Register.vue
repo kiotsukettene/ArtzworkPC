@@ -17,18 +17,32 @@
           </div>
           <form @submit.prevent="submitForm" class="space-y-6">
             <div>
-              <label for="name" class="block text-sm font-medium text-gray-700"
-                >Name</label
+              <label for="firstname" class="block text-sm font-medium text-gray-700"
+                >First Name</label
               >
               <div class="mt-1">
                 <input
-                  id="name"
-                  v-model="form.name"
+                  id="firstname"
+                  v-model="form.firstname"
                   type="text"
                   class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-navy-500 focus:border-navy-500"
                 />
               </div>
-              <small class="text-red-700">{{ form.errors.name }}</small>
+              <small class="text-red-700">{{ form.errors.firstname }}</small>
+            </div>
+            <div>
+              <label for="lastname" class="block text-sm font-medium text-gray-700"
+                >Last Name</label
+              >
+              <div class="mt-1">
+                <input
+                  id="lastname"
+                  v-model="form.lastname"
+                  type="text"
+                  class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-navy-500 focus:border-navy-500"
+                />
+              </div>
+              <small class="text-red-700">{{ form.errors.lastname }}</small>
             </div>
 
             <div>
