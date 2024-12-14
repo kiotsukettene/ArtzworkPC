@@ -9,6 +9,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AuthenticateController;
 use App\Http\Controllers\ClientRegisterController;
 use App\Http\Controllers\EmailVerificationController;
+use App\Http\Controllers\Client\ClientProfileController;
 
 
 Route::middleware('auth')->group(function () {
@@ -34,6 +35,8 @@ Route::middleware(['auth:customer'])->group(function () {
     Route::middleware(['verified'])->group(function () {
         Route::get('/customer/register/process', [ClientRegisterController::class, 'show'])->name('customer.register.process');
         Route::post('/customer/register/process', [ClientRegisterController::class, 'update'])->name('customer.register.process.update');
+
+        Route::get('/customer/profile', [ClientProfileController::class, 'index'])->name('customer.profile');
     });
 
 

@@ -288,13 +288,6 @@ const form = useForm({
 });
 
 // Methods
-const handleFileUpload = (event) => {
-  const file = event.target.files[0];
-  if (file) {
-    form.profilePicture = file;
-    form.profilePictureName = file.name;
-  }
-};
 
 const nextStep = () => {
   if (!customer.email_verified_at) {
