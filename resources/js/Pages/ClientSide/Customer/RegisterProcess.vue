@@ -45,6 +45,7 @@
                   v-model="customer.first_name"
                   type="text"
                   class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500"
+                  readonly
                 />
               </div>
 
@@ -56,6 +57,7 @@
                   v-model="customer.last_name"
                   type="text"
                   class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500"
+                  readonly
                 />
               </div>
             </div>
@@ -64,11 +66,22 @@
               <label class="block text-sm font-medium text-gray-700 mb-1">
                 Email Address
               </label>
-              <input
-                v-model="customer.email_address"
-                type="email"
-                class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500"
-              />
+              <div class="flex items-center">
+                <input
+                  v-model="customer.email"
+                  type="email"
+                  :class="[
+                    'w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2',
+                    customer.email_verified_at
+                      ? ' border-green-500'
+                      : 'focus:ring-navy-500',
+                  ]"
+                  readonly
+                />
+                <span v-if="customer.email_verified_at" class="ml-2 text-green-500">
+                  Verified
+                </span>
+              </div>
             </div>
 
             <div class="flex justify-between pt-4">
@@ -100,9 +113,8 @@
                   Username
                 </label>
                 <input
-                  v-model="formData.username"
+                  v-model="form.username"
                   type="text"
-                  required
                   class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500"
                 />
               </div>
@@ -112,8 +124,7 @@
                   Gender
                 </label>
                 <select
-                  v-model="formData.gender"
-                  required
+                  v-model="form.gender"
                   class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500"
                 >
                   <option value="male">Male</option>
@@ -127,9 +138,8 @@
                   Birthday
                 </label>
                 <input
-                  v-model="formData.birthday"
+                  v-model="form.birthday"
                   type="date"
-                  required
                   class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500"
                 />
               </div>
@@ -139,42 +149,12 @@
                   Phone Number
                 </label>
                 <input
-                  v-model="formData.phone"
+                  v-model="form.phone"
                   type="tel"
-                  required
                   class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500"
                 />
               </div>
-            </div>
-
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">
-                Profile Picture
-              </label>
-              <div
-                class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg"
-              >
-                <div class="space-y-1 text-center">
-                  <UploadIcon class="mx-auto h-12 w-12 text-gray-400" />
-                  <div class="flex text-sm text-gray-600">
-                    <label
-                      for="file-upload"
-                      class="relative cursor-pointer rounded-md font-medium text-navy-600 hover:text-navy-500"
-                    >
-                      <span>Upload a file</span>
-                      <input
-                        id="file-upload"
-                        name="file-upload"
-                        type="file"
-                        class="sr-only"
-                        @change="handleFileUpload"
-                      />
-                    </label>
-                    <p class="pl-1">or drag and drop</p>
-                  </div>
-                  <p class="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
-                </div>
-              </div>
+              <small class="text-red-500">{{ form.errors.phone }}</small>
             </div>
 
             <div class="flex justify-between pt-4">
@@ -206,25 +186,25 @@
                   Province
                 </label>
                 <select
-                  v-model="formData.province"
-                  required
+                  v-model="form.province"
                   class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500"
                 >
                   <option value="metro-manila">Metro Manila</option>
                   <!-- Add more provinces -->
                 </select>
+                <small class="text-red-500">{{ form.errors.province }}</small>
               </div>
 
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1"> City </label>
                 <select
-                  v-model="formData.city"
-                  required
+                  v-model="form.city"
                   class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500"
                 >
                   <option value="caloocan">Caloocan City</option>
                   <!-- Add more cities -->
                 </select>
+                <small class="text-red-500">{{ form.errors.city }}</small>
               </div>
             </div>
 
@@ -233,11 +213,11 @@
                 Zip Code
               </label>
               <input
-                v-model="formData.zipCode"
+                v-model="form.zip_code"
                 type="text"
-                required
                 class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500"
               />
+              <small class="text-red-500">{{ form.errors.zip_code }}</small>
             </div>
 
             <div>
@@ -245,11 +225,11 @@
                 Complete Address
               </label>
               <textarea
-                v-model="formData.address"
+                v-model="form.address"
                 rows="4"
-                required
                 class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-500"
               ></textarea>
+              <small class="text-red-500">{{ form.errors.address }}</small>
             </div>
 
             <div class="flex justify-between pt-4">
@@ -260,11 +240,14 @@
               >
                 Back
               </button>
+
               <button
                 type="submit"
                 class="px-6 py-2 bg-navy-600 text-white rounded-lg hover:bg-navy-700"
+                :disabled="form.processing"
               >
-                Complete
+                <span v-if="form.processing">Updating...</span>
+                <span v-else>Complete</span>
               </button>
             </div>
           </form>
@@ -277,16 +260,7 @@
 <script setup>
 import { ref, reactive } from "vue";
 import { Link, usePage, useForm } from "@inertiajs/vue3";
-import {
-  ShoppingCartIcon,
-  UserIcon,
-  UploadIcon,
-  Mail,
-  Loader2,
-  CheckCircle2,
-  AlertCircle,
-  AlertTriangle,
-} from "lucide-vue-next";
+import { UploadIcon } from "lucide-vue-next";
 import NavLink from "@/Components/NavLink.vue";
 
 const customer = usePage().props.customer;
@@ -300,25 +274,25 @@ const steps = [
 // Form state
 const currentStep = ref(1);
 const form = useForm({
-  firstName: "",
-  lastName: "",
-  email: "",
-  username: "",
-  gender: "",
-  birthday: "",
-  phone: "",
-  profilePicture: null,
-  province: "",
-  city: "",
-  zipCode: "",
-  address: "",
+  firstName: customer.first_name || "",
+  lastName: customer.last_name || "",
+  email: customer.email || "",
+  username: customer.username || "",
+  gender: customer.gender || "",
+  birthday: customer.birthday || "",
+  phone: customer.phone || "",
+  province: customer.addresses?.province || "",
+  city: customer.addresses?.city || "",
+  zip_code: customer.addresses?.zip_code || "",
+  address: customer.addresses?.complete_address || "",
 });
 
 // Methods
 const handleFileUpload = (event) => {
   const file = event.target.files[0];
   if (file) {
-    formData.profilePicture = file;
+    form.profilePicture = file;
+    form.profilePictureName = file.name;
   }
 };
 
@@ -330,8 +304,15 @@ const nextStep = () => {
 };
 
 const submitForm = () => {
-  // Implement form submission logic
-  console.log("Form submitted:", formData);
+  form.post(route("customer.register.process.update"), {
+    onSuccess: () => {
+      console.log("Profile updated successfully.");
+    },
+    onError: (errors) => {
+      console.error("Failed to update profile:", errors);
+    },
+    preserveScroll: true,
+  });
 };
 </script>
 

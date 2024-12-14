@@ -18,8 +18,27 @@ Route::middleware('auth')->group(function () {
     Route::resource('admin/products', ProductController::class)->names('products');
     Route::resource('admin/employees', EmployeeController::class)->names('employees');
     Route::post('admin/logout', [AuthenticateController::class, 'destroy'])->name('admin.logout');
+
+
 });
 
 Route::middleware(['auth:customer'])->group(function () {
-    Route::post('/customer/logout', [AuthenticateController::class, 'destroy'])->name('customer.logout');
+    Route::post('/customer/logout', [ClientRegisterController::class, 'destroy'])->name('customer.logout');
+
+
+    // ---Email Verification -- //
+    Route::get('/email/verify', [EmailVerificationController::class, 'notice'])->name('verification.notice');
+    Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])->middleware(['auth:customer', 'signed'])->name('verification.verify');
+    Route::post('/email/verification-notification', [EmailVerificationController::class, 'send'])->middleware(['throttle:6,1'])->name('verification.send');
+
+    Route::middleware(['verified'])->group(function () {
+        Route::get('/customer/register/process', [ClientRegisterController::class, 'show'])->name('customer.register.process');
+        Route::post('/customer/register/process', [ClientRegisterController::class, 'update'])->name('customer.register.process.update');
+    });
+
+
+
 });
+
+
+

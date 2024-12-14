@@ -19,10 +19,11 @@ return new class extends Migration
             $table->enum('gender', ['male', 'female', 'other']);
             $table->date('birthday')->nullable();
             $table->string('phone')->nullable();
-            $table->string('email_address')->unique();
+            $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
             $table->unsignedBigInteger('default_address_id')->nullable();
+            $table->foreign('default_address_id')->references('id')->on('customer_addresses')->onDelete('set null');
             $table->string('profile_picture')->nullable();
             $table->string('password');
             $table->timestamps();

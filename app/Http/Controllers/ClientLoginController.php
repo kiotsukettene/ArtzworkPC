@@ -15,17 +15,25 @@ class ClientLoginController extends Controller
 
     public function store(Request $request) {
         $credentials = $request->validate([
-            'email_address' => 'required|email',
+            'email' => 'required|email',
             'password' => 'required',
         ]);
 
         if (Auth::guard('customer')->attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
 
+            // Check if the user is verified
+            if (Auth::guard('customer')->user() && !Auth::guard('customer')->user()->email_verified_at) {
+
+
+                return redirect()->route('verification.notice')->with('status', 'Your email must be verified to access your account.');
+            }
+
             return redirect()->intended('/');
         }
+
         // Check if email exists first
-        $customer = \App\Models\Customer::where('email_address', $request->email_address)->first();
+        $customer = \App\Models\Customer::where('email', $request->email)->first();
 
         if ($customer) {
             return back()->withErrors([
@@ -34,8 +42,8 @@ class ClientLoginController extends Controller
         }
 
         return back()->withErrors([
-            'email_address' => 'The email address does not match our records.'
-        ])->onlyInput('email_address');
+            'email' => 'The email address does not match our records.'
+        ])->onlyInput('email');
     }
 
     public function destroy(Request $request) {

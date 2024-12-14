@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use App\Notifications\CustomerVerifyEmail;
+use Illuminate\Auth\Notifications\VerifyEmail;
 
 class Customer extends Authenticatable implements MustVerifyEmail
 {
@@ -22,13 +22,12 @@ class Customer extends Authenticatable implements MustVerifyEmail
         'gender',
         'birthday',
         'phone',
-        'email_address',
+        'email',
+        'email_verified_at',
         'default_address_id',
         'profile_picture',
         'password',
-        'created_by',
-        'updated_by'
-    ];
+        ];
 
     protected $hidden = [
         'password',
@@ -71,5 +70,9 @@ class Customer extends Authenticatable implements MustVerifyEmail
      *
      * @return void
      */
+    public function sendEmailVerificationNotification()
+    {
+        $this->notify(new VerifyEmail);
+    }
 
 }
