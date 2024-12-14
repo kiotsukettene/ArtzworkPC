@@ -2,14 +2,15 @@
 
 namespace App\Models;
 
+use App\Models\Orders;
 use App\Models\CustomerAddresses;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Auth\Notifications\VerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class Customer extends Authenticatable implements MustVerifyEmail
 {
@@ -51,6 +52,11 @@ class Customer extends Authenticatable implements MustVerifyEmail
     public function addresses()
     {
         return $this->hasMany(CustomerAddresses::class);
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Orders::class);
     }
 
     // Relationship with default address

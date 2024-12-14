@@ -4,6 +4,8 @@ namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
 use Inertia\Middleware;
+use Illuminate\Support\Facades\Auth;
+use App\Services\CartService;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -38,14 +40,13 @@ class HandleInertiaRequests extends Middleware
         return array_merge(parent::share($request), [
             'auth' => [
                 'user' => $request->user(),
-                'customer' => $request->user('customer'),
-                'cart' => session()->get('cart', []),
+                'customer' => Auth::guard('customer')->user(),
             ],
             'flash' => [
-                'message' => fn () => $request->session()->get('message'),
-                'type' => fn () => $request->session()->get('type'),
+                'success' => fn () => $request->session()->get('success'),
                 'error' => fn () => $request->session()->get('error'),
             ],
+            'cartCount' => app(CartService::class)->getCartCount(),
         ]);
     }
 }

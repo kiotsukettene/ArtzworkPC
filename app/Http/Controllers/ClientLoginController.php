@@ -6,9 +6,17 @@ use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use App\Services\CartService;
 
 class ClientLoginController extends Controller
 {
+    protected $cartService;
+
+    public function __construct(CartService $cartService)
+    {
+        $this->cartService = $cartService;
+    }
+
     public function create() {
         return Inertia::render("Auth/Login");
     }
@@ -22,14 +30,14 @@ class ClientLoginController extends Controller
         if (Auth::guard('customer')->attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
 
-            // Check if the user is verified
-            if (Auth::guard('customer')->user() && !Auth::guard('customer')->user()->email_verified_at) {
+            // Migrate guest cart to user cart
+            $this->cartService->migrateGuestCartToUser(Auth::guard('customer')->id());
 
-
-                return redirect()->route('verification.notice')->with('status', 'Your email must be verified to access your account.');
+            if (!Auth::guard('customer')->user()->email_verified_at) {
+                return redirect()->route('verification.notice');
             }
 
-            return redirect()->intended('/');
+            return redirect()->intended(route('home'));
         }
 
         // Check if email exists first

@@ -99,7 +99,6 @@
 
             <div class="text-sm">
               <Link
-                :href="route('password.request')"
                 class="font-medium text-navy-600 hover:text-navy-500"
               >
                 Forgot your password?

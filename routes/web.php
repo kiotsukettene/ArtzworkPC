@@ -23,41 +23,8 @@ use App\Http\Controllers\EmailVerificationController;
 
 
 
-// Public Routes (accessible without login)
-Route::middleware('guest')->group(function () {
-
-    // --------ADMIN LOGIN-------- //
-    Route::get('/admin/login', [AuthenticateController::class, 'create'])->name('admin.login');
-    Route::post('/admin/login', [AuthenticateController::class, 'store']);
-
-    // --------CUSTOMER LOGIN-------- //
-    Route::get('/customer/login', [ClientLoginController::class, 'create'])->name('customer.login');
-    Route::post('/customer/login', [ClientLoginController::class, 'store']);
-
-    // --------FORGOT PASSWORD-------- //
-    // Route::get('/customer/forgot-password', [AuthenticateController::class, 'create'])->name('customer.forgot-password');
-    // Route::post('/customer/forgot-password', [AuthenticateController::class, 'store']);
-
-    // --------FORGOT PASSWORD-------- //
-    Route::get('/forgot-password', function () {
-        return Inertia::render('Auth/ForgotPassword');
-    })->name('password.request');
-
-    // --------REGISTER--------//
-    Route::get('/customer/register', [ClientRegisterController::class, 'create'])->name('customer.register');
-    Route::post('/customer/register', [ClientRegisterController::class, 'store']);
 
 
-
-    Route::get('/', [HomeController::class, 'index'])->name('home'); // Guest Home
-    Route::get('/product-list', [ProductListController::class, 'index'])->name('product.list');
-    Route::get('/category-products/{categorySlug?}', [CategoryProductsController::class, 'index'])->name('category.products');
-    Route::get('/product-list/{slug}', [ProductViewController::class, 'index'])->name('product.view');
-    Route::get('/pc-builder', [PCBuilderController::class, 'index'])->name('pc.builder');
-    Route::get('/pc-builder/component-selection/{componentType}', [ComponentSelectionController::class, 'index'])
-    ->name('component.selection');
-
-});
 
 Route::middleware(['web'])->group(function () {
     Route::controller(CartController::class)->group(function () {
@@ -74,5 +41,7 @@ Route::middleware(['web'])->group(function () {
 });
 
 
-require __DIR__ . '/auth.php';
 
+
+require __DIR__ . '/auth.php';
+require __DIR__ . '/customer-auth.php';

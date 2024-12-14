@@ -177,11 +177,8 @@ const navigationItems = [
   { name: "Desktops", href: "/category-products/desktop" },
 ];
 
-// Get cart count directly from session cart items
-const cartCount = computed(() => {
-  const cart = usePage().props.auth?.cart || {};
-  return Object.keys(cart).length;
-});
+// Get cart count directly from shared props
+const cartCount = computed(() => usePage().props.cartCount);
 
 // Add these new refs and computed properties
 const customer = computed(() => usePage().props.auth?.customer);

@@ -5,7 +5,7 @@ import { createInertiaApp, Head, Link } from '@inertiajs/vue3'
 import { ZiggyVue } from '../../vendor/tightenco/ziggy'
 
 createInertiaApp({
-  progress: false,
+  progress: true,
   title: (title) => `ArtzworkPC ${title}`,
   resolve: name => {
     const pages = import.meta.glob('./Pages/**/*.vue', { eager: true })

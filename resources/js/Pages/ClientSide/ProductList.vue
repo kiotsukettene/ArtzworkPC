@@ -213,7 +213,7 @@
                     @click.prevent="toggleWishlist(product.id)"
                     class="p-1.5 sm:p-1.5 primary-text main rounded-lg"
                   >
-                    <HeartIcon class="h-4 w-4 sm:h-5 sm:w-5" />
+                    <HeartIcon class="h-4 w-4 sm:h-5 sm:w-5 hover:text-red-500" />
                   </button>
                   <button
                     @click.prevent="addToCart(product)"

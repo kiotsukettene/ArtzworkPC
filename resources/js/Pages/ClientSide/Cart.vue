@@ -49,7 +49,7 @@
                     :src="getImageUrl(item[4])"
                     :alt="item[1]"
                     class="w-24 h-24 object-cover rounded-lg"
-                    @error="(e) => (e.target.src = '/storage/default.png')"
+                    @error="(e) => (e.target.src = '/storage/default.jpg')"
                   />
                 </div>
 
@@ -232,20 +232,33 @@ const decrementQuantity = (item) => {
 };
 
 const updateSelection = (item) => {
-  item[5] = !item[5];
-  updateServer({ type: "selection", productId: item[0], value: item[5] });
+  const newValue = !item[5];
+  // Update the local state first (optimistic update)
+  item[5] = newValue;
+  
+  // Send update to server
+  router.post(
+    route("cart.updateSelection"),
+    {
+      product_id: item[0],
+      selected: newValue,
+    },
+    {
+      preserveScroll: true,
+      preserveState: true,
+      progress: false,
+    }
+  );
 };
 
 const toggleSelectAll = () => {
   const newValue = !selectAll.value;
-  selectAll.value = newValue;
-
-  // Optimistic update
-  cartItemsArray.value.forEach((item) => {
+  // Update local state first
+  cartItemsArray.value.forEach(item => {
     item[5] = newValue;
   });
-
-  // Single request to update all
+  
+  // Send update to server
   router.post(
     route("cart.updateAllSelections"),
     {
@@ -258,6 +271,15 @@ const toggleSelectAll = () => {
     }
   );
 };
+
+// Watch for changes in cart items to update selectAll state
+watch(
+  cartItemsArray,
+  (items) => {
+    selectAll.value = items.length > 0 && items.every(item => item[5]);
+  },
+  { immediate: true, deep: true }
+);
 
 const removeItem = (item) => {
   // Optimistic update
@@ -294,35 +316,25 @@ const total = computed(() => {
   return subtotal.value + shippingFee.value;
 });
 
-// Watch for selection changes
-watch(
-  cartItemsArray,
-  (items) => {
-    if (items.length > 0) {
-      selectAll.value = items.every((item) => item[5] === true);
-    } else {
-      selectAll.value = false;
-    }
-  },
-  { deep: true }
-);
-
 // Methods
 const formatPrice = (price) => {
   return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };
 
 const checkout = () => {
-  const selectedItems = cartItemsArray.value.filter((item) => item.selected);
-  if (selectedItems.length === 0) {
-    alert("Please select at least one item to checkout");
+  const hasSelectedItems = cartItemsArray.value.some(item => item[5]);
+  
+  if (!hasSelectedItems) {
+    // You can add a toast notification here
+    alert('Please select at least one item to checkout');
     return;
   }
-  console.log("Proceeding to checkout with selected items:", selectedItems);
+
+  router.get(route('customer.checkout'));
 };
 
 const getImageUrl = (imagePath) => {
-  if (!imagePath) return "/storage/default.png";
+  if (!imagePath) return "/storage/default.jpg";
 
   // If it's already a full URL, return as is
   if (imagePath.startsWith("http")) {
