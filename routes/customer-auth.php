@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\ClientLoginController;
@@ -41,8 +42,14 @@ Route::middleware(['auth:customer'])->group(function () {
 
         Route::get('/customer/checkout', [CheckoutController::class, 'index'])
             ->name('customer.checkout');
+        // Route::post('/customer/checkout', [CheckoutController::class, 'store'])
+        //     ->name('customer.checkout.store');
+
+        Route::get('/customer/payment/success', [CheckoutController::class, 'success'])
+            ->name('customer.payment.success');
         Route::post('/customer/checkout', [CheckoutController::class, 'store'])
             ->name('customer.checkout.store');
+        Route::get('/payment/{order_id}', [CheckoutController::class, 'pay'])->name('customer.payment');
     });
 });
 
@@ -73,6 +80,6 @@ Route::middleware(['guest'])->group(function () {
     Route::get('/compare/products', [CompareProductsController::class, 'index'])
         ->name('compare.products');
 
-   
+
 
 });

@@ -12,27 +12,164 @@ class CategorySeeder extends Seeder
     {
         $categories = [
             [
-                'name' => 'Network Interface Card',
-                'slug' => 'network-interface-card',
-                'sku' => 'NTC',
+                'name' => 'Accessories',
+                'slug' => 'accessories',
+                'sku' => 'ACC',
                 'specifications' => [
-                    'Interface Type',
-                    'Network Speed',
-                    'Port Type',
-                    'Wi-Fi Standards',
-                    'Bluetooth Version'
+                    'Type',
+                    'Material',
+                    'Compatibility',
+                    'Dimensions',
+                    'Connector Type'
                 ]
             ],
             [
-                'name' => 'Sound Card',
-                'slug' => 'sound-card',
-                'sku' => 'SND',
+                'name' => 'Motherboard',
+                'slug' => 'motherboard',
+                'sku' => 'MB',
                 'specifications' => [
-                    'Audio Channels',
-                    'Sample Rate',
-                    'SNR',
-                    'Interface Type',
-                    'Digital Audio Format'
+                    'Form Factor',
+                    'CPU Socket Type',
+                    'Chipset',
+                    'Memory Slots',
+                    'PCIe Slots',
+                    'SATA Ports',
+                    'M.2 Slots',
+                    'Rear I/O Ports',
+                    'BIOS/UEFI Features'
+                ]
+            ],
+            [
+                'name' => 'Bundle-Board / Procie',
+                'slug' => 'bundle-board-procie',
+                'sku' => 'BBP',
+                'specifications' => [
+                    'Motherboard Specifications',
+                    'Processor Specifications',
+                    'RAM Specifications',
+                    'Storage Specifications'
+                ]
+            ],
+            [
+                'name' => 'Camera',
+                'slug' => 'camera',
+                'sku' => 'CAM',
+                'specifications' => [
+                    'Type',
+                    'Resolution',
+                    'Lens Mount',
+                    'ISO Range',
+                    'Connectivity',
+                    'Storage Support',
+                    'Video Capabilities'
+                ]
+            ],
+            [
+                'name' => 'Casing',
+                'slug' => 'casing',
+                'sku' => 'CSG',
+                'specifications' => [
+                    'Form Factor Compatibility',
+                    'Material',
+                    'Cooling Support',
+                    'Drive Bays',
+                    'I/O Panel Ports',
+                    'Dimensions'
+                ]
+            ],
+            [
+                'name' => 'CCTV',
+                'slug' => 'cctv',
+                'sku' => 'CCTV',
+                'specifications' => [
+                    'Camera Resolution',
+                    'Field of View',
+                    'Night Vision',
+                    'Power Source',
+                    'Storage Options',
+                    'Connectivity',
+                    'Motion Detection'
+                ]
+            ],
+            [
+                'name' => 'Desktop',
+                'slug' => 'desktop',
+                'sku' => 'DST',
+                'specifications' => [
+                    'Processor',
+                    'Motherboard',
+                    'Graphics Card',
+                    'Memory',
+                    'Storage',
+                    'Operating System',
+                    'Power Supply Unit',
+                    'Cooling System',
+                    'Case',
+                    'Monitor'
+                ]
+            ],
+            [
+                'name' => 'Video Card',
+                'slug' => 'video-card',
+                'sku' => 'VCD',
+                'specifications' => [
+                    'Chipset Manufacturer',
+                    'Core Clock Speed',
+                    'Memory Type',
+                    'Memory Capacity',
+                    'Power Requirements',
+                    'Ports'
+                ]
+            ],
+            [
+                'name' => 'Graphics Processing Unit',
+                'slug' => 'graphics-processing-unit',
+                'sku' => 'GPU',
+                'specifications' => [
+                    'Core Clock Speed',
+                    'Memory Type',
+                    'Memory Capacity',
+                    'DirectX/OpenGL Version',
+                    'Ports'
+                ]
+            ],
+            [
+                'name' => 'Hard Disk Drive',
+                'slug' => 'hard-disk-drive',
+                'sku' => 'HDD',
+                'specifications' => [
+                    'Capacity',
+                    'RPM',
+                    'Cache Size',
+                    'Interface',
+                    'Form Factor',
+                    'Warranty'
+                ]
+            ],
+            [
+                'name' => 'Headset/Speaker',
+                'slug' => 'headset-speaker',
+                'sku' => 'HSP',
+                'specifications' => [
+                    'Type',
+                    'Connectivity',
+                    'Driver Size',
+                    'Frequency Range',
+                    'Microphone',
+                    'Battery Life'
+                ]
+            ],
+            [
+                'name' => 'Liquid Cooler',
+                'slug' => 'liquid-cooler',
+                'sku' => 'LQC',
+                'specifications' => [
+                    'Radiator Size',
+                    'Fan Speed',
+                    'Noise Level',
+                    'Pump Speed',
+                    'RGB Lighting',
+                    'Compatibility'
                 ]
             ],
             [
@@ -48,63 +185,146 @@ class CategorySeeder extends Seeder
                 ]
             ],
             [
-                'name' => 'Mouse',
-                'slug' => 'mouse',
-                'sku' => 'MSE',
+                'name' => 'Laptops',
+                'slug' => 'laptops',
+                'sku' => 'LPT',
                 'specifications' => [
-                    'DPI Range',
-                    'Sensor Type',
-                    'Button Count',
-                    'Connectivity',
-                    'Weight'
+                    'Processor',
+                    'Graphics Card',
+                    'Memory',
+                    'Storage',
+                    'Display',
+                    'Battery Life',
+                    'Connectivity Ports',
+                    'Operating System'
                 ]
             ],
             [
-                'name' => 'Webcam',
-                'slug' => 'webcam',
-                'sku' => 'WBC',
+                'name' => 'LCD Monitor',
+                'slug' => 'lcd-monitor',
+                'sku' => 'LCD',
                 'specifications' => [
+                    'Screen Size',
                     'Resolution',
-                    'Frame Rate',
-                    'Focus Type',
-                    'Microphone',
-                    'Connection Type'
+                    'Panel Type',
+                    'Refresh Rate',
+                    'Response Time',
+                    'Ports'
                 ]
             ],
             [
-                'name' => 'External Hard Drive',
-                'slug' => 'external-hard-drive',
-                'sku' => 'XHD',
+                'name' => 'LED Monitor',
+                'slug' => 'led-monitor',
+                'sku' => 'LED',
                 'specifications' => [
-                    'Storage Capacity',
+                    'Screen Size',
+                    'Resolution',
+                    'Panel Type',
+                    'Backlight Type',
+                    'Refresh Rate',
+                    'Ports'
+                ]
+            ],
+            [
+                'name' => 'Memory',
+                'slug' => 'memory',
+                'sku' => 'MEM',
+                'specifications' => [
+                    'Type',
+                    'Capacity',
+                    'Frequency',
+                    'Latency'
+                ]
+            ],
+            [
+                'name' => 'PISONET Accessories',
+                'slug' => 'pisonet-accessories',
+                'sku' => 'PSN',
+                'specifications' => [
+                    'Type',
+                    'Material',
+                    'Voltage Requirements',
+                    'Compatibility'
+                ]
+            ],
+            [
+                'name' => 'Printer',
+                'slug' => 'printer',
+                'sku' => 'PRT',
+                'specifications' => [
+                    'Type',
+                    'Resolution',
+                    'Printing Speed',
+                    'Connectivity',
+                    'Paper Size'
+                ]
+            ],
+            [
+                'name' => 'Processor',
+                'slug' => 'processor',
+                'sku' => 'CPU',
+                'specifications' => [
+                    'Core Count',
+                    'Thread Count',
+                    'Base Clock',
+                    'Turbo Boost',
+                    'Socket Compatibility'
+                ]
+            ],
+            [
+                'name' => 'Power Supply Unit',
+                'slug' => 'power-supply-unit',
+                'sku' => 'PSU',
+                'specifications' => [
+                    'Wattage',
+                    'Efficiency Rating',
+                    'Modularity',
+                    'Connector Types'
+                ]
+            ],
+            [
+                'name' => 'RGB Fans',
+                'slug' => 'rgb-fans',
+                'sku' => 'RGB',
+                'specifications' => [
+                    'Fan Size',
+                    'Lighting Type',
+                    'Speed',
+                    'Noise Level'
+                ]
+            ],
+            [
+                'name' => 'Router',
+                'slug' => 'router',
+                'sku' => 'RTR',
+                'specifications' => [
+                    'Wi-Fi Standards',
+                    'Bands',
+                    'Ports',
+                    'Antenna Count',
+                    'Speed'
+                ]
+            ],
+            [
+                'name' => 'Solid State Drive',
+                'slug' => 'solid-state-drive',
+                'sku' => 'SSD',
+                'specifications' => [
+                    'Capacity',
+                    'Read/Write Speeds',
                     'Interface',
-                    'Drive Speed',
-                    'Form Factor',
-                    'Power Source'
+                    'Form Factor'
                 ]
             ],
             [
-                'name' => 'Gaming Headset',
-                'slug' => 'gaming-headset',
-                'sku' => 'GHS',
-                'specifications' => [
-                    'Driver Size',
-                    'Frequency Response',
-                    'Microphone Type',
-                    'Connection Type',
-                    'Surround Sound'
-                ]
-            ],
-            [
-                'name' => 'USB Hub',
-                'slug' => 'usb-hub',
+                'name' => 'USB',
+                'slug' => 'usb',
                 'sku' => 'USB',
                 'specifications' => [
-                    'Port Count',
-                    'USB Version',
-                    'Power Delivery',
-                    'Data Transfer Speed',
-                    'Power Source'
+                    'Type',
+                    'Capacity',
+                    'Connector Type',
+                    'Data Transfer Speed'
                 ]
             ]
         ];

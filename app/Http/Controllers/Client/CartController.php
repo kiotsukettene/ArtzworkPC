@@ -65,7 +65,7 @@ class CartController extends Controller
                     'product_id' => $request->product_id
                 ],
                 [
-                    'quantity' => DB::raw('quantity + ' . $request->quantity),
+                    'quantity' => $request->quantity,
                     'price' => $request->price
                 ]
             );

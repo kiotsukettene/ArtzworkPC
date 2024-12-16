@@ -13,9 +13,7 @@ return new class extends Migration
     {
         Schema::create('customer_addresses', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('customer_id')
-                  ->constrained('customers')
-                  ->onDelete('cascade');
+            $table->unsignedBigInteger('customer_id');
             $table->string('first_name');
             $table->string('last_name');
             $table->string('phone_number');
@@ -30,7 +28,11 @@ return new class extends Migration
             $table->index('customer_id');
             $table->index('default_address');
         });
+
+
     }
+
+
 
     /**
      * Reverse the migrations.

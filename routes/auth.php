@@ -31,6 +31,8 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['guest'])->group(function () {
     Route::get('/admin/login', [AuthenticateController::class, 'create'])->name('admin.login');
     Route::post('/admin/login', [AuthenticateController::class, 'store']);
+    // Route::resource('admin/employees', EmployeeController::class)
+    //     ->names('employees');
 });
 
 require __DIR__ . '/customer-auth.php';

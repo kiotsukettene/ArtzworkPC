@@ -28,7 +28,7 @@
                 <h2 class="font-semibold text-gray-900">Delivery Information</h2>
                 <div class="mt-2 text-sm text-gray-600">
                   <p class="font-semibold text-gray-900">
-                    {{ customer.first_name }} {{ customer.last_name }} 
+                    {{ customer.first_name }} {{ customer.last_name }}
                   </p>
                   <p class="text-gray-900">
                     {{ customer.phone }}
@@ -41,7 +41,7 @@
             </div>
 
             <!-- Right Section (Addresses aligned to flex-end) -->
-             
+
             <div class="text-right text-sm">
               <button
                 @click="showEditModal = true"
@@ -55,7 +55,7 @@
               <p class="text-gray-900">
                 {{ customer.address.province }}, {{ customer.address.city }}, {{ customer.address.zip_code }}
               </p>
-   
+
             </div>
           </div>
         </div>
@@ -72,7 +72,7 @@
                 <input
                   type="radio"
                   v-model="deliveryMethod"
-                  value="lalamove"
+                  value="delivery"
                   class="form-radio text-navy-600 focus:ring-navy-500"
                 />
                 <span>Lalamove Delivery</span>
@@ -135,7 +135,7 @@
                 <input
                   type="radio"
                   v-model="paymentMethod"
-                  value="paynow"
+                  value="gcash"
                   class="form-radio text-navy-600 focus:ring-navy-500"
                 />
                 <span>PayNow (PayMongo)</span>
@@ -197,7 +197,7 @@
               </div>
               <div class="flex justify-between text-sm">
                 <span class="text-gray-600">Delivery Fee</span>
-                <span class="font-medium">₱{{ (summary.deliveryFee) }}</span>
+                <span class="font-medium">₱{{ (summary.shipping) }}</span>
               </div>
               <div class="flex justify-between text-base font-semibold pt-2">
                 <span>Total Amount</span>
@@ -374,12 +374,47 @@
         </div>
       </Dialog>
     </TransitionRoot>
+    <TransitionRoot appear :show="isLoading" as="template">
+  <Dialog as="div" @close="isLoading = false" class="relative z-50">
+    <TransitionChild
+      as="template"
+      enter="duration-300 ease-out"
+      enter-from="opacity-0"
+      enter-to="opacity-100"
+      leave="duration-200 ease-in"
+      leave-from="opacity-100"
+      leave-to="opacity-0"
+    >
+      <div class="fixed inset-0 bg-black bg-opacity-25" />
+    </TransitionChild>
+
+    <div class="fixed inset-0">
+      <div class="flex min-h-full items-center justify-center p-4">
+        <TransitionChild
+          as="template"
+          enter="duration-300 ease-out"
+          enter-from="opacity-0 scale-95"
+          enter-to="opacity-100 scale-100"
+          leave="duration-200 ease-in"
+          leave-from="opacity-100 scale-100"
+          leave-to="opacity-0 scale-95"
+        >
+          <DialogPanel class="w-full max-w-md transform overflow-hidden rounded-lg bg-white p-6 text-center align-middle shadow-xl transition-all">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-navy-900 mx-auto mb-4"></div>
+            <p class="text-lg font-medium text-gray-900">Processing your order...</p>
+            <p class="text-sm text-gray-500">Please wait while we redirect you to payment.</p>
+          </DialogPanel>
+        </TransitionChild>
+      </div>
+    </div>
+  </Dialog>
+</TransitionRoot>
   </div>
 </template>
 
 <script setup>
 import { ref, computed } from "vue";
-import { Link } from "@inertiajs/vue3";
+import { Link, router } from "@inertiajs/vue3";
 import {
   Dialog,
   DialogPanel,
@@ -412,7 +447,7 @@ const props = defineProps({
     type: Object,
     required: true,
   },
-  
+
 });
 
 // Form state
@@ -424,8 +459,8 @@ const getImageUrl = (imagePath) => {
 };
 
 // Delivery and payment methods
-const deliveryMethod = ref("lalamove");
-const paymentMethod = ref("paynow");
+const deliveryMethod = ref("delivery");
+const paymentMethod = ref("gcash");
 const pickupDate = ref("");
 const pickupTime = ref("");
 const notes = ref("");
@@ -439,7 +474,7 @@ const subtotal = computed(() => {
 });
 
 const deliveryFee = computed(() => {
-  return deliveryMethod.value === "lalamove" ? 14.0 : 0;
+  return deliveryMethod.value === "delivery" ? 14.0 : 0;
 });
 
 const total = computed(() => {
@@ -454,9 +489,25 @@ const updateAddress = () => {
   showEditModal.value = false;
 };
 
+
+
+const isLoading = ref(false);
+
 const completePurchase = () => {
-  // Implement purchase completion logic
-  console.log("Purchase completed");
+  if (!agreeToTerms.value) return;
+
+  isLoading.value = true;
+
+  router.post(route('customer.checkout.store'), {
+    items: props.items,
+    summary: props.summary,
+    delivery_method: deliveryMethod.value,
+    payment_method: paymentMethod.value,
+    pickup_date: pickupDate.value,
+    pickup_time: pickupTime.value,
+    notes: notes.value,
+    shipping_amount: props.summary.shipping,
+  });
 };
 </script>
 

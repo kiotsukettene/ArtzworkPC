@@ -13,12 +13,20 @@ class Orders extends Model
         'total_amount',
         'payment_status',
         'payment_method',
+        'shipping_method',
+        'tracking_number',
+        'estimated_delivery',
+        'pickup_date_time',
+        'shipping_amount',
+        'order_status',
+        'notes',
+        'return_refund_status',
         'gcash_transaction_id',
     ];
 
     public function items()
     {
-        return $this->hasMany(OrderItems::class);
+        return $this->hasMany(OrderItems::class, 'order_id', 'id');
     }
 
     public function customer()

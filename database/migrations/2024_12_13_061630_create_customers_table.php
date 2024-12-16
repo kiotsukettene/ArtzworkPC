@@ -23,10 +23,18 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
             $table->unsignedBigInteger('default_address_id')->nullable();
-            $table->foreign('default_address_id')->references('id')->on('customer_addresses')->onDelete('set null');
             $table->string('profile_picture')->nullable();
             $table->string('password');
             $table->timestamps();
+        });
+
+        // Add the foreign keys after both tables are created
+        Schema::table('customer_addresses', function (Blueprint $table) {
+            $table->foreign('customer_id')->references('id')->on('customers')->onDelete('cascade');
+        });
+
+        Schema::table('customers', function (Blueprint $table) {
+            $table->foreign('default_address_id')->references('id')->on('customer_addresses')->onDelete('cascade');
         });
     }
 
