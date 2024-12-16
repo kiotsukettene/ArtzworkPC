@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen main">
+  <div class="min-h-screen bg-gray-50         ">
     <NavLink :search-term="props.searchTerm" />
 
     <!-- Main Content -->
@@ -17,8 +17,8 @@
               <h3 class="text-sm font-medium text-gray-700 mb-3">Price Range</h3>
               <div class="space-y-2">
                 <div class="flex items-center justify-between">
-                  <span class="text-sm text-gray-600">${{ form.priceRange[0] }}</span>
-                  <span class="text-sm text-gray-600">${{ form.priceRange[1] }}</span>
+                  <span class="text-sm text-gray-600">₱{{ form.priceRange[0] }}</span>
+                  <span class="text-sm text-gray-600">₱{{ form.priceRange[1] }}</span>
                 </div>
                 <input
                   type="range"
@@ -203,7 +203,7 @@
                     >
                   </div>
                   <span class="primary-text font-bold text-base sm:text-lg"
-                    >${{ product.price }}</span
+                    >₱{{ product.price }}</span
                   >
                 </div>
 
@@ -217,7 +217,7 @@
                   </button>
                   <button
                     @click.prevent="addToCart(product)"
-                    class="p-1.5 sm:p-1.5 text-white bg-navy-900 rounded-lg"
+                    class="p-1.5 sm:p-1.5 button-primary rounded-lg"
                   >
                     <ShoppingCartIcon class="h-4 w-4 sm:h-5 sm:w-5" />
                   </button>
@@ -252,7 +252,7 @@
                 class="px-3 py-1 rounded-md flex items-center justify-center text-sm font-medium transition-colors duration-150"
                 :class="[
                   link.active
-                    ? 'bg-navy-600 text-white'
+                    ? 'button-primary'
                     : 'text-gray-700 hover:bg-gray-100',
                   !link.url && 'opacity-50 cursor-not-allowed',
                   link.label.includes('Previous') ? 'mr-2' : '',

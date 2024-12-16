@@ -177,7 +177,7 @@
           <div class="space-y-4">
             <!-- Price and Quantity -->
             <div class="flex items-center justify-between">
-              <span class="text-3xl font-bold text-gray-900">${{ product.price }}</span>
+              <span class="text-3xl font-bold text-gray-900">₱{{ product.price }}</span>
 
               <!-- Quantity Selector -->
               <div class="flex items-center border rounded-lg bg-white shadow-sm">
@@ -220,7 +220,7 @@
               <!-- Add to Cart Button -->
               <button
                 @click="addToCart"
-                class="flex-1 bg-navy-600 text-white h-12 rounded-lg hover:bg-navy-700 transition-colors duration-200 flex items-center justify-center space-x-2"
+                class="flex-1 text-white h-12 rounded-lg hover:bg-navy-700 transition-colors duration-200 flex items-center justify-center space-x-2 button-primary"
               >
                 <ShoppingCartIcon class="h-5 w-5" />
                 <span>ADD TO CART</span>
@@ -383,7 +383,7 @@
             >
               <Link
                 :href="route('product.view', { slug: product.slug })"
-                class="block bg-white rounded-lg p-2 sm:p-3 shadow-md hover:shadow-lg transition-all duration-300 border border-gray-200 hover:border-blue-500"
+                class=" block bg-white rounded-lg p-2 sm:p-3 shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-200 hover:border-blue-500"
               >
                 <!-- Brand Name -->
                 <span
@@ -407,7 +407,7 @@
 
                 <!-- Product Name -->
                 <h3
-                  class="primary-text text-sm sm:text-base font-medium mb-1 sm:mb-2 truncate whitespace-nowrap overflow-hidden"
+                  class="primary-color text-sm sm:text-base font-medium mb-1 sm:mb-2 truncate whitespace-nowrap overflow-hidden"
                 >
                   {{ product.name }}
                 </h3>
@@ -430,8 +430,8 @@
                         ({{ product.reviewCount }})
                       </span>
                     </div>
-                    <span class="primary-text font-bold text-sm sm:text-base lg:text-lg">
-                      ${{ product.price }}
+                    <span class="primary-color font-bold text-sm sm:text-base lg:text-lg">
+                      ₱{{ product.price }}
                     </span>
                   </div>
 
@@ -439,13 +439,13 @@
                   <div class="flex space-x-1 sm:space-x-2">
                     <button
                       @click.prevent="toggleWishlist(product.id)"
-                      class="p-1.5 sm:p-1.5 primary-text main rounded-lg"
+                      class="p-1.5 sm:p-1.5 primary-color bg-[#e2e8f0] rounded-lg"
                     >
-                      <HeartIcon class="h-4 w-4 sm:h-5 sm:w-5" />
+                      <HeartIcon class="h-4 w-4 sm:h-5 sm:w-5 hover:text-red-500" />
                     </button>
                     <button
                       @click.prevent="addSimilarToCart(product)"
-                      class="p-1.5 sm:p-1.5 text-white bg-navy-900 rounded-lg"
+                      class="p-1.5 sm:p-1.5 button-primary rounded-lg"
                     >
                       <ShoppingCartIcon class="h-4 w-4 sm:h-5 sm:w-5" />
                     </button>
@@ -734,5 +734,21 @@ input[type="number"]::-webkit-outer-spin-button {
 .slide-right-enter-to,
 .slide-right-leave-from {
   transform: translateX(0);
+}
+/* Add these styles if you want a pulse animation */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(26, 35, 126, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(26, 35, 126, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(26, 35, 126, 0);
+  }
+}
+
+.group:hover button {
+  animation: pulse 2s infinite;
 }
 </style>

@@ -13,7 +13,7 @@
             </h1>
             <p class="text-gray-600 mb-6 leading-relaxed">
               Save up to 50% on select Xbox games.<br />
-              Get 3 months of PC Game Pass for $2 USD.
+              Get 3 months of PC Game Pass for ₱2 USD.
             </p>
           </div>
 
@@ -109,7 +109,7 @@
     </section>
 
     <!-- Latest Products Section -->
-    <section class="py-12 main">
+    <section class="py-12 bg-gray-50">
       <div class="container mx-auto px-4">
         <!-- Section Header -->
         <div class="flex justify-between items-center mb-8">
@@ -192,7 +192,7 @@
                       </span>
                     </div>
                     <span class="primary-text font-bold text-sm sm:text-base lg:text-lg">
-                      ${{ latestProduct.price }}
+                      ₱{{ latestProduct.price }}
                     </span>
                   </div>
 
@@ -292,7 +292,7 @@
     </section>
 
     <!-- Explore Products Section -->
-    <section class="py-12 main">
+    <section class="py-12 bg-gray-50">
       <div class="container mx-auto px-4">
         <!-- Section Header -->
         <div class="flex items-center space-x-2 mb-2">
@@ -317,7 +317,7 @@
             :href="route('product.view', { slug: product.slug })"
             v-for="product in exploreProducts"
             :key="product.id"
-            class="group relative bg-white rounded-lg p-2 sm:p-3 hover:shadow-lg transition-all duration-300 border border-gray-200 block hover:border-blue-500"
+            class=" relative bg-white rounded-lg p-2 sm:p-3 hover:shadow-lg transition-all duration-300 border border-gray-200 block hover:border-blue-500"
           >
             <!-- Brand Name -->
             <span
@@ -363,7 +363,7 @@
                   >
                 </div>
                 <span class="primary-text font-bold text-sm sm:text-base lg:text-lg"
-                  >${{ product.price }}</span
+                  >₱{{ product.price }}</span
                 >
               </div>
 
@@ -374,7 +374,7 @@
                 </button>
                 <button
                   @click.prevent="addToCart(product)"
-                  class="p-1.5 sm:p-1.5 text-white bg-navy-900 rounded-lg"
+                  class="p-1.5 sm:p-1.5 button-primary rounded-lg"
                 >
                   <ShoppingCartIcon class="h-4 w-4 sm:h-5 sm:w-5" />
                 </button>
@@ -610,8 +610,6 @@ const unreadMessages = ref(0); // You can set this based on your backend data
 
 // Add this new method
 const openMessenger = () => {
-  // You can implement your messenger logic here
-  // For example, open a chat modal or redirect to a chat page
   window.open("https://www.facebook.com/ArtzworkPc", "_blank");
 };
 </script>
@@ -623,7 +621,7 @@ const openMessenger = () => {
     box-shadow: 0 0 0 0 rgba(26, 35, 126, 0.7);
   }
   70% {
-    box-shadow: 0 0 0 10px rgba(26, 35, 126, 0);
+    box-shadow: 0 0 0 1px rgba(26, 35, 126, 0);
   }
   100% {
     box-shadow: 0 0 0 0 rgba(26, 35, 126, 0);
