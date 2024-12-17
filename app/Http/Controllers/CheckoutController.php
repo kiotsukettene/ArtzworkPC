@@ -65,6 +65,10 @@ class CheckoutController extends Controller
         $customer = Auth::guard('customer')->user();
         $address = CustomerAddresses::where('customer_id', $customer->id)->first();
 
+        if (!$address) {
+            return back()->withErrors(['error' => 'Please add a delivery address first.']);
+        }
+
         // Get selected cart items
         $selectedItems = CartItem::where('customer_id', $customer->id)
             ->where('selected', true)
@@ -81,15 +85,20 @@ class CheckoutController extends Controller
                 ];
             });
 
+        if ($selectedItems->isEmpty()) {
+            return back()->withErrors(['error' => 'No items selected for checkout.']);
+        }
+
         // Calculate totals
         $subtotal = $selectedItems->sum('subtotal');
-        $shipping = 145; // You can modify this based on your shipping logic
+        $shipping = 145;
         $total = $subtotal + $shipping;
 
+        // Create Paymongo source
         $data = [
             'data' => [
                 'attributes' => [
-                    'amount' => $total * 100,
+                    'amount' => $total * 100, // Convert to cents
                     'currency' => 'PHP',
                     'type' => 'gcash',
                     'redirect' => [
@@ -105,37 +114,43 @@ class CheckoutController extends Controller
                             'city' => $address->city,
                             'state' => $address->state,
                             'postal_code' => $address->zip_code,
+                            'country' => 'PH'
                         ]
                     ]
                 ]
             ]
         ];
 
-        $response = Curl::to('https://api.paymongo.com/v1/sources')
-            ->withHeader('Content-Type: application/json')
-            ->withHeader('Accept: application/json')
-            ->withHeader('Authorization: Basic ' . base64_encode(env('AUTH_PAY') . ':'))
-            ->withData($data)
-            ->asJson()
-            ->post();
+        try {
+            $response = Curl::to('https://api.paymongo.com/v1/sources')
+                ->withHeader('Content-Type: application/json')
+                ->withHeader('Accept: application/json')
+                ->withHeader('Authorization: Basic ' . base64_encode(env('AUTH_PAY') . ':'))
+                ->withData($data)
+                ->asJson()
+                ->post();
 
-        if (isset($response->errors)) {
-            return redirect()->back()->withErrors(['error' => 'Payment processing failed.']);
+            if (!$response || isset($response->errors)) {
+                throw new \Exception('Failed to create payment source');
+            }
+
+            // Store payment data in session
+            Session::put('payment_data', [
+                'response_id' => $response->data->id,
+                'selected_items' => $selectedItems,
+                'subtotal' => $subtotal,
+                'shipping' => $shipping,
+                'total' => $total,
+                'payment_method' => 'gcash',
+                'customer' => $customer
+            ]);
+
+            // Return the checkout URL in an Inertia response
+            return Inertia::location($response->data->attributes->redirect->checkout_url);
+
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Payment initialization failed. Please try again.']);
         }
-
-        // Store the session ID and redirect URL
-        Session::put('payment_data', [
-            'response_id' => $response->data->id,
-            'selected_items' => $selectedItems,
-            'subtotal' => $subtotal,
-            'shipping' => $shipping,
-            'total' => $total,
-            'payment_method' => 'gcash',
-            'customer' => $customer
-            
-        ]);
-
-        return redirect($response->data->attributes->redirect->checkout_url);
     }
 
     public function store()
@@ -175,15 +190,14 @@ class CheckoutController extends Controller
 
         Session::forget('payment_data');
 
-        return Inertia::render('ClientSide/Customer/PaymentSuccess', [
+        return Inertia::render('ClientSide/Customer/MyOrders', [
             'message' => 'Payment successful!',
-            'order' => $order
         ]);
     }
 
     public function success()
     {
-        return Inertia::render('ClientSide/Customer/PaymentSuccess', [
+        return Inertia::render('ClientSide/Customer/MyOrders', [
             'message' => 'Payment successful!',
         ]);
     }

@@ -407,9 +407,11 @@
           </button>
           <button
             @click="proceedToPayment"
-            class="px-4 py-2 bg-navy-900 text-white rounded-lg hover:bg-navy-800"
+            :disabled="isLoading"
+            class="w-full bg-navy-600 text-white py-3 rounded-lg font-medium hover:bg-navy-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Pay Now
+            <span v-if="isLoading">Processing...</span>
+            <span v-else>Proceed to Payment</span>
           </button>
         </div>
       </div>
@@ -470,6 +472,7 @@ const pickupTime = ref("");
 const notes = ref("");
 const agreeToTerms = ref(false);
 const showPaymentModal = ref(false);
+const isLoading = ref(false);
 // Cart items
 
 // Computed values
@@ -492,8 +495,6 @@ const updateAddress = () => {
   showEditModal.value = false;
 };
 
-const isLoading = ref(false);
-
 const completePurchase = () => {
   if (!agreeToTerms.value) return;
   showPaymentModal.value = true;
@@ -501,24 +502,22 @@ const completePurchase = () => {
 
 // Proceed with the payment and order creation
 const proceedToPayment = () => {
-  router.post(route("customer.checkout.store"), {
-    items: props.items,
-    summary: props.summary,
-    delivery_method: deliveryMethod.value,
-    payment_method: paymentMethod.value,
-    pickup_date: pickupDate.value,
-    pickup_time: pickupTime.value,
-    notes: notes.value,
-    shipping_amount: props.summary.shipping,
-  });
-  showPaymentModal.value = false; // Close modal after submission
-  openPaymentPage();
-};
-
-const openPaymentPage = () => {
-  // Open the payment route in a new tab
-  const paymentUrl = route("customer.payment");
-  window.open(paymentUrl, "_blank");
+  if (paymentMethod.value === 'gcash') {
+    isLoading.value = true;
+    
+    // Make a GET request to our backend to create the payment source
+    router.get(route('customer.payment'), {}, {
+      preserveState: true,
+      onSuccess: () => {
+        isLoading.value = false;
+        showPaymentModal.value = false;
+      },
+      onError: () => {
+        isLoading.value = false;
+        alert('Failed to initialize payment. Please try again.');
+      }
+    });
+  }
 };
 </script>
 
