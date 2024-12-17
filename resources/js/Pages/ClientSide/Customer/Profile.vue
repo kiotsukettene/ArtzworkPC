@@ -14,73 +14,8 @@
     </div>
 
     <div class="flex flex-col lg:flex-row gap-8">
-      <!-- Sidebar -->
-      <div
-        :class="[
-          'lg:w-80 transition-all duration-300 ease-in-out',
-          isMobileMenuOpen ? 'block' : 'hidden lg:block',
-        ]"
-      >
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100">
-          <div class="p-6">
-            <div class="flex items-center gap-4 mb-6">
-              <div
-                class="w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center text-white text-lg font-semibold"
-              >
-                {{ initials }}
-              </div>
-              <div>
-                <h3 class="font-medium">
-                  {{ customer.first_name }} {{ customer.last_name }}
-                </h3>
-                <p class="text-sm text-gray-500">{{ customer.email }}</p>
-              </div>
-            </div>
-
-            <nav class="space-y-1">
-              <a
-                href="#"
-                class="flex items-center gap-3 px-4 py-3 text-blue-600 bg-blue-50 rounded-lg font-medium"
-              >
-                <User class="w-5 h-5" />
-                Account Profile
-              </a>
-
-              <a
-                href="#"
-                class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
-              >
-                <ShoppingBag class="w-5 h-5" />
-                My Orders
-              </a>
-
-              <a
-                href="#"
-                class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
-              >
-                <MapPin class="w-5 h-5" />
-                Addresses
-              </a>
-
-              <a
-                href="#"
-                class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
-              >
-                <Heart class="w-5 h-5" />
-                Wishlists
-              </a>
-
-              <a
-                href="#"
-                class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
-              >
-                <Lock class="w-5 h-5" />
-                Security
-              </a>
-            </nav>
-          </div>
-        </div>
-      </div>
+      <!-- Sidebar Component -->
+      <ProfileSidebar :customer="customer" :isMobileMenuOpen="isMobileMenuOpen" />
 
       <!-- Main Content -->
       <div class="flex-1">
@@ -176,36 +111,21 @@
     </div>
   </div>
 </template>
+
 <script setup>
-import { computed, ref } from "vue";
+import { ref } from "vue";
 import { Head } from "@inertiajs/vue3";
-import {
-  User,
-  ShoppingBag,
-  MapPin,
-  Heart,
-  Lock,
-  Check,
-  Menu,
-  X,
-  Pencil,
-} from "lucide-vue-next";
+import { Menu, X, Pencil } from "lucide-vue-next";
+import ProfileSidebar from "@/Components/ProfileSidebar.vue";
 import NavLink from "@/Components/NavLink.vue";
-const props = defineProps({
+
+defineProps({
   customer: Object,
   addresses: Array,
   defaultAddress: Object,
 });
 
 const isMobileMenuOpen = ref(false);
-
-const initials = computed(() => {
-  const firstInitial = props.customer.first_name
-    ? props.customer.first_name.charAt(0)
-    : "";
-  const lastInitial = props.customer.last_name ? props.customer.last_name.charAt(0) : "";
-  return `${firstInitial}${lastInitial}`.toUpperCase();
-});
 
 const toggleMobileMenu = () => {
   isMobileMenuOpen.value = !isMobileMenuOpen.value;

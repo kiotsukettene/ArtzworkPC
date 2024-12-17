@@ -21,44 +21,44 @@
           <!-- Delivery Information -->
           <div class="bg-white rounded-lg shadow-sm p-6">
             <div class="flex justify-between items-start mb-4">
-            <!-- Left Section -->
-            <div class="flex items-start space-x-2">
-              <MapPinIcon class="h-5 w-5 text-gray-500 mt-0.5" />
-              <div>
-                <h2 class="font-semibold text-gray-900">Delivery Information</h2>
-                <div class="mt-2 text-sm text-gray-600">
-                  <p class="font-semibold text-gray-900">
-                    {{ customer.first_name }} {{ customer.last_name }}
-                  </p>
-                  <p class="text-gray-900">
-                    {{ customer.phone }}
-                  </p>
-                  <p>
-                    {{ customer.email }}
-                  </p>
+              <!-- Left Section -->
+              <div class="flex items-start space-x-2">
+                <MapPinIcon class="h-5 w-5 text-gray-500 mt-0.5" />
+                <div>
+                  <h2 class="font-semibold text-gray-900">Delivery Information</h2>
+                  <div class="mt-2 text-sm text-gray-600">
+                    <p class="font-semibold text-gray-900">
+                      {{ customer.first_name }} {{ customer.last_name }}
+                    </p>
+                    <p class="text-gray-900">
+                      {{ customer.phone }}
+                    </p>
+                    <p>
+                      {{ customer.email }}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <!-- Right Section (Addresses aligned to flex-end) -->
+              <!-- Right Section (Addresses aligned to flex-end) -->
 
-            <div class="text-right text-sm">
-              <button
-                @click="showEditModal = true"
-                class="mt-2 mb-4 px-4 py-1 text-sm bg-navy-900 text-white rounded hover:bg-navy-800"
-              >
-                Edit
-              </button>
-              <p class=" text-gray-900  ">
-                {{ customer.address.complete_address }}
-              </p>
-              <p class="text-gray-900">
-                {{ customer.address.province }}, {{ customer.address.city }}, {{ customer.address.zip_code }}
-              </p>
-
+              <div class="text-right text-sm">
+                <button
+                  @click="showEditModal = true"
+                  class="mt-2 mb-4 px-4 py-1 text-sm bg-navy-900 text-white rounded hover:bg-navy-800"
+                >
+                  Edit
+                </button>
+                <p class="text-gray-900">
+                  {{ customer.address.complete_address }}
+                </p>
+                <p class="text-gray-900">
+                  {{ customer.address.province }}, {{ customer.address.city }},
+                  {{ customer.address.zip_code }}
+                </p>
+              </div>
             </div>
           </div>
-        </div>
 
           <!-- Delivery Method -->
           <div class="bg-white rounded-lg shadow-sm p-6">
@@ -183,9 +183,7 @@
                 <div class="flex-1">
                   <h3 class="text-sm font-medium text-gray-900">{{ item.name }}</h3>
                   <p class="text-sm text-gray-500">Qty: {{ item.quantity }}</p>
-                  <p class="text-sm font-medium text-navy-600">
-                    ₱{{ (item.price) }}
-                  </p>
+                  <p class="text-sm font-medium text-navy-600">₱{{ item.price }}</p>
                 </div>
               </div>
             </div>
@@ -193,15 +191,15 @@
             <div class="border-t mt-6 pt-4 space-y-2">
               <div class="flex justify-between text-sm">
                 <span class="text-gray-600">Subtotal</span>
-                <span class="font-medium">₱{{ (summary.subtotal) }}</span>
+                <span class="font-medium">₱{{ summary.subtotal }}</span>
               </div>
               <div class="flex justify-between text-sm">
                 <span class="text-gray-600">Delivery Fee</span>
-                <span class="font-medium">₱{{ (summary.shipping) }}</span>
+                <span class="font-medium">₱{{ summary.shipping }}</span>
               </div>
               <div class="flex justify-between text-base font-semibold pt-2">
                 <span>Total Amount</span>
-                <span class="text-navy-600">₱{{ (summary.total) }}</span>
+                <span class="text-navy-600">₱{{ summary.total }}</span>
               </div>
             </div>
 
@@ -374,41 +372,48 @@
         </div>
       </Dialog>
     </TransitionRoot>
-    <TransitionRoot appear :show="isLoading" as="template">
-  <Dialog as="div" @close="isLoading = false" class="relative z-50">
-    <TransitionChild
-      as="template"
-      enter="duration-300 ease-out"
-      enter-from="opacity-0"
-      enter-to="opacity-100"
-      leave="duration-200 ease-in"
-      leave-from="opacity-100"
-      leave-to="opacity-0"
+    <!-- Payment Modal -->
+    <div
+      v-if="showPaymentModal"
+      class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
     >
-      <div class="fixed inset-0 bg-black bg-opacity-25" />
-    </TransitionChild>
+      <div class="bg-white rounded-lg shadow-lg w-11/12 max-w-md p-6">
+        <h2 class="text-xl font-bold text-gray-900 mb-4">Confirm Payment</h2>
+        <p class="text-gray-700 mb-4">
+          To proceed with your order, please confirm the payment.
+        </p>
 
-    <div class="fixed inset-0">
-      <div class="flex min-h-full items-center justify-center p-4">
-        <TransitionChild
-          as="template"
-          enter="duration-300 ease-out"
-          enter-from="opacity-0 scale-95"
-          enter-to="opacity-100 scale-100"
-          leave="duration-200 ease-in"
-          leave-from="opacity-100 scale-100"
-          leave-to="opacity-0 scale-95"
-        >
-          <DialogPanel class="w-full max-w-md transform overflow-hidden rounded-lg bg-white p-6 text-center align-middle shadow-xl transition-all">
-            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-navy-900 mx-auto mb-4"></div>
-            <p class="text-lg font-medium text-gray-900">Processing your order...</p>
-            <p class="text-sm text-gray-500">Please wait while we redirect you to payment.</p>
-          </DialogPanel>
-        </TransitionChild>
+        <div class="space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="text-gray-600">Subtotal:</span>
+            <span class="font-medium">₱{{ summary.subtotal }}</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-gray-600">Delivery Fee:</span>
+            <span class="font-medium">₱{{ summary.shipping }}</span>
+          </div>
+          <div class="flex items-center justify-between text-lg font-semibold">
+            <span>Total Amount:</span>
+            <span class="text-navy-600">₱{{ summary.total }}</span>
+          </div>
+        </div>
+
+        <div class="mt-6 flex justify-end space-x-3">
+          <button
+            @click="showPaymentModal = false"
+            class="px-4 py-2 bg-gray-200 rounded-lg text-gray-600 hover:bg-gray-300"
+          >
+            Cancel
+          </button>
+          <button
+            @click="proceedToPayment"
+            class="px-4 py-2 bg-navy-900 text-white rounded-lg hover:bg-navy-800"
+          >
+            Pay Now
+          </button>
+        </div>
       </div>
     </div>
-  </Dialog>
-</TransitionRoot>
   </div>
 </template>
 
@@ -447,7 +452,6 @@ const props = defineProps({
     type: Object,
     required: true,
   },
-
 });
 
 // Form state
@@ -465,7 +469,7 @@ const pickupDate = ref("");
 const pickupTime = ref("");
 const notes = ref("");
 const agreeToTerms = ref(false);
-
+const showPaymentModal = ref(false);
 // Cart items
 
 // Computed values
@@ -483,22 +487,21 @@ const total = computed(() => {
 
 // Methods
 
-
 const updateAddress = () => {
   // Implement address update logic
   showEditModal.value = false;
 };
 
-
-
 const isLoading = ref(false);
 
 const completePurchase = () => {
   if (!agreeToTerms.value) return;
+  showPaymentModal.value = true;
+};
 
-  isLoading.value = true;
-
-  router.post(route('customer.checkout.store'), {
+// Proceed with the payment and order creation
+const proceedToPayment = () => {
+  router.post(route("customer.checkout.store"), {
     items: props.items,
     summary: props.summary,
     delivery_method: deliveryMethod.value,
@@ -508,6 +511,14 @@ const completePurchase = () => {
     notes: notes.value,
     shipping_amount: props.summary.shipping,
   });
+  showPaymentModal.value = false; // Close modal after submission
+  openPaymentPage();
+};
+
+const openPaymentPage = () => {
+  // Open the payment route in a new tab
+  const paymentUrl = route("customer.payment");
+  window.open(paymentUrl, "_blank");
 };
 </script>
 

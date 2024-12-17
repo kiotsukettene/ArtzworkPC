@@ -72,10 +72,10 @@ const menuItems = computed(() =>
     { name: "Category", icon: TagIcon, href: route("categories.index") },
     { name: "Brands", icon: ShoppingBagIcon, href: route("brands.index") },
     { name: "Products", icon: PackageIcon, href: route("products.index") },
-    { name: "Transactions", icon: ClipboardListIcon, href: "admin/transactions" },
+    { name: "Transactions", icon: ClipboardListIcon, href: route("transactions") },
     { name: "Order History", icon: ClipboardListIcon, href: "admin/order-history" },
     { name: "Return / Refund", icon: ClipboardListIcon, href: "admin/return-refund" },
-    { name: "Customers", icon: UsersIcon, href: "admin/customers" },
+    { name: "Customers", icon: UsersIcon, href: route("customers") },
     { name: "Employees", icon: UsersIcon, href: route("employees.index") },
   ].map((item) => ({
     ...item,

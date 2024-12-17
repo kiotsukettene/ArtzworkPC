@@ -15,7 +15,7 @@ use App\Http\Middleware\EnsureCustomerIsAuthenticated;
 use App\Http\Controllers\Client\ClientProfileController;
 use App\Http\Controllers\Client\CategoryProductsController;
 use App\Http\Controllers\Client\ComponentSelectionController;
-
+use App\Http\Controllers\MyOrdersController;
 
 Route::middleware(['auth:customer'])->group(function () {
     Route::post('/customer/logout', [ClientRegisterController::class, 'destroy'])->name('customer.logout');
@@ -49,7 +49,16 @@ Route::middleware(['auth:customer'])->group(function () {
             ->name('customer.payment.success');
         Route::post('/customer/checkout', [CheckoutController::class, 'store'])
             ->name('customer.checkout.store');
-        Route::get('/payment/{order_id}', [CheckoutController::class, 'pay'])->name('customer.payment');
+            
+        Route::get('/payment', [CheckoutController::class, 'pay'])
+        ->name('customer.payment');
+
+        Route::get('/customer/my-orders', [MyOrdersController::class, 'index'])
+            ->name('customer.myOrders');
+
+        Route::inertia('/customer/try', 'ClientSide/Customer/Try'); 
+
+
     });
 });
 

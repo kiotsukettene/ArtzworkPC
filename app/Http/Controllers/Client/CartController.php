@@ -208,7 +208,7 @@ class CartController extends Controller
                         'product_id' => $item['product_id']
                     ],
                     [
-                        'quantity' => DB::raw('quantity + ' . $item['quantity']),
+                        'quantity' => $item['quantity'],
                         'price' => $item['price']
                     ]
                 );
@@ -219,18 +219,13 @@ class CartController extends Controller
 
             foreach ($request->items as $item) {
                 $productId = $item['product_id'];
-
-                if (isset($cart[$productId])) {
-                    $cart[$productId]['quantity'] += $item['quantity'];
-                } else {
-                    $cart[$productId] = [
-                        'name' => $item['name'],
-                        'price' => $item['price'],
-                        'quantity' => $item['quantity'],
-                        'image' => $item['image'],
-                        'selected' => true
-                    ];
-                }
+                $cart[$productId] = [
+                    'name' => $item['name'],
+                    'price' => $item['price'],
+                    'quantity' => $item['quantity'],
+                    'image' => $item['image'],
+                    'selected' => true
+                ];
             }
 
             Session::put('cart', $cart);

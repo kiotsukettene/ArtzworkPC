@@ -2,8 +2,10 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BrandController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AuthenticateController;
@@ -25,6 +27,12 @@ Route::middleware('auth')->group(function () {
     Route::resource('admin/employees', EmployeeController::class)
         ->names('employees');
     Route::post('admin/logout', [AuthenticateController::class, 'destroy'])->name('admin.logout');
+
+    Route::get('admin/customers', [CustomerController::class, 'index'])
+        ->name('customers');
+
+    Route::get('admin/transactions', [OrderController::class, 'index'])
+        ->name('transactions');
 
 });
 
