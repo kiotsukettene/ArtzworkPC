@@ -56,6 +56,9 @@
                   {{ formatDateTime(order.created_at) }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">{{ order.total_amount }}</td>
+                <td class="px-6 py-4 whitespace-nowrap upSpercase">
+                  {{ order.payment_status }}
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap uppercase">
                   {{ order.payment_method }}
                 </td>
@@ -127,18 +130,16 @@
       class="fixed z-50 bg-white border border-gray-200 shadow-lg rounded-md"
       :style="{ top: dropdownPosition.top + 'px', left: dropdownPosition.left + 'px' }"
     >
-      <Link :href="route('employees.edit', activeActionMenu.id)">
         <button
           class="block w-full px-4 py-2 text-sm text-green-500 hover:bg-green-100 text-left"
         >
-          Accept
+          Approve
         </button>
-      </Link>
       <button
         class="block w-full px-4 py-2 text-sm text-red-600 hover:bg-red-100 text-left"
         @click="openDeleteModal(activeActionMenu)"
       >
-        Delete
+        Decline
       </button>
     </div>
 
@@ -151,11 +152,11 @@
             <div
               class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-100"
             >
-              <TrashIcon class="h-6 w-6 text-red-600" />
+              <XIcon class="h-6 w-6 text-red-600" />
             </div>
-            <h3 class="mt-4 text-lg font-semibold">Delete Employee</h3>
+            <h3 class="mt-4 text-lg font-semibold">Decline Order</h3>
             <p class="mt-2 text-sm text-gray-500">
-              Are you sure you want to delete this employee?
+              Are you sure you want to decline this order?
             </p>
             <div class="mt-6 flex gap-4">
               <button
@@ -166,6 +167,39 @@
               </button>
               <button
                 @click="confirmDelete"
+                class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div v-if="showAcceptModal" class="fixed inset-0 z-50 overflow-y-auto">
+      <div class="flex items-center justify-center min-h-screen px-4">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+        <div class="relative bg-white rounded-lg max-w-md w-full p-6">
+          <div class="flex flex-col items-center">
+            <div
+              class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-100"
+            >
+              <CheckIcon class="h-6 w-6 text-green-600" />
+            </div>
+            <h3 class="mt-4 text-lg font-semibold">Accept Order</h3>
+            <p class="mt-2 text-sm text-gray-500">
+              Are you sure you want to accept this order?
+            </p>
+            <div class="mt-6 flex gap-4">
+              <button
+                @click="closeModal"
+                class="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200"
+              >
+                Cancel
+              </button>
+              <button
+                @click="confirmAccept"
                 class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
               >
                 Confirm
@@ -187,6 +221,8 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   TrashIcon,
+  CheckIcon,
+  XIcon,
 } from "lucide-vue-next";
 import Sidebar from "../../../Components/Sidebar.vue";
 import Header from "../../../Components/Header.vue";
@@ -196,14 +232,13 @@ const props = defineProps({
   orders: Object,
 });
 
-const headers = ["Order ID", "Customer", "Date", "Total", "Method", "Status", ""];
+const headers = ["Order ID", "Customer", "Date", "Total", "Payment Status", "Method", "Status", ""];
 
 const formatDateTime = (date) => {
   if (!date) return "No activity yet";
   return new Date(date).toLocaleString("en-us", {
     hour: "numeric",
     minute: "numeric",
-    second: "numeric",
     hour12: true, // Use 12-hour format
   });
 };
@@ -244,8 +279,14 @@ const openActionMenu = (user, event) => {
   }
 };
 
-const openDeleteModal = (user) => {
-  userToDelete.value = user;
+const openAcceptModal = (order) => {
+  orderToAccept.value = order;
+  activeActionMenu.value = null;
+  showAcceptModal.value = true;
+};
+
+const openDeleteModal = (order) => {
+  orderToDecline.value = order;
   activeActionMenu.value = null;
   showDeleteModal.value = true;
 };
@@ -255,13 +296,13 @@ const closeActionMenu = () => {
 };
 
 const confirmDelete = () => {
-  if (!userToDelete.value) return;
+  if (!orderToDecline.value) return;
 
-  router.delete(route("employees.destroy", userToDelete.value.id), {
+  router.post(route("orders.decline", orderToDecline.value.id), {
     preserveScroll: true,
     onSuccess: () => {
       showDeleteModal.value = false;
-      userToDelete.value = null;
+      orderToDecline.value = null;
     },
     onError: (errors) => {
       showDeleteModal.value = false;
@@ -274,7 +315,7 @@ const confirmDelete = () => {
 
 const closeModal = () => {
   showDeleteModal.value = false;
-  userToDelete.value = null;
+  orderToDecline.value = null;
 };
 
 const makeLabel = (label) => {

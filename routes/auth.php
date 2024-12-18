@@ -33,6 +33,10 @@ Route::middleware('auth')->group(function () {
 
     Route::get('admin/transactions', [OrderController::class, 'index'])
         ->name('transactions');
+    // Route::inertia('admin/orders', 'AdminSide/Orders/OrderHistory');
+
+    Route::get('admin/orders', [OrderController::class, 'show'])
+        ->name('orders.show');
 
 });
 

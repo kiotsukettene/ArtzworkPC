@@ -142,7 +142,8 @@ class CheckoutController extends Controller
                 'shipping' => $shipping,
                 'total' => $total,
                 'payment_method' => 'gcash',
-                'customer' => $customer
+                'customer' => $customer,
+                'notes' => $request->notes ?? null
             ]);
 
             // Return the checkout URL in an Inertia response
@@ -170,7 +171,8 @@ class CheckoutController extends Controller
             'shipping_method' => 'delivery',
             'shipping_amount' => $paymentData['shipping'],
             'status' => 'pending',
-            'notes' => null
+            'payment_status' => 'paid',
+            'notes' => $paymentData['notes']
         ]);
 
         // Create order items

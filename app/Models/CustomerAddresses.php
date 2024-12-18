@@ -29,6 +29,11 @@ class CustomerAddresses extends Model
         return $this->belongsTo(Customer::class);
     }
 
+    public function orders()
+    {
+        return $this->hasMany(Orders::class, 'default_address_id');
+    }
+
     // Helper method to get full name
     public function getFullNameAttribute(): string
     {

@@ -73,7 +73,7 @@ const menuItems = computed(() =>
     { name: "Brands", icon: ShoppingBagIcon, href: route("brands.index") },
     { name: "Products", icon: PackageIcon, href: route("products.index") },
     { name: "Transactions", icon: ClipboardListIcon, href: route("transactions") },
-    { name: "Order History", icon: ClipboardListIcon, href: "admin/order-history" },
+    { name: "Order History", icon: ClipboardListIcon, href: route("orders.show") },
     { name: "Return / Refund", icon: ClipboardListIcon, href: "admin/return-refund" },
     { name: "Customers", icon: UsersIcon, href: route("customers") },
     { name: "Employees", icon: UsersIcon, href: route("employees.index") },

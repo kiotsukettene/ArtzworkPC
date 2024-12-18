@@ -1,7 +1,7 @@
     <template>
         <div class="min-h-screen bg-gray-50">
         <NavLink />
-
+        <Toast />
         <!-- Main Content -->
         <div class="container mx-auto px-4 py-8">
             <div v-if="$page.props.success" class="mb-4 p-4 bg-green-100 text-green-700 rounded-lg">
@@ -79,6 +79,7 @@
                 <!-- End of Orders List -->
                 </div>
 
+
             </div>
             </div>
         </div>
@@ -93,6 +94,7 @@
     } from "lucide-vue-next";
     import NavLink from "../../../Components/NavLink.vue";
     import ProfileSidebar from "../../../Components/ProfileSidebar.vue";
+    import Toast from "../../../Components/Toast.vue";
 
     const props = defineProps({
         customer: Object,
@@ -103,6 +105,7 @@
     // Tabs
     const tabs = [
         { id: "pending", name: "Pending" },
+        { id: "processing", name: "Processing" },
         { id: "shipped", name: "Shipped" },
         { id: "completed", name: "Completed" },
         { id: "canceled", name: "Canceled" },
