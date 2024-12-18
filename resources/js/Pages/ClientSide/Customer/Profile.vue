@@ -19,7 +19,7 @@
 
       <!-- Main Content -->
       <div class="flex-1">
-        <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+        <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
           <div class="flex justify-between items-center mb-6">
             <h2 class="text-xl font-semibold">Profile Information</h2>
             <Link

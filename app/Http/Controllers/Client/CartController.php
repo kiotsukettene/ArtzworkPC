@@ -59,16 +59,25 @@ class CartController extends Controller
     {
         if (Auth::guard('customer')->check()) {
             // For authenticated users, save to database
-            CartItem::updateOrCreate(
-                [
+            $cartItem = CartItem::where('customer_id', Auth::guard('customer')->id())
+                ->where('product_id', $request->product_id)
+                ->first();
+
+            if ($cartItem) {
+                // If item exists, add the new quantity to the existing quantity
+                $cartItem->update([
+                    'quantity' => $cartItem->quantity + $request->quantity
+                ]);
+            } else {
+                // If item doesn't exist, create new
+                CartItem::create([
                     'customer_id' => Auth::guard('customer')->id(),
-                    'product_id' => $request->product_id
-                ],
-                [
+                    'product_id' => $request->product_id,
                     'quantity' => $request->quantity,
-                    'price' => $request->price
-                ]
-            );
+                    'price' => $request->price,
+                    'selected' => true
+                ]);
+            }
         } else {
             // For guests, save to session
             $cart = Session::get('cart', []);

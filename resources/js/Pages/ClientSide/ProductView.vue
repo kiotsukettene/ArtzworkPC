@@ -212,9 +212,14 @@
 
               <!-- Compare Button -->
               <button
+                @click="toggleProductForComparison(product)"
                 class="flex-none w-20 h-12 flex items-center justify-center rounded-lg border border-gray-300 hover:bg-gray-200 transition-colors"
+                :class="{ 'bg-navy-100 border-navy-600': isSelectedForComparison(product.id) }"
               >
-                <ArrowUpDown class="h-5 w-5 text-gray-600" />
+                <ArrowUpDown
+                  class="h-5 w-5"
+                  :class="isSelectedForComparison(product.id) ? 'text-navy-600' : 'text-gray-600'"
+                />
               </button>
 
               <!-- Add to Cart Button -->
@@ -444,6 +449,16 @@
                       <HeartIcon class="h-4 w-4 sm:h-5 sm:w-5 hover:text-red-500" />
                     </button>
                     <button
+                      @click.prevent="toggleProductForComparison(product)"
+                      class="p-1.5 sm:p-1.5 primary-color bg-[#e2e8f0] rounded-lg"
+                      :class="{ 'bg-navy-100 border-navy-600': isSelectedForComparison(product.id) }"
+                    >
+                      <ArrowUpDown
+                        class="h-4 w-4 sm:h-5 sm:w-5"
+                        :class="isSelectedForComparison(product.id) ? 'text-navy-600' : 'text-gray-600'"
+                      />
+                    </button>
+                    <button
                       @click.prevent="addSimilarToCart(product)"
                       class="p-1.5 sm:p-1.5 button-primary rounded-lg"
                     >
@@ -477,6 +492,58 @@
       :product="addedProduct"
       @close="showSuccessModal = false"
     />
+    <div
+      v-if="showCompareReminder"
+      class="fixed top-4 right-4 bg-white p-4 rounded-lg shadow-lg z-50 border border-navy-600 max-w-sm"
+    >
+      <div class="flex items-start">
+        <div class="flex-1">
+          <h3 class="text-sm font-medium text-gray-900">Select a product to compare</h3>
+          <p class="mt-1 text-sm text-gray-500">
+            Click the compare icon on any similar product to compare it with {{ product.name }}
+          </p>
+        </div>
+        <button
+          @click="showCompareReminder = false"
+          class="ml-4 text-gray-400 hover:text-gray-500"
+        >
+          <XIcon class="h-5 w-5" />
+        </button>
+      </div>
+    </div>
+    <div
+      v-if="selectedProducts.length > 0"
+      class="fixed bottom-4 right-4 z-50"
+    >
+      <div class="bg-white rounded-lg shadow-lg p-4 border border-navy-600">
+        <div class="mb-3">
+          <h3 class="text-sm font-medium text-gray-900">Selected for comparison ({{ selectedProducts.length }}/2)</h3>
+          <div class="mt-2 space-y-2">
+            <div v-for="prod in selectedProducts" :key="prod.id" class="flex items-center space-x-2">
+              <span class="text-sm text-gray-600">{{ prod.name }}</span>
+              <button @click="toggleProductForComparison(prod)" class="text-gray-400 hover:text-red-500">
+                <XIcon class="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="flex justify-between">
+          <button
+            @click="clearSelectedProducts"
+            class="text-sm text-gray-600 hover:text-gray-900"
+          >
+            Clear all
+          </button>
+          <button
+            v-if="selectedProducts.length === 2"
+            @click="compareSelectedProducts"
+            class="bg-navy-600 text-white px-4 py-2 rounded-lg hover:bg-navy-700"
+          >
+            Compare
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -491,6 +558,7 @@ import {
   ArrowUpDown,
   ChevronLeftIcon,
   ChevronRightIcon,
+  XIcon,
 } from "lucide-vue-next";
 import NavLink from "../../Components/NavLink.vue";
 import Footer from "../../Components/Footer.vue";
@@ -648,6 +716,52 @@ const addSimilarToCart = (product) => {
     }
   );
 };
+
+// Add this with your other functions
+const redirectToCompare = (product) => {
+  router.get(route('compare.products'), {
+    category_id: props.product.category_id,
+    product1: props.product.id,
+    product2: product.id
+  });
+};
+
+const showCompareReminder = ref(false);
+const selectedProducts = ref([]);
+
+const toggleProductForComparison = (product) => {
+  const index = selectedProducts.value.findIndex(p => p.id === product.id);
+
+  if (index !== -1) {
+    // Remove if already selected
+    selectedProducts.value.splice(index, 1);
+  } else if (selectedProducts.value.length < 2) {
+    // Add if less than 2 products are selected
+    selectedProducts.value.push(product);
+  } else {
+    // Replace the first product if already have 2
+    selectedProducts.value.shift();
+    selectedProducts.value.push(product);
+  }
+};
+
+const isSelectedForComparison = (productId) => {
+  return selectedProducts.value.some(p => p.id === productId);
+};
+
+const clearSelectedProducts = () => {
+  selectedProducts.value = [];
+};
+
+const compareSelectedProducts = () => {
+  if (selectedProducts.value.length === 2) {
+    router.get(route('compare.products'), {
+      category_id: props.product.category_id,
+      product1: selectedProducts.value[0].id,
+      product2: selectedProducts.value[1].id
+    });
+  }
+};
 </script>
 
 <style scoped>
@@ -750,5 +864,17 @@ input[type="number"]::-webkit-outer-spin-button {
 
 .group:hover button {
   animation: pulse 2s infinite;
+}
+
+.group:hover .absolute {
+  display: block;
+}
+
+.transition-opacity {
+  transition: opacity 0.2s ease-in-out;
+}
+
+.bg-navy-100 {
+  background-color: #e8eaf6;
 }
 </style>

@@ -31,6 +31,28 @@ class ProductListController extends Controller
                 'categories'
             ]));
 
+        $filteredProductIds = (clone $query)->pluck('id');
+
+        $categories = Category::select(['id', 'name'])
+            ->whereHas('products', function($q) use ($filteredProductIds) {
+                $q->whereIn('id', $filteredProductIds);
+            })
+            ->withCount(['products' => function($q) use ($filteredProductIds) {
+                $q->whereIn('id', $filteredProductIds);
+            }])
+            ->having('products_count', '>', 0)
+            ->get();
+
+        $brands = Brand::select(['id', 'name'])
+            ->whereHas('products', function($q) use ($filteredProductIds) {
+                $q->whereIn('id', $filteredProductIds);
+            })
+            ->withCount(['products' => function($q) use ($filteredProductIds) {
+                $q->whereIn('id', $filteredProductIds);
+            }])
+            ->having('products_count', '>', 0)
+            ->get();
+
         $products = $query->paginate(16);
 
         $products->getCollection()->transform(function ($product) {
@@ -53,18 +75,6 @@ class ProductListController extends Controller
                     ];
                 })
             ];
-        });
-
-        $categories = Cache::remember('categories', 3600, function () {
-            return Category::select(['id', 'name'])
-                ->withCount('products')
-                ->get();
-        });
-
-        $brands = Cache::remember('brands', 3600, function () {
-            return Brand::select(['id', 'name'])
-                ->withCount('products')
-                ->get();
         });
 
         return Inertia::render('ClientSide/ProductList', [

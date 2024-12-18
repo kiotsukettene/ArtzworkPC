@@ -39,7 +39,7 @@ class CheckoutController extends Controller
 
         // Calculate totals
         $subtotal = $selectedItems->sum('subtotal');
-        $shipping = 145; // You can modify this based on your shipping logic
+        $shipping = request('delivery_method') === 'pickup' ? 0 : 145;
         $total = $subtotal + $shipping;
 
         return Inertia::render('ClientSide/Customer/Checkout', [
@@ -91,7 +91,7 @@ class CheckoutController extends Controller
 
         // Calculate totals
         $subtotal = $selectedItems->sum('subtotal');
-        $shipping = 145;
+        $shipping = request('delivery_method') === 'pickup' ? 0 : 145;
         $total = $subtotal + $shipping;
 
         // Create Paymongo source

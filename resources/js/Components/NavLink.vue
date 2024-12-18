@@ -82,7 +82,7 @@
                     My Profile
                   </Link>
                   <Link
-                    href="/customer/orders"
+                    href="/customer/my-orders"
                     class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
                     <Package class="h-4 w-4 inline-block mr-2" />

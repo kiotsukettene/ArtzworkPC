@@ -420,7 +420,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { Link, router } from "@inertiajs/vue3";
 import {
   Dialog,
@@ -526,6 +526,15 @@ const proceedToPayment = () => {
     });
   }
 };
+
+watch(deliveryMethod, (newValue) => {
+  router.get(route('customer.checkout'), {
+    delivery_method: newValue
+  }, {
+    preserveState: true,
+    preserveScroll: true
+  });
+});
 </script>
 
 <style scoped>
