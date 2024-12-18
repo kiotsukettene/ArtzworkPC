@@ -1,13 +1,16 @@
     <template>
         <div class="min-h-screen bg-gray-50">
         <NavLink />
-    
+
         <!-- Main Content -->
         <div class="container mx-auto px-4 py-8">
+            <div v-if="$page.props.success" class="mb-4 p-4 bg-green-100 text-green-700 rounded-lg">
+                {{ $page.props.success }}
+            </div>
             <div class="flex flex-col md:flex-row gap-8">
             <!-- Sidebar -->
             <ProfileSidebar :customer="customer" />
-    
+
            <!-- Orders Content -->
             <div class="flex-1">
             <div class="container mx-auto px-4 py-8 bg-white rounded-lg shadow-sm">
@@ -81,7 +84,7 @@
         </div>
         </div>
     </template>
-    
+
     <script setup>
     import { ref, computed } from "vue";
     import { Link } from "@inertiajs/vue3";
@@ -90,12 +93,13 @@
     } from "lucide-vue-next";
     import NavLink from "../../../Components/NavLink.vue";
     import ProfileSidebar from "../../../Components/ProfileSidebar.vue";
-    
+
     const props = defineProps({
         customer: Object,
         orders: Array,
+        success: String
     });
-    
+
     // Tabs
     const tabs = [
         { id: "pending", name: "Pending" },
@@ -110,46 +114,45 @@ const getDate = (date) =>
     month: "long",
     day: "numeric",
   });
-    
+
     const currentTab = ref("pending");
-    
+
     // Sample Orders Data
-    
-    
+
+
     // Computed
     const filteredOrders = computed(() => {
         return props.orders.filter((order) => order.status === currentTab.value);
     });
-    
+
     // Methods
     // const formatPrice = (price) => {
     //     return price.toLocaleString("en-PH", { minimumFractionDigits: 2 });
     // };
     </script>
-    
+
     <style scoped>
     .bg-navy-600 {
         background-color: #1a237e;
     }
-    
+
     .bg-navy-700 {
         background-color: #151b60;
     }
-    
+
     .bg-navy-800 {
         background-color: #0d1147;
     }
-    
+
     .bg-navy-900 {
         background-color: #070b2e;
     }
-    
+
     .text-navy-600 {
         color: #1a237e;
     }
-    
+
     .border-navy-600 {
         border-color: #1a237e;
     }
     </style>
-    

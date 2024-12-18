@@ -153,7 +153,7 @@ class CheckoutController extends Controller
         }
     }
 
-    public function store()
+    public function success()
     {
         $paymentData = Session::get('payment_data');
 
@@ -161,15 +161,16 @@ class CheckoutController extends Controller
             return redirect()->route('customer.checkout')->withErrors(['error' => 'Payment session expired.']);
         }
 
-        // Create the order only after successful payment
+        // Create the order
         $order = Orders::create([
             'reference_number' => 'ORD-' . uniqid(),
             'customer_id' => $paymentData['customer']->id,
             'total_amount' => $paymentData['total'],
             'payment_method' => $paymentData['payment_method'],
-            'shipping_method' => 'delivery', // Modify based on your requirements
+            'shipping_method' => 'delivery',
             'shipping_amount' => $paymentData['shipping'],
-            'notes' => null // Modify based on your requirements
+            'status' => 'pending',
+            'notes' => null
         ]);
 
         // Create order items
@@ -190,15 +191,6 @@ class CheckoutController extends Controller
 
         Session::forget('payment_data');
 
-        return Inertia::render('ClientSide/Customer/MyOrders', [
-            'message' => 'Payment successful!',
-        ]);
-    }
-
-    public function success()
-    {
-        return Inertia::render('ClientSide/Customer/MyOrders', [
-            'message' => 'Payment successful!',
-        ]);
+        return redirect()->route('customer.myOrders')->with('success', 'Payment successful! Your order has been placed.');
     }
 }

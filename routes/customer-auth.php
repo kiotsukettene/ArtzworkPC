@@ -47,16 +47,11 @@ Route::middleware(['auth:customer'])->group(function () {
 
         Route::get('/customer/payment/success', [CheckoutController::class, 'success'])
             ->name('customer.payment.success');
-        Route::post('/customer/checkout', [CheckoutController::class, 'store'])
-            ->name('customer.checkout.store');
-            
-        Route::get('/payment', [CheckoutController::class, 'pay'])
-        ->name('customer.payment');
-
         Route::get('/customer/my-orders', [MyOrdersController::class, 'index'])
             ->name('customer.myOrders');
-
-        Route::inertia('/customer/try', 'ClientSide/Customer/Try'); 
+        Route::get('payment', [CheckoutController::class, 'pay'])
+            ->name('customer.payment');
+        Route::inertia('/customer/try', 'ClientSide/Customer/Try');
 
 
     });
