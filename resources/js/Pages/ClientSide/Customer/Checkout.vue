@@ -504,9 +504,16 @@ const completePurchase = () => {
 const proceedToPayment = () => {
   if (paymentMethod.value === 'gcash') {
     isLoading.value = true;
-    
+
+    // Create the shipping address string using props.customer
+    const shippingAddress = props.customer.address ?
+      `${props.customer.address.complete_address}, ${props.customer.address.city}, ${props.customer.address.province}, ${props.customer.address.zip_code}` : '';
+
     // Make a GET request to our backend to create the payment source
-    router.get(route('customer.payment'), {}, {
+    router.get(route('customer.payment'), {
+      notes: notes.value,  // Add notes from the form
+      shipping_address: shippingAddress  // Add formatted shipping address
+    }, {
       preserveState: true,
       onSuccess: () => {
         isLoading.value = false;

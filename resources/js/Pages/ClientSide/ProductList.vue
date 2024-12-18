@@ -173,7 +173,7 @@
                     product.image ? '/storage/' + product.image : 'storage/default.jpg'
                   "
                   :alt="product.name"
-                  class="w-full h-28 sm:h-32 md:h-36 lg:h-40 object-contain rounded-lg"
+                  class="w-full h-28 sm:h-32 md:h-36 lg:h-40 object-cover rounded-lg"
                 />
               </div>
 

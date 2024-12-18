@@ -57,9 +57,9 @@
                 <span
                   :class="[
                     'px-3 py-1 text-sm font-medium rounded-full',
-                    order.status === 'completed' ? 'bg-green-500 text-white' :
-                    order.status === 'shipped' ? 'bg-blue-500 text-white' :
-                    order.status === 'cancelled' ? 'bg-red-500 text-white' :
+                    order.order_status === 'completed' ? 'bg-green-500 text-white' :
+                    order.order_status === 'shipped' ? 'bg-blue-500 text-white' :
+                    order.order_status === 'cancelled' ? 'bg-red-500 text-white' :
                     'bg-yellow-500 text-white'
                   ]"
                 >
@@ -108,7 +108,7 @@
               </div>
               <div class="text-right">
                 <p class="text-gray-600">Total:</p>
-                <p class="text-2xl font-bold">₱{{ selectedOrder.total_amount }}</p>
+                <p class="text-2xl font-semibold">₱{{ selectedOrder.total_amount }}</p>
               </div>
             </div>
           </div>
@@ -148,7 +148,7 @@
                   <p class="font-medium">{{ selectedOrder.customer_address }}</p>
                 </div>
                 <div>
-                  <p class="text-gray-600 mb-1">Tracking Number:</p>
+                  <p class="text-gray-600 mb-1">Phone Number:</p>
                   <p class="font-medium">{{ selectedOrder.customer_phone_number }}</p>
                 </div>
                 <div>
@@ -175,9 +175,8 @@
           </div>
         </div>
         <!-- Pagination Links -->
-        <div class="flex items-center justify-between mt-6">
+        <div v-if="filteredOrders.length && !showOrderDetails" class="flex items-center justify-between mt-6">
           <div class="flex items-center">
-
           </div>
           <div class="flex gap-2">
             <Link
@@ -203,8 +202,8 @@
                 {{ link.label }}
               </template>
             </Link>
-              </div>
-            </div>
+          </div>
+        </div>
       </div>
     </main>
   </div>

@@ -134,7 +134,7 @@ class CheckoutController extends Controller
                 throw new \Exception('Failed to create payment source');
             }
 
-            // Store payment data in session
+            // Store payment data in session with the notes and shipping address from request
             Session::put('payment_data', [
                 'response_id' => $response->data->id,
                 'selected_items' => $selectedItems,
@@ -143,7 +143,8 @@ class CheckoutController extends Controller
                 'total' => $total,
                 'payment_method' => 'gcash',
                 'customer' => $customer,
-                'notes' => $request->notes ?? null
+                'notes' => $request->input('notes'),  // Get notes from request
+                'shipping_address' => $request->input('shipping_address')  // Get shipping address from request
             ]);
 
             // Return the checkout URL in an Inertia response
@@ -162,7 +163,7 @@ class CheckoutController extends Controller
             return redirect()->route('customer.checkout')->withErrors(['error' => 'Payment session expired.']);
         }
 
-        // Create the order
+        // Create the order with shipping address and notes
         $order = Orders::create([
             'reference_number' => 'ORD-' . uniqid(),
             'customer_id' => $paymentData['customer']->id,
@@ -172,7 +173,8 @@ class CheckoutController extends Controller
             'shipping_amount' => $paymentData['shipping'],
             'status' => 'pending',
             'payment_status' => 'paid',
-            'notes' => $paymentData['notes']
+            'notes' => $paymentData['notes'] ?? null,
+            'shipping_address' => $paymentData['shipping_address']
         ]);
 
         // Create order items

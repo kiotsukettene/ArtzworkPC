@@ -22,6 +22,7 @@ class Orders extends Model
         'notes',
         'return_refund_status',
         'gcash_transaction_id',
+        'shipping_address'
     ];
 
     public function items()
