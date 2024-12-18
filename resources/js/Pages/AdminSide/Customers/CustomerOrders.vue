@@ -4,8 +4,7 @@
 
     <main class="lg:ml-64 min-h-screen">
       <Header title="Customer Details" />
-      <div v-if="$page.props.flash.success">
-        <Toast>{{ $page.props.flash.success }}</Toast>
+      <div v-if="$page.props.flash.success" onMounted="$toast.success($page.props.flash.success)">
       </div>
 
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

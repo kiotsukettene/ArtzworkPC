@@ -3,8 +3,10 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\MyOrdersController;
 use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\ClientLoginController;
+use App\Http\Controllers\OrderDetailsController;
 use App\Http\Controllers\ClientRegisterController;
 use App\Http\Controllers\CompareProductsController;
 use App\Http\Controllers\Client\PCBuilderController;
@@ -15,7 +17,6 @@ use App\Http\Middleware\EnsureCustomerIsAuthenticated;
 use App\Http\Controllers\Client\ClientProfileController;
 use App\Http\Controllers\Client\CategoryProductsController;
 use App\Http\Controllers\Client\ComponentSelectionController;
-use App\Http\Controllers\MyOrdersController;
 
 Route::middleware(['auth:customer'])->group(function () {
     Route::post('/customer/logout', [ClientRegisterController::class, 'destroy'])->name('customer.logout');
@@ -51,6 +52,12 @@ Route::middleware(['auth:customer'])->group(function () {
             ->name('customer.myOrders');
         Route::get('payment', [CheckoutController::class, 'pay'])
             ->name('customer.payment');
+
+        Route::get('/customer/orders/{reference_number}', [OrderDetailsController::class, 'show'])
+            ->name('customer.orderDetails');
+
+
+
         Route::inertia('/customer/try', 'ClientSide/Customer/Try');
 
 
@@ -83,6 +90,8 @@ Route::middleware(['guest'])->group(function () {
 
     Route::get('/compare/products', [CompareProductsController::class, 'index'])
         ->name('compare.products');
+
+
 
 
 

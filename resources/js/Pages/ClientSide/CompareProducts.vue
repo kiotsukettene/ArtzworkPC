@@ -230,7 +230,7 @@
         quantity: 1,
         price: product.price,
         name: product.name,
-        image: product.image
+        image: product.image ? '/storage/' + product.image : '/storage/default.jpg'
       },
       {
         preserveScroll: true,

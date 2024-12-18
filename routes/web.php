@@ -20,6 +20,7 @@ use App\Http\Controllers\Client\CategoryProductsController;
 use App\Http\Controllers\Client\ComponentSelectionController;
 use App\Http\Controllers\EmailVerificationController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\OrderDetailsController;
 
 
 
@@ -53,3 +54,5 @@ require __DIR__ . '/customer-auth.php';
 Route::fallback(function () {
     return Inertia::render('Errors/404');
 });
+
+
