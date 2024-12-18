@@ -19,6 +19,7 @@ use App\Http\Controllers\Client\ProductViewController;
 use App\Http\Controllers\Client\CategoryProductsController;
 use App\Http\Controllers\Client\ComponentSelectionController;
 use App\Http\Controllers\EmailVerificationController;
+use App\Http\Controllers\CustomerController;
 
 
 
@@ -44,5 +45,11 @@ Route::middleware(['web'])->group(function () {
 
 
 
+
+
 require __DIR__ . '/auth.php';
 require __DIR__ . '/customer-auth.php';
+
+Route::fallback(function () {
+    return Inertia::render('Errors/404');
+});

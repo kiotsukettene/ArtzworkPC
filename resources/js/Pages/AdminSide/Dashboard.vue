@@ -20,7 +20,7 @@
           <div
             v-for="metric in metrics"
             :key="metric.title"
-            class="bg-white p-6 rounded-lg shadow-sm"
+            class="bg-white p-6 rounded-lg shadow-sm border border-gray-200"
           >
             <div class="flex items-center">
               <component :is="metric.icon" class="h-8 w-8 text-gray-400" />
@@ -43,9 +43,9 @@
         </div>
 
         <!-- Chart and Most Sold Items -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8 ">
           <!-- Overview Chart -->
-          <div class="bg-white p-6 rounded-lg shadow-sm">
+          <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
             <h3 class="text-lg font-medium mb-4">Overview</h3>
             <div class="h-64">
               <!-- Chart would go here - implement with your preferred charting library -->
@@ -53,8 +53,8 @@
           </div>
 
           <!-- Most Sold Items -->
-          <div class="bg-white p-6 rounded-lg shadow-sm">
-            <h3 class="text-lg font-medium mb-4">Most Sold Items</h3>
+          <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+            <h3 class="text-lg font-medium mb-4 ">Most Sold Items</h3>
             <div class="space-y-4">
               <div
                 v-for="item in mostSoldItems"
@@ -77,7 +77,7 @@
         </div>
 
         <!-- Latest Orders -->
-        <div class="bg-white rounded-lg shadow-sm">
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200">
           <div class="px-6 py-4 border-b">
             <h3 class="text-lg font-medium">Latest Orders</h3>
           </div>

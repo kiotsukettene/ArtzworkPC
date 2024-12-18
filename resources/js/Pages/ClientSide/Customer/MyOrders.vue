@@ -57,7 +57,7 @@
                     <div class="flex flex-col items-end gap-2 min-w-[150px]">
                         <div class="text-right">
                         <div class="font-medium text-gray-900">
-                            ${{ order.total_amount }}
+                            ₱{{ order.total_amount }}
                         </div>
                         </div>
                         <div class="flex gap-2">

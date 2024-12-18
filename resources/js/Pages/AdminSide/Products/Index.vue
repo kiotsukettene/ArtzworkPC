@@ -34,7 +34,7 @@
         </div>
 
         <!-- Product Table -->
-        <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+        <div class="bg-white shadow-sm rounded-lg overflow-hidden border border-gray-200">
           <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
               <tr>
@@ -59,6 +59,13 @@
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">{{ product.price }}</td>
                 <td class="px-6 py-4 whitespace-nowrap">{{ product.stock }}</td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div
+                    class="h-3 w-3 rounded-full hover:cursor-help"
+                    :class="product.stock > 10 ? 'bg-green-500' : 'bg-red-500'"
+                    :title="product.stock > 10 ? 'Available' : 'Low Stock / Out of Stock'"
+                  ></div>
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap text-right">
                   <button
                     @click="openActionMenu(index, $event)"
@@ -80,12 +87,7 @@
             left: dropdownPosition.left + 'px',
           }"
         >
-          <button
-            @click="viewProduct"
-            class="block w-full px-4 py-2 text-sm pr-4 text-gray-700 hover:bg-gray-100 text-left"
-          >
-            View
-          </button>
+
           <Link :href="route('products.edit', products.data[activeActionMenu].id)">
             <button
               class="block w-full px-4 py-2 text-sm text-green-500 hover:bg-green-100 text-left"
@@ -194,7 +196,7 @@ const isFilterOpen = ref(false);
 const showDeleteModal = ref(false);
 const productToDelete = ref(null);
 
-const headers = ["NAME", "SKU", "CATEGORY", "BRAND", "PRICE", "STOCKS", ""];
+const headers = ["NAME", "SKU", "CATEGORY", "BRAND", "PRICE", "STOCKS",  "", ""];
 
 const activeActionMenu = ref(null);
 const dropdownPosition = ref({ top: 0, left: 0 });

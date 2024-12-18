@@ -29,13 +29,10 @@
               <!-- Add filter options here -->
             </div>
           </div>
-          <button class="px-4 py-2 bg-navy-900 text-white rounded-md hover:bg-navy-900">
-            <Link :href="route('customers')"> New Customers </Link>
-          </button>
         </div>
 
-        <!-- Employees Table -->
-        <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+        <!-- Customers Table -->
+        <div class="bg-white shadow-sm rounded-lg overflow-hidden border border-gray-200">
           <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
               <tr>
@@ -49,11 +46,19 @@
               </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
-              <tr v-for="customer in customers.data" :key="customer.id">
+              <tr
+                v-for="customer in customers.data"
+                :key="customer.id"
+                class="cursor-pointer hover:bg-gray-50"
+                @click="$inertia.visit(route('customers.orders', customer.id))"
+              >
                 <td class="px-6 py-4 whitespace-nowrap">{{ customer.first_name }}</td>
                 <td class="px-6 py-4 whitespace-nowrap">{{ customer.last_name }}</td>
                 <td class="px-6 py-4 whitespace-nowrap">{{ customer.email }}</td>
                 <td class="px-6 py-4 whitespace-nowrap">{{ customer.phone }}</td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span class="inline-flex items-center justify-center h-8 w-8 rounded-full bg-green-100 text-navy-900 font-semibold">{{ customer.orders_count }}</span>
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   {{ getDate(customer.created_at) }}
                 </td>
@@ -153,7 +158,7 @@ const props = defineProps({
   customers: Object,
 });
 
-const headers = ["First Name", "Last Name", "Email", "Phone", "Created At"];
+const headers = ["First Name", "Last Name", "Email", "Phone", "Orders", "Created At"];
 
 const getDate = (date) =>
   new Date(date).toLocaleDateString("en-us", {

@@ -29,13 +29,10 @@
               <!-- Add filter options here -->
             </div>
           </div>
-          <button class="px-4 py-2 bg-navy-900 text-white rounded-md hover:bg-navy-900">
-            <Link :href="route('employees.create')"> New Employees </Link>
-          </button>
         </div>
 
         <!-- Employees Table -->
-        <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+        <div class="bg-white shadow-sm rounded-lg overflow-hidden border border-gray-200">
           <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
               <tr>
@@ -50,8 +47,8 @@
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
               <tr v-for="order in orders.data" :key="order.id">
-                <td class="px-6 py-4 whitespace-nowrap">{{ order.reference_number }}</td>
-                <td class="px-6 py-4 whitespace-nowrap">{{ order.customer_id }}</td>
+                <td class="px-6 py-4 whitespace-nowrap uppercase">{{ order.reference_number }}</td>
+                <td class="px-6 py-4 whitespace-nowrap">{{ order.customer_name }}</td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   {{ formatDateTime(order.created_at) }}
                 </td>

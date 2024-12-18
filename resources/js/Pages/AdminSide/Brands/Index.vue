@@ -34,7 +34,7 @@
         </div>
 
         <!-- Brand Table -->
-        <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+        <div class="bg-white shadow-sm rounded-lg overflow-hidden border border-gray-200">
           <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
               <tr>
@@ -116,12 +116,6 @@
       class="fixed z-50 bg-white border border-gray-200 shadow-lg rounded-md"
       :style="{ top: dropdownPosition.top + 'px', left: dropdownPosition.left + 'px' }"
     >
-      <button
-        @click="viewBrand"
-        class="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 text-left"
-      >
-        View
-      </button>
       <Link :href="route('brands.edit', brands.data[activeActionMenu].id)">
         <button
           class="block w-full px-4 py-2 text-sm text-green-500 hover:bg-green-100 text-left"

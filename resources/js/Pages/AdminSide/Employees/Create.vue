@@ -107,6 +107,8 @@
                   <select
                     v-model="form.status"
                     class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    readonly
+                    disabled
                   >
                     <option value="Inactive">Inactive</option>
                     <option value="Active">Active</option>
@@ -121,6 +123,7 @@
                   <input
                     v-model="form.password"
                     type="password"
+                    pattern="^(?=.*[A-Z])(?=.*\d).+$"
                     @focus="form.clearErrors('password')"
                     :class="[
                       'w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500',
@@ -128,6 +131,7 @@
                     ]"
                   />
                   <small class="text-red-700">{{ form.errors.password }}</small>
+                  <small class="text-gray-500">Password must contain at least one capital letter and one number</small>
                 </div>
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-1"

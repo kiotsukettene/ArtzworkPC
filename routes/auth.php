@@ -38,6 +38,10 @@ Route::middleware('auth')->group(function () {
     Route::get('admin/orders', [OrderController::class, 'show'])
         ->name('orders.show');
 
+    Route::get('/admin/customers/{id}/orders', [CustomerController::class, 'showOrders'])->name('customers.orders');
+    Route::put('/orders/{order}/status', [CustomerController::class, 'updateOrderStatus'])
+    ->name('orders.update-status');
+
 });
 
 Route::middleware(['guest'])->group(function () {

@@ -35,7 +35,7 @@
         </div>
 
         <!-- Employees Table -->
-        <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+        <div class="bg-white shadow-sm rounded-lg overflow-hidden border border-gray-200">
           <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
               <tr>
@@ -63,7 +63,7 @@
                         : 'bg-red-100 text-red-800',
                     ]"
                   >
-                    {{ user.status }}
+                    {{ user.status.charAt(0).toUpperCase() + user.status.slice(1) }}
                   </span>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
@@ -124,12 +124,6 @@
       class="fixed z-50 bg-white border border-gray-200 shadow-lg rounded-md"
       :style="{ top: dropdownPosition.top + 'px', left: dropdownPosition.left + 'px' }"
     >
-      <button
-        class="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 text-left"
-        @click="viewUser(activeActionMenu)"
-      >
-        View
-      </button>
       <Link :href="route('employees.edit', activeActionMenu.id)">
         <button
           class="block w-full px-4 py-2 text-sm text-green-500 hover:bg-green-100 text-left"
@@ -214,7 +208,6 @@ const formatDateTime = (date) => {
   return new Date(date).toLocaleString("en-us", {
     hour: "numeric",
     minute: "numeric",
-    second: "numeric",
     hour12: true, // Use 12-hour format
   });
 };

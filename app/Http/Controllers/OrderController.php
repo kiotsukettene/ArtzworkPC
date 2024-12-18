@@ -14,7 +14,35 @@ class OrderController extends Controller
 {
     public function index()
     {
-        $orders = Orders::latest()->paginate(10);
+        $orders = Orders::latest()
+        ->paginate(9)
+        ->through(function ($orders) {
+            return [
+                'id' => $orders->id,
+                'customer_name' => $orders->customer->first_name . ' ' . $orders->customer->last_name,
+                'shipping_address' => $orders->shipping_address,
+                'created_at' => $orders->created_at,
+                'total_amount' => $orders->total_amount,
+                'order_status' => $orders->order_status,
+                'customer_id' => $orders->customer_id,
+                'customer_phone_number' => $orders->customer->phone,
+                'reference_number' => $orders->reference_number,
+                'payment_method' => $orders->payment_method,
+                'payment_status' => $orders->payment_status,
+                'items' => $orders->items->map(function ($item) {
+                    return [
+                        'product_name' => $item->product->name ?? 'Unknown Product',
+                        'category_id'  => $item->product->category_id ?? 'Unknown Category',
+                        'brand_id' => $item->product->brand_id ?? 'Unknown Brand',
+                        'product_image' => $item->product->product_images[0] ?? null,
+                        'sku' => $item->product->sku ?? 'N/A',
+                        'quantity' => $item->quantity,
+                        'unit_amount' => $item->unit_amount,
+                    ];
+                }),
+            ];
+        });
+
         return Inertia::render('AdminSide/Orders/Transactions', [
             'orders' => $orders,
         ]);
@@ -30,7 +58,7 @@ class OrderController extends Controller
             return [
                 'id' => $order->id,
                 'customer_name' => $order->customer->first_name . ' ' . $order->customer->last_name,
-                'customer_address' => $order->customer->default_address_id,
+                'shipping_address' => $order->shipping_address,
                 'created_at' => $order->created_at->format('m/d/Y'),
                 'total_amount' => $order->total_amount,
                 'order_status' => $order->order_status,

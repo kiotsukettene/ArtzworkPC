@@ -57,7 +57,7 @@
                 <span
                   :class="[
                     'px-3 py-1 text-sm font-medium rounded-full',
-                    order.order_status === 'completed' ? 'bg-green-500 text-white' :
+                    order.order_status === 'delivered' ? 'bg-green-500 text-white' :
                     order.order_status === 'shipped' ? 'bg-blue-500 text-white' :
                     order.order_status === 'cancelled' ? 'bg-red-500 text-white' :
                     'bg-yellow-500 text-white'
@@ -97,8 +97,20 @@
 
           <!-- Order Details Header -->
           <div class="mb-8 ">
-            <h2 class="text-xl font-semibold mb-6">Order Details - {{ selectedOrder.reference_number }}</h2>
-
+            <div class="flex justify-between items-start mb-4">
+                <h1 class="text-lg font-semibold uppercase">{{ selectedOrder.reference_number }}</h1>
+                <span
+                  :class="[
+                    'px-3 py-1 text-sm font-medium rounded-full',
+                    selectedOrder.order_status === 'delivered' ? 'bg-green-500 text-white' :
+                    selectedOrder.order_status === 'shipped' ? 'bg-blue-500 text-white' :
+                    selectedOrder.order_status === 'cancelled' ? 'bg-red-500 text-white' :
+                    'bg-yellow-500 text-white'
+                  ]"
+                >
+                  {{ selectedOrder.order_status.charAt(0).toUpperCase() + selectedOrder.order_status.slice(1) }}
+                </span>
+              </div>
             <div class="flex justify-between">
               <div>
                 <p class="text-gray-600">Customer Name:</p>
@@ -145,7 +157,7 @@
               <div class="space-y-4">
                 <div>
                   <p class="text-gray-600 mb-1">Address:</p>
-                  <p class="font-medium">{{ selectedOrder.customer_address }}</p>
+                  <p class="font-medium">{{ selectedOrder.shipping_address }}</p>
                 </div>
                 <div>
                   <p class="text-gray-600 mb-1">Phone Number:</p>
@@ -162,7 +174,7 @@
             <div class="bg-gray-50 rounded-lg p-6 border border-gray-200">
               <h3 class="font-semibold mb-4 flex items-center gap-2">Order Status</h3>
               <p class="font-medium flex items-center gap-2">
-                <CircleCheckBig v-if="selectedOrder.order_status === 'completed'" class="h-5 w-5 text-green-500" />
+                <CircleCheckBig v-if="selectedOrder.order_status === 'delivered'" class="h-5 w-5 text-green-500" />
                 <Truck v-else-if="selectedOrder.order_status === 'shipped'" class="h-5 w-5 text-blue-500" />
                 <X v-else-if="selectedOrder.order_status === 'cancelled'" class="h-5 w-5 text-red-500" />
                 <Loader2 v-else-if="selectedOrder.order_status === 'processing'" class="h-5 w-5 text-yellow-500 animate-spin" />
