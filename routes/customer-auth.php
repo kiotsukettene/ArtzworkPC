@@ -32,6 +32,7 @@ Route::middleware(['auth:customer'])->group(function () {
         ->middleware(['throttle:6,1'])
         ->name('verification.send');
 
+
     Route::middleware(['verified', EnsureCustomerIsAuthenticated::class])->group(function () {
         Route::get('/customer/register/process', [ClientRegisterController::class, 'show'])
             ->name('customer.register.process');
@@ -55,6 +56,9 @@ Route::middleware(['auth:customer'])->group(function () {
 
         Route::get('/customer/orders/{reference_number}', [OrderDetailsController::class, 'show'])
             ->name('customer.orderDetails');
+            
+        Route::get('invoice/download/{reference_number}', [OrderDetailsController::class, 'downloadInvoice'])
+            ->name('invoice.download');
 
 
 

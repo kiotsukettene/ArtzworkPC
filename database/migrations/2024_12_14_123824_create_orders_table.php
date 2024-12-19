@@ -28,6 +28,7 @@ return new class extends Migration
             $table->decimal('shipping_amount', 10, 2)->nullable(); // Nullable for pickup
             $table->text('notes')->nullable(); // Optional notes
             $table->string('shipping_address')->nullable(); // Nullable for pickup
+            $table->string('e_invoice')->nullable(); // Nullable for pickup
             $table->timestamps(); // Created at & Updated at
         });
     }

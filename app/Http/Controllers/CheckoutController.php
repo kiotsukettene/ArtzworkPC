@@ -17,6 +17,15 @@ class CheckoutController extends Controller
 {
     public function index()
     {
+        // Check if user has any selected items in cart
+        $hasItems = CartItem::where('customer_id', Auth::guard('customer')->id())
+            ->where('selected', true)
+            ->exists();
+
+        if (!$hasItems) {
+            return redirect()->route('cart')->with('error', 'Your cart is empty. Please add items before proceeding to checkout.');
+        }
+
         // Get authenticated customer
         $customer = Auth::guard('customer')->user();
         $address = CustomerAddresses::where('customer_id', $customer->id)->first();

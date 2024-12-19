@@ -53,14 +53,15 @@
                 </div>
                 <div>
                   <p class="text-sm text-gray-500">E-invoice</p>
-                  <a
-                    :href="order.e_invoice"
-                    class="text-sm font-medium text-navy-600 hover:text-navy-700 inline-flex items-center gap-1"
-                    target="_blank"
-                  >
-                    <FileText class="h-4 w-4" />
-                    Download PDF
-                  </a>
+                  <div v-if="order.e_invoice.number">
+                    <a
+                      :href="order.e_invoice.download_url"
+                      class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                      target="_blank"
+                    >
+                      Download E-Invoice
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>

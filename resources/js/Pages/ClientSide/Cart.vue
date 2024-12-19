@@ -124,10 +124,6 @@
               </div>
 
               <div class="flex justify-between text-sm">
-                <span class="text-gray-600">Shipping Fee</span>
-                <span class="text-gray-900 font-medium"
-                  >₱{{ formatPrice(shippingFee) }}</span
-                >
               </div>
 
               <div class="border-t pt-4">
@@ -235,7 +231,7 @@ const updateSelection = (item) => {
   const newValue = !item[5];
   // Update the local state first (optimistic update)
   item[5] = newValue;
-  
+
   // Send update to server
   router.post(
     route("cart.updateSelection"),
@@ -257,7 +253,7 @@ const toggleSelectAll = () => {
   cartItemsArray.value.forEach(item => {
     item[5] = newValue;
   });
-  
+
   // Send update to server
   router.post(
     route("cart.updateAllSelections"),
@@ -309,7 +305,7 @@ const subtotal = computed(() => {
 });
 
 const shippingFee = computed(() => {
-  return subtotal.value > 0 ? 450 : 0;
+  return subtotal.value > 0;
 });
 
 const total = computed(() => {
@@ -322,10 +318,8 @@ const formatPrice = (price) => {
 };
 
 const checkout = () => {
-  const hasSelectedItems = cartItemsArray.value.some(item => item[5]);
-  
-  if (!hasSelectedItems) {
-    // You can add a toast notification here
+  // Check if there are any selected items
+  if (!cartItemsArray.value.some(item => item[5])) {
     alert('Please select at least one item to checkout');
     return;
   }
