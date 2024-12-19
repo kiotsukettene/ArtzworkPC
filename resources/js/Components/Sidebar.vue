@@ -32,16 +32,6 @@
           {{ item.name }}
         </Link>
       </nav>
-
-      <div class="p-4 border-t">
-        <button
-          @click="logout"
-          class="flex items-center w-full px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-md"
-        >
-          <LogOutIcon class="h-5 w-5 mr-3" />
-          Logout
-        </button>
-      </div>
     </div>
   </aside>
 </template>
@@ -74,7 +64,6 @@ const menuItems = computed(() =>
     { name: "Products", icon: PackageIcon, href: route("products.index") },
     { name: "Transactions", icon: ClipboardListIcon, href: route("transactions") },
     { name: "Order History", icon: ClipboardListIcon, href: route("orders.show") },
-    { name: "Return / Refund", icon: ClipboardListIcon, href: "admin/return-refund" },
     { name: "Customers", icon: UsersIcon, href: route("customers") },
     { name: "Employees", icon: UsersIcon, href: route("employees.index") },
   ].map((item) => ({

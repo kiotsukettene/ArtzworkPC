@@ -155,6 +155,7 @@
                           @change="updateStatus(order.id, $event.target.value)"
                           class="w-full rounded-md text-sm font-medium px-3 py-1.5 border-0 focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-150"
                           :class="getStatusClass(order.status)"
+                          :disabled="order.status === 'pending' || order.status === 'cancelled'"
                         >
                           <option value="pending" disabled>Pending</option>
                           <option value="processing">Processing</option>
