@@ -1,4 +1,4 @@
-# PC Components E-commerce Platform
+# Artworkz E-commerce Platform
 
 A comprehensive e-commerce platform built specifically for PC components and computer hardware, featuring a custom PC builder tool, dual authentication system, and complete order management.
 
