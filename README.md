@@ -2,39 +2,39 @@
 
 A comprehensive e-commerce platform built specifically for PC components and computer hardware, featuring a custom PC builder tool, dual authentication system, and complete order management.
 
-## 🚀 Features
+## Features
 
 ### Customer Features
-- **🏠 Product Browsing**: Browse products by categories with advanced filtering
-- **🔧 PC Builder Tool**: Interactive tool to build custom PC configurations with component compatibility
-- **🛒 Shopping Cart**: Full-featured cart with quantity management and item selection
-- **❤️ Wishlist**: Save products for later purchase
-- **⚖️ Product Comparison**: Compare multiple products side by side
-- **📦 Order Management**: Track orders, view history, and download invoices
-- **👤 User Authentication**: Secure registration, login, and email verification
-- **📧 Email Verification**: Secure email verification system
-- **📋 Customer Profile**: Manage personal information and addresses
+- ** Product Browsing**: Browse products by categories with advanced filtering
+- ** PC Builder Tool**: Interactive tool to build custom PC configurations with component compatibility
+- ** Shopping Cart**: Full-featured cart with quantity management and item selection
+- ** Wishlist**: Save products for later purchase
+- ** Product Comparison**: Compare multiple products side by side
+- ** Order Management**: Track orders, view history, and download invoices
+- ** User Authentication**: Secure registration, login, and email verification
+- ** Email Verification**: Secure email verification system
+- ** Customer Profile**: Manage personal information and addresses
 
 ### Admin Features
-- **📊 Dashboard**: Comprehensive analytics and overview
-- **📦 Product Management**: Create, edit, and manage products with specifications
-- **🏷️ Category Management**: Organize products into categories
-- **🏢 Brand Management**: Manage product brands
-- **👥 Customer Management**: View customer details and order history
-- **📋 Order Management**: Process orders and update status
-- **👨‍💼 Employee Management**: Manage admin users and employees
-- **💰 Transaction Tracking**: Monitor sales and revenue
+- **Dashboard**: Comprehensive analytics and overview
+- **Product Management**: Create, edit, and manage products with specifications
+- **Category Management**: Organize products into categories
+- **Brand Management**: Manage product brands
+- **Customer Management**: View customer details and order history
+- **Order Management**: Process orders and update status
+- **Employee Management**: Manage admin users and employees
+- **Transaction Tracking**: Monitor sales and revenue
 
 ### Technical Features
-- **🔐 Dual Authentication**: Separate auth systems for customers and administrators
-- **📱 Responsive Design**: Mobile-first design with Tailwind CSS
-- **⚡ SPA Experience**: Seamless single-page application using Inertia.js
-- **📊 Charts & Analytics**: Interactive charts using Chart.js
-- **📄 PDF Generation**: Generate and download invoices
-- **🎨 Modern UI**: Beautiful interface using Headless UI components
-- **🔍 Search & Filter**: Advanced product search and filtering capabilities
+- **Dual Authentication**: Separate auth systems for customers and administrators
+- **Responsive Design**: Mobile-first design with Tailwind CSS
+- **SPA Experience**: Seamless single-page application using Inertia.js
+- **Charts & Analytics**: Interactive charts using Chart.js
+- **PDF Generation**: Generate and download invoices
+- **Modern UI**: Beautiful interface using Headless UI components
+- **Search & Filter**: Advanced product search and filtering capabilities
 
-## 🛠️ Technology Stack
+##Technology Stack
 
 ### Backend
 - **Laravel 11** - PHP Framework
