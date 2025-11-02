@@ -66,7 +66,7 @@ A comprehensive e-commerce platform built specifically for PC components and com
 - **MySQL** >= 8.0 or **SQLite** >= 3.35
 - **Git** - Version Control
 
-## ⚡ Quick Start
+## Quick Start
 
 ### 1. Clone the Repository
 ```bash
