@@ -104,12 +104,6 @@ DB_USERNAME=your_username
 DB_PASSWORD=your_password
 ```
 
-For SQLite (simpler setup):
-```env
-DB_CONNECTION=sqlite
-DB_DATABASE=/absolute/path/to/database/database.sqlite
-```
-
 ### 6. Create Database
 ```bash
 # For SQLite
