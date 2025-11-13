@@ -183,11 +183,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Support
 
-For support and questions:
-- Create an issue in the repository
-- Check the Laravel documentation: https://laravel.com/docs
-- Vue.js documentation: https://vuejs.org/guide/
-- Inertia.js documentation: https://inertiajs.com/
+
 
 ## Changelog
 
