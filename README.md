@@ -189,4 +189,4 @@ See [CHANGELOG.md](CHANGELOG.md) for a list of changes and updates.
 
 ---
 
-**Built with using Laravel VueJS and Inertia**
+**Built with using Laravel VueJS and InertiaJS**
