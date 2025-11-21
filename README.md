@@ -185,7 +185,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Changelog
 
-See [CHANGELOG.md](CHANGELOG.md) for a list of changes and updates.
+
 
 ---
 
