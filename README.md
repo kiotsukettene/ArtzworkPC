@@ -57,7 +57,7 @@ A comprehensive e-commerce platform built specifically for PC components and com
 - **PostCSS** - CSS Processing
 - **Autoprefixer** - CSS Vendor Prefixes
 
-## 📋 Requirements
+## Requirements
 
 - **PHP** >= 8.2
 - **Node.js** >= 16.0
