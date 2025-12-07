@@ -169,13 +169,3 @@ php artisan make:model Product -mcr
 php artisan optimize:clear
 ```
 
-
-
-
-
-
-
-
----
-
-**Built with using Laravel VueJS and InertiaJS**
