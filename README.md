@@ -18,7 +18,7 @@ A comprehensive e-commerce platform built specifically for PC components and com
 ### Admin Features
 - **Dashboard**: Comprehensive analytics and overview
 - **Product Management**: Create, edit, and manage products with specifications
-- **Category Management**: Organize products into categories
+- **Category Management**: Organize products into categories=
 - **Brand Management**: Manage product brands
 - **Customer Management**: View customer details and order history
 - **Order Management**: Process orders and update status
